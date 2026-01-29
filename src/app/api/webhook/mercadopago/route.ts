@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 
-export async function POST(request: Request) {
+export async function POST(request: Request) { 
   try {
     const body = await request.json();
     const { data, type } = body;
@@ -22,7 +22,7 @@ export async function POST(request: Request) {
         if (paymentData.status === 'approved') {
           let orderId = paymentData.external_reference;
 
-          // LIMPIEZA DINÁMICA:
+          // LIMPIEZA DINÁMICA :
           // Si el ID tiene más de 5 guiones, significa que MP le pegó un ID al principio.
           if (orderId && orderId.includes('-')) {
             const parts = orderId.split('-');
