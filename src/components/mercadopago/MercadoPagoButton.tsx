@@ -15,7 +15,6 @@ export const MercadoPagoButton = ({ preferenceId }: Props) => {
     <div className="relative z-0">
       <Wallet 
         initialization={{ preferenceId }} 
-        customization={{ texts: { valueProp: 'smart_option' } }}
       />
     </div>
   );
