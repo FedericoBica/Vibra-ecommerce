@@ -1,13 +1,10 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 
-export async function POST(request: Request) { 
+export async function POST(request: Request) {
   try {
     const body = await request.json();
     const { data, type } = body;
-
-    // 1. Responder rápido a las pruebas de MP
-    if (data?.id === "123456") return NextResponse.json({ ok: true });
 
     if (type === 'payment') {
       const paymentId = data.id;
@@ -18,48 +15,37 @@ export async function POST(request: Request) {
 
       if (response.ok) {
         const paymentData = await response.json();
-        console.log("ESTADO RECIBIDO DE MP:", paymentData.status); // <--- AGREGÁ ESTO
-        console.log("REFERENCIA RECIBIDA:", paymentData.external_reference); // <--- Y ESTO
+        
+        // --- LOGS DE CONTROL ---
+        console.log("1. ESTADO:", paymentData.status);
+        const rawRef = paymentData.external_reference;
+        console.log("2. REF BRUTA:", rawRef);
 
         if (paymentData.status === 'approved' || paymentData.status === 'completed') {
-          let orderId = paymentData.external_reference;
+          
+          // LIMPIEZA TOTAL: Buscamos el UUID dentro del string
+          // Esta regex busca el patrón xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+          const uuidRegex = /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i;
+          const match = rawRef.match(uuidRegex);
+          const orderId = match ? match[0] : rawRef;
 
-      // LÓGICA DE LIMPIEZA DE UUID:
-          // Un UUID estándar tiene este formato: 8-4-4-4-12 caracteres (5 bloques unidos por guiones)
-          if (orderId && orderId.includes('-')) {
-            const parts = orderId.split('-');
-            
-            // Si tiene más de 5 partes, Mercado Pago le pegó un ID de cuenta al principio
-            if (parts.length > 5) {
-              // Tomamos solo las últimas 5 partes para reconstruir el ID original de tu DB
-              orderId = parts.slice(-5).join('-');
-            }
-          }
-
-          console.log("Intentando actualizar orden limpia:", orderId);
+          console.log("3. ID FINAL A BUSCAR:", orderId);
 
           try {
-            const updatedOrder = await prisma.order.update({
+            const updated = await prisma.order.update({
               where: { id: orderId },
-              data: { 
-                isPaid: true,
-                paidAt: new Date(),
-              }
+              data: { isPaid: true, paidAt: new Date() }
             });
-            console.log("✅ ÉXITO: Orden", updatedOrder.id, "marcada como pagada.");
-          } catch (prismaError:any) {
-            console.error("❌ ERROR PRISMA:", prismaError?.message || "Error desconocido");
-            // Si la orden no existe, igual respondemos 200 para que MP no reintente infinitamente
+            console.log("4. ✅ ACTUALIZADO EN DB:", updated.id);
+          } catch (dbError: any) {
+            console.error("4. ❌ ERROR PRISMA:", dbError.message);
           }
         }
       }
     }
-
-    // Siempre responder 200 a Mercado Pago para evitar reintentos innecesarios
     return NextResponse.json({ ok: true });
-
-  } catch (error) {
-    console.error("--- Webhook Error Grave ---", error);
-    return NextResponse.json({ ok: false }, { status: 200 });
+  } catch (error: any) {
+    console.error("ERROR WEBHOOK:", error.message);
+    return NextResponse.json({ ok: true }); // Siempre 200 para MP
   }
 }
