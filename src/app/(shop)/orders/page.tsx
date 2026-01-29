@@ -10,6 +10,7 @@ import { IoCardOutline } from "react-icons/io5";
 
 
 export default async function OrdersPage() {
+  
   const { ok, orders = [] } = await getOrdersByUser();
 
   if (!ok) {

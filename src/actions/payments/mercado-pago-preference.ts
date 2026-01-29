@@ -7,7 +7,9 @@ export const createMercadoPagoPreference = async (orderId: string, total: number
   try {
     const preference = new Preference(client);
 
-    const baseUrl = process.env.NEXT_PUBLIC_URL;
+    const baseUrl = process.env.NEXT_PUBLIC_URL?.replace(/\/$/, "").trim();
+
+    if (!baseUrl) throw new Error("Falta NEXT_PUBLIC_URL");
 
     const response = await preference.create({
       body: {
@@ -15,7 +17,7 @@ export const createMercadoPagoPreference = async (orderId: string, total: number
           id: orderId,
           title: `Orden #${orderId.split("-").at(-1)}`,
           quantity: 1,
-          unit_price: total,
+          unit_price: Number(total.toFixed(2)),
           currency_id: 'UYU', 
         }],
         payment_methods: {
@@ -36,7 +38,7 @@ export const createMercadoPagoPreference = async (orderId: string, total: number
     });
     return { ok: true, preferenceId: response.id };
   } catch (error) {
-    console.log(error);
+    console.error('Error MP:', error);
     return { ok: false, preferenceId: null };
   }
 };
