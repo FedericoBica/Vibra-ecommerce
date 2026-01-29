@@ -18,8 +18,10 @@ export async function POST(request: Request) {
 
       if (response.ok) {
         const paymentData = await response.json();
+        console.log("ESTADO RECIBIDO DE MP:", paymentData.status); // <--- AGREGÁ ESTO
+        console.log("REFERENCIA RECIBIDA:", paymentData.external_reference); // <--- Y ESTO
 
-        if (paymentData.status === 'approved') {
+        if (paymentData.status === 'approved' || paymentData.status === 'completed') {
           let orderId = paymentData.external_reference;
 
           // LIMPIEZA DINÁMICA :
