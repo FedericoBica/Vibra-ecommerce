@@ -16,13 +16,23 @@ interface Props {
 export default async function OrdersByIdPage({ params }: Props) {
   const { id } = params;
 
-  const { ok, order } = await getOrderById(id);
+  const {  order } = await getOrderById(id);
 
-  if (!ok || !order) redirect("/");
+  if (!order) redirect("/");
 
-// LLAMAMOS AL ACTION PARA MERCADO PAGO
-  const { preferenceId } = await createMercadoPagoPreference(order.id, order.total);
-  console.log("ID DE PREFERENCIA:", preferenceId);
+ let preferenceId: string | null = null;
+  
+  if (!order.isPaid) {
+    const response = await createMercadoPagoPreference(id, order.total);
+    console.log('--- MP Response ---', response);
+
+    if (response.ok && response.preferenceId) {
+      preferenceId = response.preferenceId;
+    }
+  }
+  // // LLAMAMOS AL ACTION PARA MERCADO PAGO
+//   const { preferenceId } = await createMercadoPagoPreference(order.id, order.total);
+
   const address = order.OrderAddress;
 
   return (
@@ -110,13 +120,14 @@ export default async function OrdersByIdPage({ params }: Props) {
             </div>
 
             <div className="mt-5 mb-2 w-full">
-            {order.isPaid ? (
-                <OrderStatus isPaid={true} />
-              ) : (
-                // REEMPLAZAMOS EL PAYPAL BUTTON
-                <MercadoPagoButton 
-                  preferenceId={preferenceId!} 
-                />
+            {!order.isPaid && preferenceId && (
+                <MercadoPagoButton preferenceId={preferenceId} />
+              )}
+              
+              {order.isPaid && (
+                <div className="bg-green-100 text-green-700 p-4 rounded">
+                  Esta orden ya ha sido pagada.
+                </div>
               )}            
             </div>
           </div>

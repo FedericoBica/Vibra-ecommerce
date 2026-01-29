@@ -6,15 +6,15 @@ interface Props {
   preferenceId: string;
 }
 
-// Inicializamos fuera para que no se re-ejecute innecesariamente
-initMercadoPago(process.env.NEXT_PUBLIC_MP_PUBLIC_KEY!);
-
 export const MercadoPagoButton = ({ preferenceId }: Props) => {
-  
+  // Inicializa con tu PUBLIC KEY
+  initMercadoPago(process.env.NEXT_PUBLIC_MP_PUBLIC_KEY!);
+
   return (
-    <div id="relative z-0">
+    <div className="relative z-0">
       <Wallet 
         initialization={{ preferenceId }} 
+        customization={{ texts: { valueProp: 'smart_option' } }}
       />
     </div>
   );

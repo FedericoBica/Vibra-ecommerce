@@ -7,8 +7,7 @@ export const createMercadoPagoPreference = async (orderId: string, total: number
   try {
     const preference = new Preference(client);
 
-    // 1. Validamos la URL base. Si no existe en el .env, usamos localhost por defecto.
-    const baseUrl = /*process.env.NEXT_PUBLIC_URL || */'http://localhost:3000';
+    const baseUrl = process.env.NEXT_PUBLIC_URL;
 
     const response = await preference.create({
       body: {
@@ -17,7 +16,7 @@ export const createMercadoPagoPreference = async (orderId: string, total: number
           title: `Orden #${orderId.split("-").at(-1)}`,
           quantity: 1,
           unit_price: total,
-          currency_id: 'UYU', // O tu moneda local
+          currency_id: 'UYU', 
         }],
         payment_methods: {
           excluded_payment_types: [
@@ -35,13 +34,9 @@ export const createMercadoPagoPreference = async (orderId: string, total: number
         external_reference: orderId,
       }
     });
-  // 3. Verificamos que tengamos un ID antes de retornar
-    if (!response.id) {
-      throw new Error('No se obtuvo un ID de preferencia');
-    }
     return { ok: true, preferenceId: response.id };
   } catch (error) {
     console.log(error);
-    return { ok: false };
+    return { ok: false, preferenceId: null };
   }
 };

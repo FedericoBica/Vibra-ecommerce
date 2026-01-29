@@ -1,6 +1,7 @@
 // SDK de Mercado Pago
-import { MercadoPagoConfig, Preference } from 'mercadopago';
+import { MercadoPagoConfig } from 'mercadopago';
 // Agrega credenciales
 export const client = new MercadoPagoConfig({
-     accessToken: process.env.MP_ACCESS_TOKEN || 'TU_TEST_ACCESS_TOKEN_AQUI'
+     accessToken: process.env.MP_ACCESS_TOKEN!,
+     options: {timeout: 5000}
 });
