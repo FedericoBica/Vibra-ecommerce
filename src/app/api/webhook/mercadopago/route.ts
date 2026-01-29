@@ -47,8 +47,8 @@ export async function POST(request: Request) {
               }
             });
             console.log("✅ ÉXITO: Orden", updatedOrder.id, "marcada como pagada.");
-          } catch (prismaError) {
-            console.error("❌ ERROR PRISMA:", prismaError.message);
+          } catch (prismaError:any) {
+            console.error("❌ ERROR PRISMA:", prismaError?.message || "Error desconocido");
             // Si la orden no existe, igual respondemos 200 para que MP no reintente infinitamente
           }
         }
