@@ -62,7 +62,7 @@ export const initialData: SeedData = {
     {
       title: "Vibrador Rabbit Premium",
       description: "Vibrador con estimulador de clítoris de silicona médica.",
-      images: ['vibrador-app.webp'],
+      images: ['vibrador-app.webp','vibrador-app-2.webp'],
       inStock: 15,
       price: 1890,
       colors: ['Rosa', 'Violeta'], // <--- Solo acepta ValidColor
@@ -73,7 +73,7 @@ export const initialData: SeedData = {
     {
       title: "Lubricante de Frutilla",
       description: "Lubricante efecto calor sabor frutilla.",
-      images: ['vibrador-doble-estimulo-negro.webp'],
+      images: ['vibrador-doble-estimulo-negro.webp','vibrador-doble-estimulo-2'],
       inStock: 20,
       price: 550,
       colors: ['Rojo'],

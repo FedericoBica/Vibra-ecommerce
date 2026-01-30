@@ -8,7 +8,6 @@ import {
   ProductMobileSlideshow,
   ProductSlideshow,
   QuantitySelector,
-  SizeSelector,
   StockLabel,
 } from "@/components";
 import { getProductBySlug } from "@/actions";
@@ -83,9 +82,15 @@ export default async function ProductBySlugPage({ params }: Props) {
 
         <p className="text-lg mb-5">${product.price}</p>
 
-        <AddToCart product={ product } />
-
-        {/* Descripción */}
+      <AddToCart 
+        product={{
+          ...product,
+          category: product.category as any,
+          color: product.color as any, // Forzamos a que acepte el array de strings como Color[]
+        }} 
+        category={product.category as any}
+      />        
+      {/* Descripción */}
         <h3 className="font-bold text-sm">Descripción</h3>
         <p className="font-light">{product.description}</p>
       </div>

@@ -2,11 +2,12 @@
 
 import { useState } from "react";
 import { QuantitySelector, ColorSelector } from "@/components"; // Importás ColorSelector
-import type { CartProduct, Product, Color } from "@/interfaces";
+import type { CartProduct, Product, Color, ProductCategory } from "@/interfaces";
 import { useCartStore } from '@/store';
 
 interface Props {
   product: Product;
+  category: ProductCategory;
 }
 
 export const AddToCart = ({ product }: Props) => {
