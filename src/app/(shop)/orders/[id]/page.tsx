@@ -13,21 +13,30 @@ interface Props {
   params: {
     id: string;
   };
+  // Declaramos searchParams para que Next.js acepte la basura de Mercado Pago sin quejarse
+  searchParams: { [key: string]: string | string[] | undefined };
 }
 
-export default async function OrdersByIdPage({ params }: Props) {
-  const { id } = params;
-  const { ok, order } = await getOrderById(id);
+export default async function OrdersByIdPage({ params, searchParams }: Props) {
+  
+  // Limpiamos el ID por si MP lo devuelve con una barra al final o parámetros pegados
+  const cleanId = params.id.split('?')[0].replace('/', '');
+  
+  const { ok, order } = await getOrderById(cleanId);
 
   // Si no hay orden o hubo error
   if (!ok || !order) {
     redirect("/");
   }
 
+  // Si el pago se confirmó, podrías usar searchParams para mostrar un mensaje extra,
+  // pero por ahora solo dejamos que existan para evitar errores de renderizado.
+  const isPaymentRedirect = !!searchParams.status; 
+
   let preferenceId: string | null = null;
   
   if (!order.isPaid) {
-    const response = await createMercadoPagoPreference(id, order.total);
+    const response = await createMercadoPagoPreference(cleanId, order.total);
     if (response.ok && response.preferenceId) {
       preferenceId = response.preferenceId;
     }
@@ -38,7 +47,14 @@ export default async function OrdersByIdPage({ params }: Props) {
   return (
     <div className="flex justify-center items-center mb-72 px-10 sm:px-0">
       <div className="flex flex-col w-[1000px]">
-        <Title title={`Orden #${id.split("-").at(-1)}`} />
+        <Title title={`Orden #${cleanId.split("-").at(-1)}`} />
+
+        {/* Si quieres podrías usar searchParams aquí para un feedback visual extra */}
+        {isPaymentRedirect && !order.isPaid && (
+          <div className="bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded mb-4">
+            Estamos procesando tu pago. Si ya pagaste, puede demorar unos minutos en impactar.
+          </div>
+        )}
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-10">
           <div className="flex flex-col mt-5">
@@ -47,7 +63,6 @@ export default async function OrdersByIdPage({ params }: Props) {
             {order.OrderItem.map((item) => (
               <div key={item.product.slug + "-" + item.color} className="flex mb-5">
                 <Image
-                  // Blindamos la imagen por si el array viene vacío
                   src={
                     item.product.ProductImage && item.product.ProductImage.length > 0
                       ? `/products/${item.product.ProductImage[0].url}`
@@ -84,21 +99,21 @@ export default async function OrdersByIdPage({ params }: Props) {
                   {address?.postalCode && <p>CP: {address.postalCode}</p>}
                 </div>
               )}
-              <p className="mt-2 text-sm font-semibold">Tel: {address?.phone ?? 'N/A'}</p>
+              <p className="mt-2 text-sm font-semibold text-gray-600">Tel: {address?.phone ?? 'N/A'}</p>
             </div>
 
             <div className="w-full h-0.5 rounded bg-gray-200 mb-10" />
 
-            <h2 className="text-2xl mb-2 font-bold">Resumen de pago</h2>
+            <h2 className="text-2xl mb-2 font-bold text-gray-800">Resumen de pago</h2>
             <div className="grid grid-cols-2 text-gray-700">
               <span>Productos</span>
-              <span className="text-right">{order.itemsInOrder}</span>
+              <span className="text-right font-medium">{order.itemsInOrder}</span>
 
               <span>Subtotal</span>
-              <span className="text-right">{currencyFormat(order.subTotal)}</span>
+              <span className="text-right font-medium">{currencyFormat(order.subTotal)}</span>
 
               <span>Envío ({order.deliveryMethod})</span>
-              <span className="text-right">{currencyFormat(order.shippingCost)}</span>
+              <span className="text-right font-medium">{currencyFormat(order.shippingCost)}</span>
 
               <div className="col-span-2 mt-4 h-px bg-gray-200" />
 

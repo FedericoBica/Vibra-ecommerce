@@ -4,6 +4,7 @@ import { authConfig } from './auth.config';
 export default NextAuth(authConfig).auth;
  
 export const config = {
-  // https://nextjs.org/docs/app/building-your-application/routing/middleware#matcher
-  matcher: ['/((?!api|_next/static|_next/image|.*\\.png$).*)'],
+  // Agregamos /orders/:id a la lista de ignorados si es necesario, 
+  // pero lo más seguro es excluir explícitamente las rutas que MP toca.
+  matcher: ['/((?!api|_next/static|_next/image|orders|.*\\.png$).*)'],
 };
