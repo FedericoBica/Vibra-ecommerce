@@ -21,7 +21,7 @@ export const createMercadoPagoPreference = async (orderId: string, total: number
         external_reference: orderId,
         notification_url: `${baseUrl}/api/webhook/mercadopago`,
         back_urls: {
-          success: `${baseUrl}/orders/${orderId}`,
+          success: `${baseUrl}/api/payments/success`,
           failure: `${baseUrl}/orders/${orderId}`,
           pending: `${baseUrl}/orders/${orderId}`,
         },
