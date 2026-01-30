@@ -1,9 +1,8 @@
 "use client";
 
 import { useState } from "react";
-
-import { QuantitySelector, SizeSelector } from "@/components";
-import type { CartProduct, Product, Size } from "@/interfaces";
+import { QuantitySelector, ColorSelector } from "@/components"; // Importás ColorSelector
+import type { CartProduct, Product, Color } from "@/interfaces";
 import { useCartStore } from '@/store';
 
 interface Props {
@@ -14,14 +13,15 @@ export const AddToCart = ({ product }: Props) => {
 
   const addProductToCart = useCartStore( state => state.addProductTocart );
 
-  const [size, setSize] = useState<Size | undefined>();
+  // 1. Cambiamos 'size' por 'color'
+  const [color, setColor] = useState<Color | undefined>(); 
   const [quantity, setQuantity] = useState<number>(1);
   const [posted, setPosted] = useState(false);
 
   const addToCart = () => {
     setPosted(true);
 
-    if (!size) return;
+    if (!color) return; // Validamos que haya color seleccionado
 
     const cartProduct: CartProduct = {
       id: product.id,
@@ -29,32 +29,29 @@ export const AddToCart = ({ product }: Props) => {
       title: product.title,
       price: product.price,
       quantity: quantity,
-      size: size,
+      color: color, // Usamos la variable color
       image: product.images[0]
     }
 
     addProductToCart(cartProduct);
     setPosted(false);
     setQuantity(1);
-    setSize(undefined);
-
-
+    setColor(undefined); // Reseteamos color
   };
-
 
   return (
     <>
-      {posted && !size && (
+      {posted && !color && (
         <span className="mt-2 text-red-500 fade-in">
-          Debe de seleccionar una talla*
+          Debe de seleccionar un color*
         </span>
       )}
 
-      {/* Selector de Tallas */}
-      <SizeSelector
-        selectedSize={size}
-        availableSizes={product.sizes}
-        onSizeChanged={setSize}
+      {/* 2. USAMOS EL COMPONENTE CORRECTO: ColorSelector */}
+      <ColorSelector
+        selectedColor={color}
+        availableColors={product.color} // Asegurate que tu interfaz product tenga colors
+        onColorChanged={setColor}
       />
 
       {/* Selector de Cantidad */}

@@ -23,10 +23,9 @@ const productSchema = z.object({
     .min(0)
     .transform( val => Number(val.toFixed(0)) ),
   categoryId: z.string().uuid(),
-  colors: z.coerce.string().transform( val => val.split(',').map(c => c.trim()) ),  tags: z.string(),
+  color: z.coerce.string().transform( val => val.split(',').map(c => c.trim()) ), 
+  tags: z.string(),
 });
-
-
 
 
 
@@ -63,7 +62,7 @@ export const createUpdateProduct = async( formData: FormData ) => {
       const productData = {
         ...rest,
         // En Prisma ahora usamos colors en lugar de sizes
-        colors: rest.colors, 
+        color: rest.color, 
         tags: tagsArray,
       };
 

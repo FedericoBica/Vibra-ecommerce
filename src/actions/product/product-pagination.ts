@@ -1,5 +1,6 @@
 "use server";
 
+import { Color } from "@/interfaces";
 import prisma from "@/lib/prisma";
 
 interface PaginationOptions {
@@ -56,6 +57,8 @@ export const getPaginatedProductsWithImages = async ({
       products: products.map((product) => ({
         ...product,
         images: product.ProductImage.map((image) => image.url),
+        category: product.category.name as any,
+        color: product.color as Color[],
       })),
     };
   } catch (error) {

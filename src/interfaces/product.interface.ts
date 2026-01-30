@@ -4,13 +4,12 @@ export interface Product {
   images: string[];
   inStock: number;
   price: number;
-  // sizes: Size[];
   slug: string;
   tags: string[];
   title: string;
-  //todo: type: Type;
   category: ProductCategory;
-  colors: string[]
+  color: Color[]
+  categoryId: string
 }
 
 export interface CartProduct {
@@ -19,9 +18,8 @@ export interface CartProduct {
   title: string;
   price: number;
   quantity: number;
-  // size: Size;
   image: string;
-  color: string;
+  color: Color;
 }
 
 
@@ -31,5 +29,5 @@ export interface ProductImage {
   productId: string;
 }
 
-
+export type Color = 'Rosa' | 'Negro' | 'Violeta' | 'Rojo' | 'Azul' | 'Gris' | 'Blanco';
 export type ProductCategory = 'juguetes' | 'juegos' | 'lubricantes' | 'bdsm';

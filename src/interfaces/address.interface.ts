@@ -1,3 +1,4 @@
+
 export interface Address {
   firstName: string;
   lastName: string;
@@ -7,4 +8,8 @@ export interface Address {
   city: string;
   departamento: string;
   phone: string;
+  // Nuevos campos
+  email: string; 
+  deliveryMethod: 'EXPRESS' | 'STANDARD' | 'PICKUP';
+  lockerLocation?: string;
 }

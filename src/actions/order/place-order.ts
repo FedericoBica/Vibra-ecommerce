@@ -1,6 +1,6 @@
 "use server";
-import prisma from "@/lib/prisma";
 
+import prisma from "@/lib/prisma";
 import { auth } from "@/auth.config";
 import type { Address } from "@/interfaces";
 
@@ -10,96 +10,80 @@ interface ProductToOrder {
   color: string;
 }
 
+// Precios de envío (puedes ajustarlos aquí)
+const shippingPrices = {
+  EXPRESS: 350,
+  STANDARD: 220,
+  PICKUP: 100,
+};
+
 export const placeOrder = async (
   productIds: ProductToOrder[],
   address: Address
 ) => {
   const session = await auth();
-  const userId = session?.user.id;
+  const userId = session?.user.id; // Puede ser undefined si es invitado
 
-  // Verificar sesión de usuario
-  if (!userId) {
-    return {
-      ok: false,
-      message: "No hay sesión de usuario",
-    };
-  }
-
-  // Obtener la información de los productos
-  // Nota: recuerden que podemos llevar 2+ productos con el mismo ID
+  // 1. Obtener la información de los productos en la DB
   const products = await prisma.product.findMany({
     where: {
-      id: {
-        in: productIds.map((p) => p.productId),
-      },
+      id: { in: productIds.map((p) => p.productId) },
     },
   });
 
-  // Calcular los montos // Encabezado
+  // 2. Calcular montos de productos
   const itemsInOrder = productIds.reduce((count, p) => count + p.quantity, 0);
 
-  // Los totales de tax, subtotal, y total
-  const { subTotal, tax, total } = productIds.reduce(
-    (totals, item) => {
-      const productQuantity = item.quantity;
-      const product = products.find((product) => product.id === item.productId);
+const { subTotal } = productIds.reduce(
+  (totals, item) => {
+    const product = products.find((p) => p.id === item.productId);
+    if (!product) throw new Error(`${item.productId} no existe`);
 
-      if (!product) throw new Error(`${item.productId} no existe - 500`);
+    const itemSubtotal = product.price * item.quantity;
+    totals.subTotal += itemSubtotal;
 
-      const subTotal = product.price * productQuantity;
+    return totals;
+  },
+  { subTotal: 0 } // Quitamos tax de aquí
+);
 
-      totals.subTotal += subTotal;
-      totals.tax += subTotal * 0.15;
-      totals.total += subTotal * 1.15;
-
-      return totals;
-    },
-    { subTotal: 0, tax: 0, total: 0 }
-  );
-
-  // Crear la transacción de base de datos
+  const tax = 0; // Impuestos eliminados
+  const shippingCost = shippingPrices[address.deliveryMethod] || 0;
+  const total = subTotal + shippingCost; // Total es solo productos + envío
+  
+  // 3. Lógica de Envío
   try {
-
     const prismaTx = await prisma.$transaction(async (tx) => {
+      
       // 1. Actualizar el stock de los productos
       const updatedProductsPromises = products.map((product) => {
-        //  Acumular los valores
         const productQuantity = productIds
           .filter((p) => p.productId === product.id)
           .reduce((acc, item) => item.quantity + acc, 0);
 
-        if (productQuantity === 0) {
-          throw new Error(`${product.id} no tiene cantidad definida`);
-        }
-
         return tx.product.update({
           where: { id: product.id },
-          data: {
-            // inStock: product.inStock - productQuantity // no hacer
-            inStock: {
-              decrement: productQuantity,
-            },
-          },
+          data: { inStock: { decrement: productQuantity } },
         });
       });
 
       const updatedProducts = await Promise.all(updatedProductsPromises);
-
-      // Verificar valores negativos en las existencia = no hay stock
-      updatedProducts.forEach((product) => {
-        if (product.inStock < 0) {
-          throw new Error(`${product.title} no tiene inventario suficiente`);
-        }
+      updatedProducts.forEach((p) => {
+        if (p.inStock < 0) throw new Error(`${p.title} no tiene stock suficiente`);
       });
 
-      // 2. Crear la orden - Encabezado - Detalles
+      // 2. Crear la orden (Shopify Style: userId puede ser null)
       const order = await tx.order.create({
         data: {
-          userId: userId,
+          userId: userId ?? null, // <--- Si no hay sesión, es invitado
+          guestEmail: address.email,
           itemsInOrder: itemsInOrder,
           subTotal: subTotal,
-          tax: tax,
+          tax: 0,
           total: total,
+          deliveryMethod: address.deliveryMethod,
+          lockerLocation: address.lockerLocation,
+          shippingCost: shippingCost,
 
           OrderItem: {
             createMany: {
@@ -107,47 +91,45 @@ export const placeOrder = async (
                 quantity: p.quantity,
                 color: p.color,
                 productId: p.productId,
-                price:
-                  products.find((product) => product.id === p.productId)
-                    ?.price ?? 0,
+                price: products.find((product) => product.id === p.productId)?.price ?? 0,
               })),
             },
           },
         },
       });
 
-      // Validar, si el price es cero, entonces, lanzar un error
-
-      // 3. Crear la direccion de la orden
-      // Address
-      const { departamento, ...restAddress } = address;
+      // 3. Crear la dirección de la orden
       const orderAddress = await tx.orderAddress.create({
         data: {
-          ...restAddress,
-          departamento: departamento,
-          orderId: order.id,
+          firstName:    address.firstName,
+          lastName:     address.lastName,
+          address:      address.address,
+          address2:     address.address2 || "",
+          postalCode:   address.postalCode,
+          city:         address.city,
+          phone:        address.phone,
+          departamento: address.departamento,
+          orderId:      order.id,
         },
       });
 
       return {
-        updatedProducts: updatedProducts,
         order: order,
         orderAddress: orderAddress,
       };
     });
 
-
     return {
       ok: true,
       order: prismaTx.order,
-      prismaTx: prismaTx,
-    }
-
+      message: 'Orden creada correctamente',
+    };
 
   } catch (error: any) {
+    console.error(error);
     return {
       ok: false,
-      message: error?.message,
+      message: error?.message || 'No se pudo crear la orden',
     };
   }
 };
