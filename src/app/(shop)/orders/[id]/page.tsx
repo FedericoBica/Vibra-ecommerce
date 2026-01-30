@@ -19,8 +19,10 @@ export default async function OrdersByIdPage({ params }: Props) {
   const { id } = params;
   const { ok, order } = await getOrderById(id);
 
-  // Si no hay orden o hubo error en getOrderById (que ahora permite invitados)
-  if (!ok || !order) redirect("/");
+  // Si no hay orden o hubo error
+  if (!ok || !order) {
+    redirect("/");
+  }
 
   let preferenceId: string | null = null;
   
@@ -45,12 +47,19 @@ export default async function OrdersByIdPage({ params }: Props) {
             {order.OrderItem.map((item) => (
               <div key={item.product.slug + "-" + item.color} className="flex mb-5">
                 <Image
-                  src={`/products/${item.product.ProductImage[0].url}`}
-                  width={100} height={100} alt={item.product.title}
-                  className="mr-5 rounded"
+                  // Blindamos la imagen por si el array viene vacío
+                  src={
+                    item.product.ProductImage && item.product.ProductImage.length > 0
+                      ? `/products/${item.product.ProductImage[0].url}`
+                      : '/imgs/placeholder.jpg'
+                  }
+                  width={100} 
+                  height={100} 
+                  alt={item.product.title}
+                  className="mr-5 rounded object-cover"
                 />
                 <div>
-                  <p>{item.product.title}</p>
+                  <p className="font-semibold">{item.product.title}</p>
                   <p>${item.price} x {item.quantity}</p>
                   <p className="font-bold">Subtotal: {currencyFormat(item.price * item.quantity)}</p>
                 </div>
@@ -61,39 +70,39 @@ export default async function OrdersByIdPage({ params }: Props) {
           <div className="bg-white rounded-xl shadow-xl p-7 h-fit">
             <h2 className="text-2xl mb-2 font-bold">Detalles de Entrega</h2>
             <div className="mb-10 p-4 bg-blue-50 rounded border border-blue-100">
-            <p className="text-xl font-bold">
-              {address?.firstName ?? 'Invitado'} {address?.lastName ?? ''}
-            </p>              
-              {/* Lógica de Locker vs Envío */}
+              <p className="text-xl font-bold">
+                {address?.firstName ?? 'Invitado'} {address?.lastName ?? ''}
+              </p>              
+              
               { order.deliveryMethod === 'PICKUP' ? (
-                <p className="mt-2 text-blue-800 font-medium">📍 Retiro en: {order.lockerLocation}</p>
+                <p className="mt-2 text-blue-800 font-medium">📍 {order.lockerLocation ?? 'Locker seleccionado'}</p>
               ) : (
-                <>
-                  <p>{address!.address}</p>
-                  <p>{address!.address2}</p>
-                  <p>{address!.city}, {address!.departamento}</p>
-                </>
+                <div className="text-gray-700">
+                  <p>{address?.address ?? 'Sin dirección registrada'}</p>
+                  {address?.address2 && <p>{address.address2}</p>}
+                  <p>{address?.city ?? ''}, {address?.departamento ?? ''}</p>
+                  {address?.postalCode && <p>CP: {address.postalCode}</p>}
+                </div>
               )}
-              <p className="mt-2 text-sm">Tel: {address!.phone}</p>
+              <p className="mt-2 text-sm font-semibold">Tel: {address?.phone ?? 'N/A'}</p>
             </div>
 
             <div className="w-full h-0.5 rounded bg-gray-200 mb-10" />
 
             <h2 className="text-2xl mb-2 font-bold">Resumen de pago</h2>
-            <div className="grid grid-cols-2">
+            <div className="grid grid-cols-2 text-gray-700">
               <span>Productos</span>
               <span className="text-right">{order.itemsInOrder}</span>
 
               <span>Subtotal</span>
               <span className="text-right">{currencyFormat(order.subTotal)}</span>
 
-              {/* Mostramos el costo de envío que guardamos en la DB */}
               <span>Envío ({order.deliveryMethod})</span>
               <span className="text-right">{currencyFormat(order.shippingCost)}</span>
 
               <div className="col-span-2 mt-4 h-px bg-gray-200" />
 
-              <span className="mt-5 text-2xl font-bold">Total:</span>
+              <span className="mt-5 text-2xl font-bold text-gray-900">Total:</span>
               <span className="mt-5 text-2xl text-right font-bold text-blue-600">
                 {currencyFormat(order.total)}
               </span>
@@ -104,8 +113,8 @@ export default async function OrdersByIdPage({ params }: Props) {
                 <MercadoPagoButton preferenceId={preferenceId} />
               )}
               {order.isPaid && (
-                <div className="bg-green-100 text-green-700 p-4 rounded text-center font-bold">
-                  Orden Pagada con Éxito
+                <div className="bg-green-100 border border-green-200 text-green-700 p-4 rounded-lg text-center font-bold animate-pulse">
+                  ✅ Pago confirmado. ¡Gracias por tu compra!
                 </div>
               )}            
             </div>
