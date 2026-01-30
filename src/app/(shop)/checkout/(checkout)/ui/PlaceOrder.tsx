@@ -125,7 +125,7 @@ export const PlaceOrder = () => {
       <div className="mt-8 mb-2 w-full">
         <p className="mb-5 text-gray-500">
           <span className="text-xs">
-            Al hacer clic en "Colocar orden", confirmas que los datos de entrega son correctos y aceptas nuestros{" "}
+           Al hacer clic en &quot;Colocar orden&quot;, confirmas que los datos de entrega son correctos y aceptas nuestros{" "}
             <a href="#" className="underline">términos de servicio</a>.
           </span>
         </p>
