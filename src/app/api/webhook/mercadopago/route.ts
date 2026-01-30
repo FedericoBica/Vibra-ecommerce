@@ -4,65 +4,48 @@ import prisma from "@/lib/prisma";
 export async function POST(request: Request) {
   try {
     const url = new URL(request.url);
-    const searchParams = url.searchParams;
-    
-    // 1. Detectar ID del pago (viene por URL o por Body)
-    const topic = searchParams.get("topic") || searchParams.get("type");
-    const id = searchParams.get("id") || searchParams.get("data.id");
+    const paymentId = url.searchParams.get("data.id") || url.searchParams.get("id");
+    const type = url.searchParams.get("type") || url.searchParams.get("topic");
 
-    const body = await request.json();
-    const paymentId = body?.data?.id || body?.id || id;
-    const type = body?.type || topic;
-
-    // Solo procesamos si es una notificación de pago
+    // Solo procesamos si hay un ID de pago
     if (type === "payment" && paymentId) {
-      console.log(`🚀 Webhook recibido para pago: ${paymentId}`);
-
-      // 2. Consultar a Mercado Pago para verificar estado real
+      
       const response = await fetch(`https://api.mercadopago.com/v1/payments/${paymentId}`, {
-        headers: { "Authorization": `Bearer ${process.env.MP_ACCESS_TOKEN}` },
+        headers: { Authorization: `Bearer ${process.env.MP_ACCESS_TOKEN}` },
       });
 
       if (response.ok) {
-        const paymentData = await response.json();
-        const rawRef = paymentData.external_reference;
-        const status = paymentData.status;
+        const data = await response.json();
+        const rawRef = data.external_reference; 
 
-        console.log(`🔎 Estado: ${status} | Referencia Bruta de MP: ${rawRef}`);
-
-        if (status === "approved" || status === "completed") {
+        // Si el pago está aprobado, buscamos la orden
+        if ((data.status === "approved" || data.status === "authorized") && rawRef) {
           
-          // --- AQUÍ ESTÁ LA SOLUCIÓN ---
-          // Esta Regex extrae SOLO el UUID (xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx)
-          // e ignora el prefijo "3166395116-" que agrega Mercado Pago
+          // REGLA DE ORO: Extraemos el ID real (UUID) ignorando cualquier prefijo de MP
           const uuidRegex = /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i;
+          const match = rawRef.match(uuidRegex);
+          const cleanOrderId = match ? match[0] : rawRef;
+
+          // Actualizamos la base de datos
+          await prisma.order.update({
+            where: { id: cleanOrderId },
+            data: { 
+              isPaid: true, 
+              paidAt: new Date(),
+              // Guardamos el ID de transacción de MP por si acaso
+              transactionId: paymentId.toString() 
+            },
+          });
           
-          // Si rawRef es null, evitamos el crash
-          const match = rawRef ? rawRef.match(uuidRegex) : null;
-          const orderId = match ? match[0] : rawRef;
-
-          console.log(`🎯 ID LIMPIO PARA DB: ${orderId}`);
-
-          if (orderId) {
-            try {
-              const updatedOrder = await prisma.order.update({
-                where: { id: orderId },
-                data: { isPaid: true, paidAt: new Date() },
-              });
-              console.log(`✅✅ ÉXITO: Orden ${updatedOrder.id} PAGADA.`);
-            } catch (error) {
-              console.error(`❌ ERROR DB: No se encontró la orden ${orderId} o falló Prisma.`, error);
-            }
-          } else {
-             console.error("❌ ERROR: No se pudo extraer un ID válido de la referencia.");
-          }
+          console.log(`✅ ORDEN PAGADA: ${cleanOrderId}`);
         }
       }
     }
 
+    // Mercado Pago exige un 200 siempre
     return NextResponse.json({ ok: true });
   } catch (error) {
-    console.error("❌ ERROR CRÍTICO WEBHOOK:", error);
-    return NextResponse.json({ ok: true });
+    console.error("❌ Error Webhook:", error);
+    return NextResponse.json({ ok: true }, { status: 200 });
   }
 }

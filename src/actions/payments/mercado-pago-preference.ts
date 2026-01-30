@@ -6,34 +6,26 @@ import { client } from '@/lib/mercadopago';
 export const createMercadoPagoPreference = async (orderId: string, total: number) => {
   try {
     const preference = new Preference(client);
-
     const baseUrl = process.env.NEXT_PUBLIC_URL?.replace(/\/$/, "").trim();
-
-    if (!baseUrl) throw new Error("Falta NEXT_PUBLIC_URL");
 
     const response = await preference.create({
       body: {
         items: [{
           id: orderId,
-          title: `Orden #${orderId.split("-").at(-1)}`,
+          title: `Orden Vibra #${orderId.split("-").at(-1)}`,
           quantity: 1,
           unit_price: Number(total.toFixed(2)),
           currency_id: 'UYU', 
         }],
-        payment_methods: {
-          excluded_payment_types: [
-            { id: 'ticket' },  // Esto excluye Abitab y RedPagos (pagos offline)
-            { id: 'atm' }     // Por si acaso, excluye cajeros
-          ],
-          installments: 1, // Opcional: Máximo de cuotas permitidas
-        },
+        // La clave es que external_reference sea SOLO el ID
+        external_reference: orderId,
+        notification_url: `${baseUrl}/api/webhook/mercadopago`,
         back_urls: {
           success: `${baseUrl}/orders/${orderId}`,
           failure: `${baseUrl}/orders/${orderId}`,
           pending: `${baseUrl}/orders/${orderId}`,
         },
         auto_return: 'approved',
-        external_reference: orderId,
       }
     });
     return { ok: true, preferenceId: response.id };
