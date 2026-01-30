@@ -105,7 +105,7 @@ const { subTotal } = productIds.reduce(
           lastName:     address.lastName,
           address:      address.address,
           address2:     address.address2 || "",
-          postalCode:   address.postalCode,
+          postalCode:   address.postalCode || "N/A",
           city:         address.city,
           phone:        address.phone,
           departamento: address.departamento,
