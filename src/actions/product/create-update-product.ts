@@ -2,7 +2,7 @@
 
 import prisma from '@/lib/prisma';
 import { revalidatePath } from 'next/cache';
-import { Gender, Product, Size } from '@prisma/client';
+import { Product } from '@prisma/client';
 import { z } from 'zod';
 import {v2 as cloudinary} from 'cloudinary';
 cloudinary.config( process.env.CLOUDINARY_URL ?? '' );
@@ -23,9 +23,7 @@ const productSchema = z.object({
     .min(0)
     .transform( val => Number(val.toFixed(0)) ),
   categoryId: z.string().uuid(),
-  sizes: z.coerce.string().transform( val => val.split(',') ),
-  tags: z.string(),
-  gender: z.nativeEnum(Gender), 
+  colors: z.coerce.string().transform( val => val.split(',').map(c => c.trim()) ),  tags: z.string(),
 });
 
 
@@ -45,8 +43,14 @@ export const createUpdateProduct = async( formData: FormData ) => {
   }
 
   const product = productParsed.data;
-  product.slug = product.slug.toLowerCase().replace(/ /g, '-' ).trim();
-
+  product.slug = product.slug
+    .toLowerCase()
+    .trim()
+    .normalize('NFD') // Divide caracteres como 'é' en 'e' + '´'
+    .replace(/[\u0300-\u036f]/g, "") // Borra los acentos/tildes
+    .replace(/[^a-z0-9 -]/g, "") // Quita cualquier cosa que no sea letra, número o espacio
+    .replace(/\s+/g, '-') // Cambia espacios por guiones
+    .replace(/-+/g, '-'); // Evita guiones dobles (--)
 
   const { id, ...rest } = product;
 
@@ -56,36 +60,25 @@ export const createUpdateProduct = async( formData: FormData ) => {
       let product: Product;
       const tagsArray = rest.tags.split(',').map( tag => tag.trim().toLowerCase() );
   
+      const productData = {
+        ...rest,
+        // En Prisma ahora usamos colors en lugar de sizes
+        colors: rest.colors, 
+        tags: tagsArray,
+      };
+
       if ( id ) {
         // Actualizar
-        product = await prisma.product.update({
+        product = await tx.product.update({
           where: { id },
-          data: {
-            ...rest,
-            sizes: {
-              set: rest.sizes as Size[],
-            },
-            tags: {
-              set: tagsArray
-            }
-          }
+          data: productData
         });
-  
       } else {
         // Crear
-        product = await prisma.product.create({
-          data: {
-            ...rest,
-            sizes: {
-              set: rest.sizes as Size[],
-            },
-            tags: {
-              set: tagsArray
-            }
-          }
-        })
-      }
-  
+        product = await tx.product.create({
+          data: productData
+        });
+      }  
       
       // Proceso de carga y guardado de imagenes
       // Recorrer las imagenes y guardarlas
@@ -96,7 +89,7 @@ export const createUpdateProduct = async( formData: FormData ) => {
           throw new Error('No se pudo cargar las imágenes, rollingback');
         }
 
-        await prisma.productImage.createMany({
+        await tx.productImage.createMany({
           data: images.map( image => ({
             url: image!,
             productId: product.id,

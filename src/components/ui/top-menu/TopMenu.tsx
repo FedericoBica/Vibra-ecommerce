@@ -26,7 +26,7 @@ export const TopMenu = () => {
       <div>
         <Link href="/">
           <span className={`${titleFont.className } antialiased font-bold`}>
-            Teslo
+            Vibra
           </span>
           <span> | Shop</span>
         </Link>
@@ -36,21 +36,20 @@ export const TopMenu = () => {
       <div className="hidden sm:block">
         <Link
           className="m-2 p-2 rounded-md transition-all hover:bg-gray-100"
-          href="/gender/men"
+          href="/category/vibradores"
         >
-          Hombres
+          Vibra
         </Link>
         <Link
           className="m-2 p-2 rounded-md transition-all hover:bg-gray-100"
-          href="/gender/women"
+          href="/category/lubricantes"
         >
-          Mujeres
+          Lubri
         </Link>
         <Link
           className="m-2 p-2 rounded-md transition-all hover:bg-gray-100"
-          href="/gender/kid"
-        >
-          Niños
+          href="/category/juegos" >
+          Juegos
         </Link>
       </div>
 
@@ -67,7 +66,7 @@ export const TopMenu = () => {
         } className="mx-2">
           <div className="relative">
             {  ( loaded && totalItemsInCart > 0) && (
-              <span className="fade-in absolute text-xs px-1 rounded-full font-bold -top-2 -right-2 bg-blue-700 text-white">
+              <span className="fade-in absolute text-xs px-1 rounded-full font-bold -top-2 -right-2 bg-pink-700 text-white">
                 {totalItemsInCart}
               </span>
             )}

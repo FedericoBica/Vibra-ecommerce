@@ -2,12 +2,12 @@
 import prisma from "@/lib/prisma";
 
 import { auth } from "@/auth.config";
-import type { Address, Size } from "@/interfaces";
+import type { Address } from "@/interfaces";
 
 interface ProductToOrder {
   productId: string;
   quantity: number;
-  size: Size;
+  color: string;
 }
 
 export const placeOrder = async (
@@ -105,7 +105,7 @@ export const placeOrder = async (
             createMany: {
               data: productIds.map((p) => ({
                 quantity: p.quantity,
-                size: p.size,
+                color: p.color,
                 productId: p.productId,
                 price:
                   products.find((product) => product.id === p.productId)
@@ -120,11 +120,11 @@ export const placeOrder = async (
 
       // 3. Crear la direccion de la orden
       // Address
-      const { country, ...restAddress } = address;
+      const { departamento, ...restAddress } = address;
       const orderAddress = await tx.orderAddress.create({
         data: {
           ...restAddress,
-          countryId: country,
+          departamento: departamento,
           orderId: order.id,
         },
       });

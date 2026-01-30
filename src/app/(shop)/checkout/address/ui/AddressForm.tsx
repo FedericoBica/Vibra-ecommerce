@@ -12,6 +12,12 @@ import { useAddressStore } from '@/store';
 import { deleteUserAddress, setUserAddress } from '@/actions';
 
 
+const departamentosUruguay = [
+  "Artigas", "Canelones", "Cerro Largo", "Colonia", "Durazno", "Flores", 
+  "Florida", "Lavalleja", "Maldonado", "Montevideo", "Paysandú", "Río Negro", 
+  "Rivera", "Rocha", "Salto", "San José", "Soriano", "Tacuarembó", "Treinta y Tres"
+];
+
 type FormInputs = {
   firstName: string;
   lastName: string;
@@ -19,19 +25,17 @@ type FormInputs = {
   address2?: string;
   postalCode: string;
   city: string;
-  country: string;
+  departamento: string;
   phone: string;
-  rememberAddress: boolean;
 }
 
 
 interface Props {
-  countries: Country[];
   userStoredAddress?: Partial<Address>;
 }
 
 
-export const AddressForm = ({ countries, userStoredAddress = {} }: Props) => {
+export const AddressForm = ({ userStoredAddress = {} }: Props) => {
 
   const router = useRouter();
   const { handleSubmit, register, formState: { isValid }, reset } = useForm<FormInputs>({
@@ -62,16 +66,7 @@ export const AddressForm = ({ countries, userStoredAddress = {} }: Props) => {
 
   const onSubmit = async( data: FormInputs ) => {
     
-
-    const { rememberAddress, ...restAddress } = data;
-
-    setAddress(restAddress);
-
-    if ( rememberAddress ) {
-      await setUserAddress(restAddress, session!.user.id );
-    } else {
-      await deleteUserAddress(session!.user.id);
-    }
+    setAddress(data);
 
     router.push('/checkout');
 
@@ -112,17 +107,19 @@ export const AddressForm = ({ countries, userStoredAddress = {} }: Props) => {
       </div>
 
       <div className="flex flex-col mb-2">
-        <span>País</span>
-        <select className="p-2 border rounded-md bg-gray-200" { ...register('country', { required: true  }) }>
-          <option value="">[ Seleccione ]</option>
+        <span>Departamento (Uruguay)</span>
+        <select 
+          className="p-2 border rounded-md bg-gray-200" 
+          { ...register('departamento', { required: true }) }
+        >
+          <option value="">[ Seleccione un departamento ]</option>
           {
-            countries.map( country => (
-              <option key={ country.id } value={ country.id }>{ country.name }</option>
+            departamentosUruguay.map( dep => (
+              <option key={ dep } value={ dep }>{ dep }</option>
             ))
           }
         </select>
       </div>
-
       <div className="flex flex-col mb-2">
         <span>Teléfono</span>
         <input type="text" className="p-2 border rounded-md bg-gray-200" { ...register('phone', { required: true  }) } />
@@ -130,37 +127,6 @@ export const AddressForm = ({ countries, userStoredAddress = {} }: Props) => {
 
       <div className="flex flex-col mb-2 sm:mt-1">
         
-        <div className="inline-flex items-center mb-10 ">
-          <label
-            className="relative flex cursor-pointer items-center rounded-full p-3"
-            htmlFor="checkbox"
-          >
-            <input
-              type="checkbox"
-              className="border-gray-500 before:content[''] peer relative h-5 w-5 cursor-pointer appearance-none rounded-md border border-blue-gray-200 transition-all before:absolute before:top-2/4 before:left-2/4 before:block before:h-12 before:w-12 before:-translate-y-2/4 before:-translate-x-2/4 before:rounded-full before:bg-blue-gray-500 before:opacity-0 before:transition-opacity checked:border-blue-500 checked:bg-blue-500 checked:before:bg-blue-500 hover:before:opacity-10"
-              id="checkbox"
-              { ...register('rememberAddress') }
-            />
-            <div className="pointer-events-none absolute top-2/4 left-2/4 -translate-y-2/4 -translate-x-2/4 text-white opacity-0 transition-opacity peer-checked:opacity-100">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-3.5 w-3.5"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-                stroke="currentColor"
-                strokeWidth="1"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                  clipRule="evenodd"
-                ></path>
-              </svg>
-            </div>
-          </label>
-
-          <span>¿Recordar dirección?</span>
-        </div>
 
         <button
           disabled={ !isValid }
