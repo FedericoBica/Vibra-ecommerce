@@ -1,4 +1,5 @@
 export const revalidate = 604800; //7 días
+
 import { Metadata, ResolvingMetadata } from "next";
 
 import { notFound } from "next/navigation";
@@ -74,7 +75,7 @@ export default async function ProductBySlugPage({ params }: Props) {
 
       {/* Detalles */}
       <div className="col-span-1 px-5">
-        <StockLabel slug={product.slug} />
+        {/* <StockLabel slug={product.slug} /> */}
 
         <h1 className={` ${titleFont.className} antialiased font-bold text-xl`}>
           {product.title}

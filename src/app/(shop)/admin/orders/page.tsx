@@ -30,6 +30,9 @@ export default async function OrdersPage() {
               >
                 #ID
               </th>
+              <th scope="col" className="text-sm font-medium text-gray-900 px-6 py-4 text-left">
+                Fecha
+              </th>
               <th
                 scope="col"
                 className="text-sm font-medium text-gray-900 px-6 py-4 text-left"
@@ -58,6 +61,13 @@ export default async function OrdersPage() {
               >
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                   {order.id.split("-").at(-1)}
+                </td>
+                <td className="text-sm text-gray-900 px-6 py-4 whitespace-nowrap">
+                  {new Date(order.createdAt).toLocaleDateString("es-UY", {
+                    day: "2-digit",
+                    month: "2-digit",
+                    year: "numeric",
+                  })}
                 </td>
                 <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
                   {order.OrderAddress?.firstName} {order.OrderAddress?.lastName}

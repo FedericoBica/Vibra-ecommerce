@@ -13,6 +13,14 @@ const config: Config = {
         'gradient-conic':
           'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
       },
+      colors: {
+        // Un negro casi púrpura para el fondo
+        'sexshop-dark': '#0f0a12', 
+        // Un rosa neón para botones y acentos
+        'sexshop-pink': '#ff007a',
+        // Un violeta eléctrico
+        'sexshop-violet': '#8a2be2',
+    }
     },
   },
   plugins: [],
