@@ -20,7 +20,7 @@ interface FormInputs {
   description: string;
   price: number;
   inStock: number;
-  colors: string[];
+  color: Color[];
   tags: string;
   categoryId: string;
 
@@ -42,18 +42,18 @@ export const ProductForm = ({ product, categories }: Props) => {
     defaultValues: {
       ...product,
       tags: product.tags?.join(", "),
-      colors: product.color ?? [],
+      color: product.color ?? [],
 
       images: undefined,
     },
   });
 
-  watch("colors");
+  watch("color");
 
-const onColorChanged = (color: string) => {
-    const currentColors = new Set(getValues("colors"));
+const onColorChanged = (color: Color) => {
+    const currentColors = new Set(getValues("color"));
     currentColors.has(color) ? currentColors.delete(color) : currentColors.add(color);
-    setValue("colors", Array.from(currentColors));
+    setValue("color", Array.from(currentColors));
   };
   const onSubmit = async (data: FormInputs) => {
     const formData = new FormData();
@@ -69,7 +69,7 @@ const onColorChanged = (color: string) => {
     formData.append("description", productToSave.description);
     formData.append("price", productToSave.price.toString());
     formData.append("inStock", productToSave.inStock.toString());
-    formData.append("colors", productToSave.colors.toString());
+    formData.append("color", productToSave.color.join(','));
     formData.append("tags", productToSave.tags);
     formData.append("categoryId", productToSave.categoryId);
     
@@ -184,8 +184,8 @@ const onColorChanged = (color: string) => {
                 className={clsx(
                   "p-2 border cursor-pointer rounded-md mr-2 mb-2 min-w-[70px] transition-all text-center text-sm",
                   {
-                    "bg-pink-500 text-white border-pink-600": getValues("colors").includes(color),
-                    "bg-white text-gray-700": !getValues("colors").includes(color),
+                    "bg-pink-500 text-white border-pink-600": getValues("color").includes(color),
+                    "bg-white text-gray-700": !getValues("color").includes(color),
                   }
                 )}
               >

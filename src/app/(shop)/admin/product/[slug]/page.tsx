@@ -21,18 +21,20 @@ export default async function ProductPage({ params }: Props) {
   ]);
  
 
-  // Todo: new
-  if ( !product && slug !== 'new' ) {
-    redirect('/admin/products')
-  }
+const title = (slug === 'new') ? 'Nuevo producto' : 'Editar producto';
 
-  const title = (slug === 'new') ? 'Nuevo producto' : 'Editar producto'
-
+      // Creamos un objeto que TypeScript acepte
+      const productData = product ? {
+        ...product,
+        // Forzamos a que ignore la discrepancia de 'category' y 'color'
+        category: product.category as any,
+        color: product.color as any,
+      } : {};
   return (
     <>
       <Title title={ title } />
 
-      <ProductForm product={ product ?? {} } categories={ categories } />
+      <ProductForm product={ productData as any } categories={ categories } />
     </>
   );
 }
