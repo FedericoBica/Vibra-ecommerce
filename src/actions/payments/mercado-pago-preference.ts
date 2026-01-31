@@ -7,6 +7,7 @@ export const createMercadoPagoPreference = async (orderId: string, total: number
   try {
     const preference = new Preference(client);
     const baseUrl = process.env.NEXT_PUBLIC_URL?.replace(/\/$/, "").trim();
+    console.log('Base URL usada para MP:', baseUrl);
 
     const response = await preference.create({
       body: {
