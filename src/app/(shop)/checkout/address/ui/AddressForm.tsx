@@ -75,8 +75,8 @@ export const AddressForm = ({ userStoredAddress = {} }: Props) => {
     <form onSubmit={ handleSubmit( onSubmit ) } className="grid grid-cols-1 gap-2 sm:gap-5 sm:grid-cols-2">
       
       {/* SECCIÓN: MÉTODO DE ENVÍO */}
-      <div className="col-span-1 sm:col-span-2 bg-gray-100 p-4 rounded-md mb-4 border border-gray-200">
-        <h3 className="font-bold mb-3 text-gray-700 text-lg">¿Cómo quieres recibir tu pedido?</h3>
+      <div className="col-span-1 sm:col-span-2 bg-zinc-800 p-4 rounded-md mb-4 border border-gray-200">
+        <h3 className="font-bold mb-3 text-gray-300 text-lg">¿Cómo quieres recibir tu pedido?</h3>
         
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           
@@ -87,7 +87,7 @@ export const AddressForm = ({ userStoredAddress = {} }: Props) => {
             : "bg-zinc-800 border-transparent hover:border-zinc-700")}>
           <input type="radio" value="STANDARD" {...register('deliveryMethod')} className="hidden" />
           <span className={clsx("font-bold text-lg", selectedMethod === 'STANDARD' ? "text-pink-500" : "text-gray-300")}>Estándar ($220)</span>
-          <span className="text-xs text-gray-500">24-72 hs hábiles</span>
+          <span className="text-xs text-gray-400">24-72 hs hábiles</span>
         </label>
 
         {/* Card: Express */}
@@ -97,7 +97,7 @@ export const AddressForm = ({ userStoredAddress = {} }: Props) => {
             : "bg-zinc-800 border-transparent hover:border-zinc-700")}>
           <input type="radio" value="EXPRESS" {...register('deliveryMethod')} className="hidden" />
           <span className={clsx("font-bold text-lg", selectedMethod === 'EXPRESS' ? "text-pink-500" : "text-gray-300")}>Express ($350)</span>
-          <span className="text-xs text-gray-500">Mismo día (Solo MVD)</span>
+          <span className="text-xs text-gray-400">Mismo día (Solo MVD)</span>
         </label>
 
         {/* Card: PICKUP */}
@@ -107,7 +107,7 @@ export const AddressForm = ({ userStoredAddress = {} }: Props) => {
             : "bg-zinc-800 border-transparent hover:border-zinc-700")}>
           <input type="radio" value="PICKUP" {...register('deliveryMethod')} className="hidden" />
           <span className={clsx("font-bold text-lg", selectedMethod === 'PICKUP' ? "text-pink-500" : "text-gray-300")}>Locker ($100)</span>
-          <span className="text-xs text-gray-500">Retiro en punto Pick-up</span>
+          <span className="text-xs text-gray-400">Retiro en punto Pick-up</span>
         </label>
 
         </div>
@@ -118,7 +118,7 @@ export const AddressForm = ({ userStoredAddress = {} }: Props) => {
         <span className="font-semibold mb-1">Correo Electrónico</span>
         <input 
           type="email" 
-          className="p-3 border rounded-zinc-700 rounded-lg bg-zinc-800 text-white  focus:outline-none focus:border-pink-500 transition-all placeholder:text-gray-600" 
+          className="p-3 border rounded-zinc-700 rounded-lg bg-zinc-800 text-white  focus:outline-none focus:border-pink-500 transition-all placeholder:text-gray-500" 
           { ...register('email', { required: true, pattern: /^\S+@\S+$/i }) } 
           placeholder="ejemplo@correo.com"
         />
