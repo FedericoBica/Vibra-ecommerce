@@ -30,20 +30,21 @@ export const OrderSummary = () => {
 
 
 
-  if (!loaded) return <p>Loading...</p>;
+  if (!loaded) return <p>Cargando...</p>;
 
   return (
-    <div className="grid grid-cols-2">
-      <span>No. Productos</span>
-      <span className="text-right">
-        {itemsInCart === 1 ? "1 artículo" : `${itemsInCart} artículos`}
+    <div className="grid grid-cols-2 gap-y-3">
+      <span className="text-gray-400">No. Productos</span>
+      <span className="text-right text-gray-200">{itemsInCart} unidades</span>
+
+      <span className="text-gray-400">Subtotal</span>
+      <span className="text-right text-gray-200">{currencyFormat(subTotal)}</span>
+
+      <div className="col-span-2 h-px bg-zinc-800 my-2" />
+
+      <span className="text-xl font-bold text-gray-100">Total:</span>
+      <span className="text-xl text-right font-bold text-pink-500">
+        {currencyFormat(total)}
       </span>
-
-      <span>Subtotal</span>
-      <span className="text-right">{currencyFormat(subTotal)}</span>
-
-      <span className="mt-5 text-2xl">Total:</span>
-      <span className="mt-5 text-2xl text-right">{currencyFormat(total)}</span>
-    </div>
-  );
+    </div>  );
 };

@@ -16,59 +16,57 @@ export default function CartPage() {
 
 
 
-  return (
-    <div className="flex justify-center items-center mb-72 px-10 sm:px-0">
+return (
+    <div className="flex justify-center items-center mb-72 px-4 sm:px-0 mt-10">
+      <div className="flex flex-col w-full max-w-[1000px]">
+        
+        <Title title='Carrito de Compras' />
 
-      <div className="flex flex-col w-[1000px]">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
 
-        <Title title='Carrito' />
-
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-10">
-
-          {/* Carrito */ }
+          {/* Columna Izquierda: Items */}
           <div className="flex flex-col mt-5">
-            <span className="text-xl">Agregar más items</span>
-            <Link href="/" className="underline mb-5">
-              Continúa comprando
+            <span className="text-xl font-bold text-gray-200">Tu selección</span>
+            <Link href="/" className="text-pink-500 hover:text-pink-400 underline mb-8 text-sm transition-all">
+              ¿Quieres agregar algo más? Continúa comprando
             </Link>
          
-
-
-          {/* Items */ }
-            <ProductsInCart />
-         
-           </div>
-
-
-
-
-          {/* Checkout - Resumen de orden */ }
-          <div className="bg-white rounded-xl shadow-xl p-7 h-fit">
-            <h2 className="text-2xl mb-2">Resumen de orden</h2>
-
-            <OrderSummary />
-
-            <div className="mt-5 mb-2 w-full">
-              <Link 
-                className="flex btn-primary justify-center"
-                href="/checkout/address">
-                Checkout
-              </Link>
+            {/* Lista de productos en el carrito */}
+            <div className="bg-zinc-900/30 rounded-2xl border border-zinc-800 p-2 sm:p-4">
+              <ProductsInCart />
             </div>
-
-
           </div>
 
+          {/* Columna Derecha: Resumen de orden */}
+          <div className="bg-zinc-900 rounded-2xl border border-zinc-800 p-8 h-fit shadow-2xl relative overflow-hidden">
+            {/* Adorno visual sutil */}
+            <div className="absolute top-0 right-0 w-20 h-20 bg-pink-600/5 blur-3xl pointer-events-none" />
 
+            <h2 className="text-2xl mb-6 font-bold text-gray-100 border-b border-zinc-800 pb-4 uppercase tracking-wider">
+              Resumen
+            </h2>
+
+            {/* Aquí el texto ahora sí se verá porque el fondo es zinc-900 */}
+            <div className="text-gray-300">
+              <OrderSummary />
+            </div>
+
+            <div className="mt-8 mb-2 w-full">
+              <Link 
+                className="btn-neon w-full flex justify-center py-4 rounded-xl font-bold uppercase tracking-widest transition-all"
+                href="/checkout/address"
+              >
+                Ir al Checkout
+              </Link>
+              
+              <p className="text-center text-xs text-gray-500 mt-4">
+                Envío calculado en el siguiente paso
+              </p>
+            </div>
+          </div>
 
         </div>
-
-
-
       </div>
-
-
     </div>
   );
 }
