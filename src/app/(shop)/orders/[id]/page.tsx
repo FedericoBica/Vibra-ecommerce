@@ -44,92 +44,110 @@ export default async function OrdersByIdPage({ params, searchParams }: Props) {
 
   const address = order.OrderAddress;
 
-  return (
-    <div className="flex justify-center items-center mb-72 px-10 sm:px-0">
+return (
+    <div className="flex justify-center items-center mb-72 px-4 sm:px-0">
       <div className="flex flex-col w-[1000px]">
-        <Title title={`Orden #${cleanId.split("-").at(-1)}`} />
+        <Title title={`Orden #${cleanId.split("-").at(-1)?.toUpperCase()}`} />
 
-        {/* Si quieres podrías usar searchParams aquí para un feedback visual extra */}
+        {/* Alerta de procesamiento Mercado Pago */}
         {isPaymentRedirect && !order.isPaid && (
-          <div className="bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded mb-4">
+          <div className="bg-amber-950/20 border border-amber-500/50 text-amber-500 px-4 py-3 rounded-xl mb-6 animate-pulse text-sm">
             Estamos procesando tu pago. Si ya pagaste, puede demorar unos minutos en impactar.
           </div>
         )}
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-10">
+          
+          {/* Columna Izquierda: Productos */}
           <div className="flex flex-col mt-5">
             <OrderStatus isPaid={order.isPaid} />
 
-            {order.OrderItem.map((item) => (
-              <div key={item.product.slug + "-" + item.color} className="flex mb-5">
-                <Image
-                  src={
-                    item.product.ProductImage && item.product.ProductImage.length > 0
-                      ? `/products/${item.product.ProductImage[0].url}`
-                      : '/imgs/placeholder.jpg'
-                  }
-                  width={100} 
-                  height={100} 
-                  alt={item.product.title}
-                  className="mr-5 rounded object-cover"
-                />
-                <div>
-                  <p className="font-semibold">{item.product.title}</p>
-                  <p>${item.price} x {item.quantity}</p>
-                  <p className="font-bold">Subtotal: {currencyFormat(item.price * item.quantity)}</p>
+            <div className="mt-8 space-y-6">
+              {order.OrderItem.map((item) => (
+                <div key={item.product.slug + "-" + item.color} className="flex items-center gap-4 bg-zinc-900/30 p-3 rounded-xl border border-zinc-800">
+                  <Image
+                    src={
+                      item.product.ProductImage && item.product.ProductImage.length > 0
+                        ? `/products/${item.product.ProductImage[0].url}`
+                        : '/imgs/placeholder.jpg'
+                    }
+                    width={80} 
+                    height={80} 
+                    alt={item.product.title}
+                    className="rounded-lg object-cover"
+                  />
+                  <div className="flex-1">
+                    <p className="font-semibold text-gray-200">{item.product.title}</p>
+                    <p className="text-xs text-gray-500 uppercase tracking-tighter">Color: {item.color}</p>
+                    <div className="flex justify-between items-center mt-1">
+                      <p className="text-sm text-gray-400">${item.price} x {item.quantity}</p>
+                      <p className="font-bold text-pink-500">{currencyFormat(item.price * item.quantity)}</p>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
 
-          <div className="bg-white rounded-xl shadow-xl p-7 h-fit">
-            <h2 className="text-2xl mb-2 font-bold">Detalles de Entrega</h2>
-            <div className="mb-10 p-4 bg-blue-50 rounded border border-blue-100">
-              <p className="text-xl font-bold">
+          {/* Columna Derecha: Resumen y Pago */}
+          <div className="bg-zinc-900/50 backdrop-blur-md rounded-2xl border border-zinc-800 p-7 h-fit shadow-2xl">
+            <h2 className="text-xl mb-4 font-bold text-gray-200 uppercase tracking-widest">Detalles de Entrega</h2>
+            
+            <div className="mb-8 p-5 bg-zinc-800/40 rounded-xl border border-zinc-700/30">
+              <p className="text-xl font-bold text-pink-500">
                 {address?.firstName ?? 'Invitado'} {address?.lastName ?? ''}
               </p>              
               
+              <div className="h-px bg-zinc-700/50 my-3" />
+
               { order.deliveryMethod === 'PICKUP' ? (
-                <p className="mt-2 text-blue-800 font-medium">📍 {order.lockerLocation ?? 'Locker seleccionado'}</p>
+                <div className="text-gray-300">
+                  <p className="text-xs text-gray-500 uppercase font-bold">Retiro en Punto:</p>
+                  <p className="text-pink-400 font-medium mt-1">📍 {order.lockerLocation ?? 'Locker seleccionado'}</p>
+                </div>
               ) : (
-                <div className="text-gray-700">
-                  <p>{address?.address ?? 'Sin dirección registrada'}</p>
-                  {address?.address2 && <p>{address.address2}</p>}
+                <div className="text-gray-400 text-sm space-y-1">
+                  <p className="text-xs text-gray-500 uppercase font-bold mb-1">Dirección:</p>
+                  <p className="text-gray-200">{address?.address ?? 'Sin dirección registrada'}</p>
+                  {address?.address2 && <p className="italic">{address.address2}</p>}
                   <p>{address?.city ?? ''}, {address?.departamento ?? ''}</p>
                   {address?.postalCode && <p>CP: {address.postalCode}</p>}
                 </div>
               )}
-              <p className="mt-2 text-sm font-semibold text-gray-600">Tel: {address?.phone ?? 'N/A'}</p>
+              <p className="mt-4 text-xs font-semibold text-gray-500 flex items-center gap-2">
+                <span className="opacity-50">📞</span> {address?.phone ?? 'N/A'}
+              </p>
             </div>
 
-            <div className="w-full h-0.5 rounded bg-gray-200 mb-10" />
-
-            <h2 className="text-2xl mb-2 font-bold text-gray-800">Resumen de pago</h2>
-            <div className="grid grid-cols-2 text-gray-700">
+            <h2 className="text-xl mb-4 font-bold text-gray-200 uppercase tracking-widest">Resumen de pago</h2>
+            <div className="grid grid-cols-2 text-gray-400 gap-y-2 text-sm">
               <span>Productos</span>
-              <span className="text-right font-medium">{order.itemsInOrder}</span>
+              <span className="text-right font-medium text-gray-200">{order.itemsInOrder}</span>
 
               <span>Subtotal</span>
-              <span className="text-right font-medium">{currencyFormat(order.subTotal)}</span>
+              <span className="text-right font-medium text-gray-200">{currencyFormat(order.subTotal)}</span>
 
               <span>Envío ({order.deliveryMethod})</span>
-              <span className="text-right font-medium">{currencyFormat(order.shippingCost)}</span>
+              <span className="text-right font-medium text-gray-200">{currencyFormat(order.shippingCost)}</span>
 
-              <div className="col-span-2 mt-4 h-px bg-gray-200" />
+              <div className="col-span-2 mt-4 h-px bg-zinc-800" />
 
-              <span className="mt-5 text-2xl font-bold text-gray-900">Total:</span>
-              <span className="mt-5 text-2xl text-right font-bold text-blue-600">
+              <span className="mt-5 text-xl font-bold text-gray-100 uppercase">Total:</span>
+              <span className="mt-5 text-2xl text-right font-black text-pink-500 drop-shadow-[0_0_10px_rgba(219,39,119,0.2)]">
                 {currencyFormat(order.total)}
               </span>
             </div>
 
-            <div className="mt-5 mb-2 w-full">
+            <div className="mt-8 mb-2 w-full">
               {!order.isPaid && preferenceId && (
-                <MercadoPagoButton preferenceId={preferenceId} />
+                <div className="animate-in fade-in zoom-in duration-300">
+                   <MercadoPagoButton preferenceId={preferenceId} />
+                </div>
               )}
               {order.isPaid && (
-                <div className="bg-green-100 border border-green-200 text-green-700 p-4 rounded-lg text-center font-bold animate-pulse">
-                  ✅ Pago confirmado. ¡Gracias por tu compra!
+                <div className="bg-emerald-950/20 border border-emerald-500/50 text-emerald-500 p-4 rounded-xl text-center font-bold shadow-[0_0_20px_rgba(16,185,129,0.1)]">
+                  <span className="block text-2xl mb-1">✨</span>
+                  Pago confirmado. ¡Gracias por confiar en Vibra!
                 </div>
               )}            
             </div>
