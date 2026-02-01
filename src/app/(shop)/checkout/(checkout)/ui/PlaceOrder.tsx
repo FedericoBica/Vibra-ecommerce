@@ -64,14 +64,17 @@ export const PlaceOrder = () => {
   if (!loaded) return <p>Cargando...</p>;
 
   return (
-    <div className="bg-white rounded-xl shadow-xl p-7">
+    <div className="bg-zinc-900/50 backdrop-blur-md rounded-xl border border-zinc-800 p-7 shadow-2xl">
+      <h2 className="text-2xl mb-2 font-bold text-gray-100">Detalles de Entrega</h2>
       
-      <h2 className="text-2xl mb-2 font-bold">Detalles de Entrega</h2>
-      <div className="mb-10 p-4 bg-gray-50 rounded-lg border border-gray-100">
-        <p className="text-xl font-semibold">
+      {/* Caja de dirección */}
+      <div className="mb-10 p-4 bg-zinc-800/50 rounded-lg border border-pink-900/20">
+        <p className="text-xl font-semibold text-pink-500">
           {address.firstName} {address.lastName}
+        </p>        
+        <p className="text-gray-400 italic mb-2">
+          {address.email}
         </p>
-        <p className="text-gray-600 italic mb-2">{address.email}</p>
 
         {/* Lógica para mostrar Locker o Dirección */}
         { address.deliveryMethod === 'PICKUP' ? (
@@ -94,7 +97,7 @@ export const PlaceOrder = () => {
       </div>
 
       {/* Divider */}
-      <div className="w-full h-px bg-gray-200 mb-10" />
+      <div className="w-full h-px bg-zinc-800 mb-10" />
 
       <h2 className="text-2xl mb-4 font-bold">Resumen de orden</h2>
 
@@ -112,16 +115,13 @@ export const PlaceOrder = () => {
         </span>
         <span className="text-right text-gray-600">{currencyFormat(shippingCost)}</span>
 
-        {/* Impuestos eliminados como pediste */}
-
         <div className="col-span-2 mt-4 h-px bg-gray-200" />
 
-        <span className="mt-4 text-2xl font-bold">Total:</span>
-        <span className="mt-4 text-2xl text-right font-bold text-blue-600">
+        <span className="mt-4 text-2xl font-bold text-gray-100">Total:</span>
+        <span className="mt-4 text-2xl text-right font-bold text-pink-500">
           {currencyFormat(finalTotal)}
         </span>      
       </div>
-
       <div className="mt-8 mb-2 w-full">
         <p className="mb-5 text-gray-500">
           <span className="text-xs">
@@ -141,7 +141,7 @@ export const PlaceOrder = () => {
           disabled={isPlacingOrder}
           className={
             clsx(
-              "w-full flex justify-center py-3 rounded-lg transition-all",
+              "btn-neon w-full flex justify-center py-3 rounded-lg transition-all mt-5",
               {
                 'btn-primary': !isPlacingOrder,
                 'btn-disabled opacity-50': isPlacingOrder
