@@ -53,13 +53,14 @@ return (
 
             <div className="mt-8 mb-2 w-full">
               <Link 
-                className="btn-neon w-full flex justify-center py-4 rounded-xl font-bold uppercase tracking-widest transition-all"
+                className="btn-neon w-full flex justify-center py-4 rounded-xl font-bold uppercase tracking-widest transition-all
+                 text-gray-500 mt-4 bg-pink-600 
+               border border-pink-400 shadow-[0_0_20px_rgba(219,39,119,0.4)] hover:bg-pink-500 hover:shadow-[0_0_30px_rgba(219,39,119,0.6)] hover:scale-[1.02] active:scale-95 ring-2 ring-pink-500/20"
                 href="/checkout/address"
               >
-                Ir al Checkout
+                Siguiente
               </Link>
-              
-              <p className="text-center text-xs text-gray-500 mt-4">
+              <p className="text-center text-[10px] uppercase tracking-tighter text-gray-500 mt-4">
                 Envío calculado en el siguiente paso
               </p>
             </div>
