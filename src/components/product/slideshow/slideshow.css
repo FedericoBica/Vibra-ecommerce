@@ -48,3 +48,37 @@
   height: 100%;
   object-fit: cover;
 }
+
+/* slideshow.css */
+:root {
+  --swiper-theme-color: #db2777; /* Rosa Pink-600 */
+  --swiper-navigation-size: 25px;
+}
+
+.mySwiper2 {
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(219, 39, 119, 0.1);
+}
+
+.mySwiper {
+  margin-top: 10px;
+}
+
+.mySwiper .swiper-slide {
+  border-radius: 8px;
+  border: 2px solid transparent;
+  overflow: hidden;
+}
+
+.mySwiper .swiper-slide-thumb-active {
+  border-color: #db2777;
+  opacity: 1;
+}
+
+/* Ajuste para que en móvil no se vea gigante */
+@media (max-width: 640px) {
+  .swiper {
+    height: 400px !important;
+  }
+}

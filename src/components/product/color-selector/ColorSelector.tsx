@@ -24,43 +24,31 @@ export const ColorSelector = ({ selectedColor, availableColors = [], onColorChan
   if (availableColors.length === 0) return null;
 
   return (
-    <div className="my-5">
-      <h3 className="font-bold mb-2">Colores disponibles</h3>
+<div className="my-5">
+  <h3 className="font-bold mb-3 text-gray-300 text-sm uppercase tracking-widest">Colores</h3>
 
-      <div className="flex flex-wrap gap-3">
-        {availableColors.map((color) => (
-          <button
-            key={color}
-            type="button" // Siempre es bueno especificar que es tipo button para evitar submits accidentales
-            onClick={() => onColorChanged(color)}
-            className="group relative flex flex-col items-center"
-          >
-            <div
-              className={clsx(
-                "w-10 h-10 rounded-full border-2 flex items-center justify-center transition-all",
-                selectedColor === color 
-                  ? "border-pink-500 scale-110 shadow-md" 
-                  : "border-gray-200 hover:border-gray-400"
-              )}
-            >
-              <span 
-                className={clsx(
-                  "w-7 h-7 rounded-full shadow-inner",
-                  color === 'Blanco' && "border border-gray-100" // Un bordecito gris si el color es blanco
-                )}
-                style={{ backgroundColor: colorMap[color] || '#ccc' }}
-              />
-            </div>
-            
-            <span className={clsx(
-              "text-[10px] mt-1 transition-colors",
-              selectedColor === color ? "text-pink-600 font-bold" : "text-gray-500"
-            )}>
-              {color}
-            </span>
-          </button>
-        ))}
-      </div>
-    </div>
-  );
+  <div className="flex flex-wrap gap-4">
+    {availableColors.map((color) => (
+      <button
+        key={color}
+        onClick={() => onColorChanged(color)}
+        className="group relative flex flex-col items-center"
+      >
+        <div
+          className={clsx(
+            "w-12 h-12 rounded-full border-2 flex items-center justify-center transition-all duration-300",
+            selectedColor === color 
+              ? "border-pink-500 scale-110 shadow-[0_0_15px_rgba(219,39,119,0.3)]" 
+              : "border-zinc-700 hover:border-pink-500/50 bg-zinc-800"
+          )}
+        >
+          <span 
+            className="w-8 h-8 rounded-full shadow-inner"
+            style={{ backgroundColor: colorMap[color] || '#ccc' }}
+          />
+        </div>
+      </button>
+    ))}
+  </div>
+</div>  );
 };

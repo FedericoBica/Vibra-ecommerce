@@ -32,7 +32,7 @@ export const Pagination = ({ totalPages }: Props) => {
 
   const createPageUrl = ( pageNumber: number | string ) => {
 
-    const params = new URLSearchParams( searchParams );
+    const params = new URLSearchParams( searchParams.toString() );
 
     if ( pageNumber === '...' ) {
       return `${ pathname }?${ params.toString() }`
@@ -74,10 +74,11 @@ export const Pagination = ({ totalPages }: Props) => {
               <li key={ page } className="page-item">
                 <Link
                   className={
+                    
                     clsx(
-                      "page-link relative block py-1.5 px-3 border-0 outline-none transition-all duration-300 rounded text-gray-800 hover:text-gray-800 hover:bg-gray-200 focus:shadow-none",
-                      {
-                        'bg-blue-600 shadow-sm text-white hover:text-white hover:bg-blue-700': page === currentPage
+                      "page-link relative block py-1.5 px-3 border-0 outline-none transition-all duration-300 rounded focus:shadow-none",                      {
+                        'bg-pink-600 shadow-[0_0_10px_#db2777] text-white hover:bg-pink-500': page === currentPage,
+                        'text-gray-400 hover:bg-zinc-800 hover:text-pink-400': page !== currentPage,
                       }
                     )
                   }
