@@ -49,12 +49,15 @@ export const Sidebar = () => {
         )}
       >
         {/* Botón Cerrar - Tamaño ajustado para móvil */}
-        <button 
-          onClick={() => closeMenu()}
-          className="absolute top-5 right-5 text-pink-500 hover:text-pink-400 p-2"
-        >
-          <IoCloseOutline size={35} />
-        </button>
+       <div className="flex justify-end mb-2">
+          <button 
+            onClick={closeMenu}
+            className="p-2 -mr-2 text-pink-500 hover:text-white transition-colors focus:outline-none"
+            aria-label="Cerrar"
+          >
+            <IoCloseOutline size={45} />
+          </button>
+        </div>
 
         {/* Contenedor del contenido para dar espacio abajo */}
         <div className="flex flex-col h-full mt-10 pb-10">
