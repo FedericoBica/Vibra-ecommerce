@@ -9,6 +9,7 @@ import { OrderStatus, Title } from "@/components";
 import { createMercadoPagoPreference } from "@/actions/payments/mercado-pago-preference";
 import { MercadoPagoButton } from "@/components/mercadopago/MercadoPagoButton";
 
+
 interface Props {
   params: {
     id: string;
@@ -16,6 +17,34 @@ interface Props {
   // Declaramos searchParams para que Next.js acepte la basura de Mercado Pago sin quejarse
   searchParams: { [key: string]: string | string[] | undefined };
 }
+
+  export const lockerAddresses: Record<string, string> = {
+  "Parking Euskadi": "Coronel Brandzen 2086 (Cordón)",
+  "Disa Buceo": "Humberto 1ro. 3862 y Bv. José Batlle y Ordoñez",
+  "Red Pagos RedRodó (Pque. Rodó)": "José Enrique Rodó 1801 esq. Gaboto",
+  "Parking Catedral (Ciudad Vieja)": "Rincón 517 esq. Ituzaingo",
+  "Mercado Williman": "Claudio Williman 626",
+  "Ancap Brito del Pino": "Bartolito Mitre 2553 esq. Gral. Brito del Pino",
+  "Ancap Servicentro Sayago": "Av. Gral. Eugenio Garzón 1028 esq. Cno. Ariel",
+  "Ancap Barra de Carrasco": "Rambla Costanera s/n esq. Gral Lavalleja",
+  "Disa Malvín": "Av. Italia 4763 esq. Valencia",
+  "Galeria Paso Molino": "Av. Agraciada 4141",
+  "Ancap Parque Posadas": "Av. Millán 3771 esq. Av. Joaquín Suarez",
+  "Ancap Libertador (Centro)": "Av. Gral. Rondeau 1579",
+  "MOM (Buceo)": "Luis Alberto de Herrera 1279 esq. Luis Lamas y Plácido Ellauri",
+  "Farmacia Pigalle (Cordon)": "Av. 18 de Julio 2102 esq. Martin C. Martinez",
+  "Farmacia Pigalle - 3 (Pocitos)": "Juan Benito Blanco 994 esq. José Martí",
+  "UAM (Unidad Agroalimentaria)": "Camino Luis Eduardo Pérez 6651 (Nave Polivalente - Nave C)",
+  "Parking Española (Tres Cruces)": "Palmar 2275 esq. Acevedo Díaz",
+  "Parking Independencia(Ciudad Vieja)": "Florida 1440 esq. Mercedes",
+  "Ancap Punto Clinicas": "Av. Italia 2905 esq. Dr. Jose Brito Foresti",
+  "RedPagos - Del Parque (Parque Rodo)": "Bvr Artigas 1149 esq Maldonado",
+  "Districad - Oficina Central": "Rafael Hortiguera 3830 esq. Av. Gral. San Martín",
+  "Ancap Shangrilá": "Rambla Costanera s/n esq. Ecuador",
+  "Ancap El Pinar": "Avda. Giannattasio Km. 28.500 esq. Av. Guillermo Perez Butler",
+  "Ancap Las Piedras": "Av. Dr. Enrique Pouey 662 esq. Dr. Francisco Soca",
+  "Punta Shopping": "Parada. 7 - Mansa esq. Av. Roosevelt",
+};
 
 export default async function OrdersByIdPage({ params, searchParams }: Props) {
   
@@ -89,7 +118,7 @@ return (
             </div>
           </div>
 
-          {/* Columna Derecha: Resumen y Pago */}
+{/* Columna Derecha: Resumen y Pago */}
           <div className="bg-zinc-900/50 backdrop-blur-md rounded-2xl border border-zinc-800 p-7 h-fit shadow-2xl">
             <h2 className="text-xl mb-4 font-bold text-gray-200 uppercase tracking-widest">Detalles de Entrega</h2>
             
@@ -102,8 +131,21 @@ return (
 
               { order.deliveryMethod === 'PICKUP' ? (
                 <div className="text-gray-300">
-                  <p className="text-xs text-gray-500 uppercase font-bold">Retiro en Punto:</p>
-                  <p className="text-pink-400 font-medium mt-1">📍 {order.lockerLocation ?? 'Locker seleccionado'}</p>
+                  <p className="text-xs text-gray-500 uppercase font-bold mb-1">Retiro en Punto:</p>
+                  <p className="text-pink-400 font-bold text-[17px] leading-tight">
+                    📍 {order.lockerLocation ?? 'Locker seleccionado'}
+                  </p>
+                  
+                  {/* DIRECCIÓN FÍSICA EN LETRA CHICA */}
+                  {order.lockerLocation && lockerAddresses[order.lockerLocation] && (
+                    <p className="text-[11px] text-gray-400 italic font-medium ml-6 mt-0.5">
+                      {lockerAddresses[order.lockerLocation]}
+                    </p>
+                  )}
+
+                  <div className="mt-4 p-3 bg-zinc-900/50 rounded-lg border border-zinc-800 text-[10px] text-gray-500 leading-tight">
+                    <p>Recuerda que recibirás el <strong className="text-gray-300">código QR</strong> en tu email cuando el pedido esté listo.</p>
+                  </div>
                 </div>
               ) : (
                 <div className="text-gray-400 text-sm space-y-1">
@@ -118,7 +160,7 @@ return (
                 <span className="opacity-50">📞</span> {address?.phone ?? 'N/A'}
               </p>
             </div>
-
+            
             <h2 className="text-xl mb-4 font-bold text-gray-200 uppercase tracking-widest">Resumen de pago</h2>
             <div className="grid grid-cols-2 text-gray-400 gap-y-2 text-sm">
               <span>Productos</span>
