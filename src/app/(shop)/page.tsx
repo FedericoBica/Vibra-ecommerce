@@ -5,6 +5,7 @@ import { redirect } from 'next/navigation';
 
 import { getPaginatedProductsWithImages } from '@/actions';
 import { Pagination, ProductGrid, Title } from '@/components';
+import { ProductHero } from '@/components/ui/product-hero/ProductHero';
 
 
 
@@ -29,9 +30,12 @@ export default async function Home({ searchParams }: Props) {
 
   return (
     <>
+
+      <ProductHero />
+
       <Title
-        title="Tienda"
-        subtitle="Todos los productos"
+        title="Todos los productos"
+        subtitle="Encuentra lo que te hace vibrar"
         className="mb-2"
       />
 

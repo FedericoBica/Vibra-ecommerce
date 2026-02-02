@@ -30,9 +30,9 @@ export const PlaceOrder = () => {
   }, []);
 
   const shippingPrices = {
-    EXPRESS: 250,
+    EXPRESS: 260,
     STANDARD: 160,
-    PICKUP: 50,
+    PICKUP: 60,
   };
 
   const lockerAddresses: Record<string, string> = {

@@ -124,7 +124,7 @@ export const AddressForm = ({ userStoredAddress = {} }: Props) => {
             ? "border-pink-600 bg-pink-600/10 shadow-[0_0_15px_rgba(219,39,119,0.2)]" 
             : "bg-zinc-800 border-transparent hover:border-zinc-700")}>
           <input type="radio" value="EXPRESS" {...register('deliveryMethod')} className="hidden" />
-          <span className={clsx("font-bold text-lg", selectedMethod === 'EXPRESS' ? "text-pink-500" : "text-gray-300")}>Express ($250)</span>
+          <span className={clsx("font-bold text-lg", selectedMethod === 'EXPRESS' ? "text-pink-500" : "text-gray-300")}>Express ($260)</span>
           <span className="text-xs text-gray-400">Mismo día (Solo MVD / dias habiles)</span>
         </label>
 
@@ -134,7 +134,7 @@ export const AddressForm = ({ userStoredAddress = {} }: Props) => {
             ? "border-pink-600 bg-pink-600/10 shadow-[0_0_15px_rgba(219,39,119,0.2)]" 
             : "bg-zinc-800 border-transparent hover:border-zinc-700")}>
           <input type="radio" value="PICKUP" {...register('deliveryMethod')} className="hidden" />
-          <span className={clsx("font-bold text-lg", selectedMethod === 'PICKUP' ? "text-pink-500" : "text-gray-300")}>Locker ($50)</span>
+          <span className={clsx("font-bold text-lg", selectedMethod === 'PICKUP' ? "text-pink-500" : "text-gray-300")}>Locker ($60)</span>
           <span className="text-xs text-gray-400">Retiro en punto Pick-up</span>
         </label>
 

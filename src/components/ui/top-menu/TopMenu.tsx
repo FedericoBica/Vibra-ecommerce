@@ -24,7 +24,7 @@ export const TopMenu = () => {
             Vibra
           </span>
           <span className={`${titleFont.className} antialiased font-bold text-2xl bg-gradient-to-r from-pink-500 to-purple-500 bg-clip-text text-transparent group-hover:from-pink-400 group-hover:to-purple-400 transition-all`}> 
-            | Lover
+             Lover
           </span>
         </Link>
       </div>
@@ -53,9 +53,9 @@ export const TopMenu = () => {
 
       {/* Iconos - Search, Cart, Menu */}
       <div className="flex items-center text-gray-300">
-        <Link href="/search" className="mx-2 hover:text-pink-500 transition-colors">
+        {/* <Link href="/search" className="mx-2 hover:text-pink-500 transition-colors">
           <IoSearchOutline className="w-6 h-6" />
-        </Link>
+        </Link> */}
 
         <Link href={(totalItemsInCart === 0 && loaded) ? '/empty' : "/cart"} className="mx-2 hover:text-pink-500 transition-colors">
           <div className="relative">
