@@ -30,9 +30,9 @@ export const PlaceOrder = () => {
   }, []);
 
   const shippingPrices = {
-    EXPRESS: 350,
-    STANDARD: 220,
-    PICKUP: 100,
+    EXPRESS: 250,
+    STANDARD: 160,
+    PICKUP: 50,
   };
 
   const shippingCost = shippingPrices[address.deliveryMethod] || 0;
@@ -83,21 +83,44 @@ if (!loaded) return <p className="animate-pulse text-pink-500">Cargando resumen.
 
         <div className="h-px bg-zinc-700/50 my-3" />
 
-        {/* Lógica de Dirección/Locker - Colores integrados */}
-        { address.deliveryMethod === 'PICKUP' ? (
-          <div className="text-gray-300">
-            <p className="text-xs text-gray-500 uppercase font-bold">Punto de Retiro:</p>
-            <p className="text-pink-400 font-medium mt-1">📍 {address.lockerLocation}</p>
-          </div>
-        ) : (
-          <div className="text-gray-300 text-sm leading-relaxed">
-            <p className="text-xs text-gray-500 uppercase font-bold mb-1">Dirección de envío:</p>
-            <p>{address.address}</p>
-            {address.address2 && <p className="text-gray-400 italic">{address.address2}</p>}
-            <p>{address.city}, {address.departamento}</p>
-          </div>
-        )}
-        
+{/* Lógica de Dirección/Locker */}
+{ address.deliveryMethod === 'PICKUP' ? (
+  <div className="text-gray-300">
+    <div className="flex items-center gap-2 mb-1">
+      <p className="text-xs text-gray-500 uppercase font-bold">Punto de Retiro:</p>
+      <span className="text-[10px] bg-emerald-500/10 text-emerald-400 px-2 py-0.5 rounded border border-emerald-500/20 uppercase">
+        Listo en 24-48hs
+      </span>
+    </div>
+    
+    <p className="text-pink-400 font-bold text-lg leading-tight">
+      📍 {address.lockerLocation}
+    </p>
+
+    {/* Bloque de Información Adicional del Punto */}
+    <div className="mt-3 grid grid-cols-1 gap-2 bg-black/20 p-3 rounded-lg border border-zinc-700/30">
+      <div className="flex items-start gap-2">
+        <span className="text-pink-500 text-sm">🕒</span>
+        <p className="text-[11px] text-gray-400 leading-snug">
+          Recibirás un <strong className="text-gray-200">SMS y un email</strong> con el código de retiro en cuanto el paquete llegue al locker.
+        </p>
+      </div>
+      <div className="flex items-start gap-2">
+        <span className="text-pink-500 text-sm">🔑</span>
+        <p className="text-[11px] text-gray-400 leading-snug">
+          Tendrás <strong className="text-gray-200">48 horas</strong> para retirar tu pedido una vez depositado.
+        </p>
+      </div>
+    </div>
+    </div>
+    ) : (
+      <div className="text-gray-300 text-sm leading-relaxed">
+        <p className="text-xs text-gray-500 uppercase font-bold mb-1">Dirección de envío:</p>
+        <p className="text-gray-100">{address.address}</p>
+        {address.address2 && <p className="text-gray-400 italic">{address.address2}</p>}
+        <p>{address.city}, {address.departamento}</p>
+      </div>
+    )}        
         <p className="mt-3 text-sm text-gray-400 flex items-center gap-2">
            <span className="opacity-50">📞</span> {address.phone}
         </p>

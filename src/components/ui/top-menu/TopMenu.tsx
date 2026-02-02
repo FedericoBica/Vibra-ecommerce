@@ -23,7 +23,9 @@ export const TopMenu = () => {
           <span className={`${titleFont.className} antialiased font-bold text-2xl bg-gradient-to-r from-pink-500 to-purple-500 bg-clip-text text-transparent group-hover:from-pink-400 group-hover:to-purple-400 transition-all`}>
             Vibra
           </span>
-          <span className="text-gray-400 font-light"> | Shop</span>
+          <span className={`${titleFont.className} antialiased font-bold text-2xl bg-gradient-to-r from-pink-500 to-purple-500 bg-clip-text text-transparent group-hover:from-pink-400 group-hover:to-purple-400 transition-all`}> 
+            | Lover
+          </span>
         </Link>
       </div>
 
@@ -35,12 +37,12 @@ export const TopMenu = () => {
         >
           Vibradores
         </Link>
-        <Link
+        {/* <Link
           className="m-2 p-2 rounded-md transition-all text-gray-300 hover:text-pink-500 hover:bg-pink-500/10 font-medium"
           href="/category/lubricantes"
         >
           Lubricantes
-        </Link>
+        </Link> */}
         <Link
           className="m-2 p-2 rounded-md transition-all text-gray-300 hover:text-pink-500 hover:bg-pink-500/10 font-medium"
           href="/category/juegos"

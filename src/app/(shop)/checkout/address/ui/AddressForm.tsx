@@ -10,9 +10,37 @@ import { useAddressStore } from '@/store';
 import type { Address } from '@/interfaces';
 
 const lockersByDepto = {
-  Montevideo: ["Locker Punta Carretas", "Locker Tres Cruces", "Locker Montevideo Shopping", "Locker Nuevo Centro"],
-  Canelones: ["Locker Costa Urbana", "Locker Las Piedras Shopping", "Locker Pando"],
-  Maldonado: ["Locker Punta del Este", "Locker Maldonado Centro", "Locker La Barra"],
+  Montevideo: [
+    "Parking Euskadi",
+    "Disa Buceo",
+    "Red Pagos RedRodó (Pque. Rodó)",
+    "Parking Catedral (Ciudad Vieja)",
+    "Mercado Williman",
+    "Ancap Brito del Pino",
+    "Ancap Servicentro Sayago",
+    "Ancap Barra de Carrasco",
+    "Disa Malvín",
+    "Galeria Paso Molino",
+    "Ancap Parque Posadas",
+    "Ancap Libertador (Centro)",
+    "MOM (Buceo)",
+    "Farmacia Pigalle (Cordon)",
+    "Farmacia Pigalle - 3 (Pocitos)",
+    "UAM (Unidad Agroalimentaria)",
+    "Parking Española (Tres Cruces)",
+    "Parking Independencia(Ciudad Vieja)",
+    "Ancap Punto Clinicas",
+    "RedPagos - Del Parque (Parque Rodo)",
+    "Districad - Oficina Central"
+  ],
+  Canelones: [
+    "Ancap Shangrilá",
+    "Ancap El Pinar",
+    "Ancap Las Piedras",
+  ],
+  Maldonado: [
+    "Punta Shopping",
+  ],
 };
 
 const departamentosUruguay = [
@@ -86,7 +114,7 @@ export const AddressForm = ({ userStoredAddress = {} }: Props) => {
             ? "border-pink-600 bg-pink-600/10 shadow-[0_0_15px_rgba(219,39,119,0.2)]" 
             : "bg-zinc-800 border-transparent hover:border-zinc-700")}>
           <input type="radio" value="STANDARD" {...register('deliveryMethod')} className="hidden" />
-          <span className={clsx("font-bold text-lg", selectedMethod === 'STANDARD' ? "text-pink-500" : "text-gray-300")}>Estándar ($220)</span>
+          <span className={clsx("font-bold text-lg", selectedMethod === 'STANDARD' ? "text-pink-500" : "text-gray-300")}>Estándar ($160)</span>
           <span className="text-xs text-gray-400">24-72 hs hábiles</span>
         </label>
 
@@ -96,8 +124,8 @@ export const AddressForm = ({ userStoredAddress = {} }: Props) => {
             ? "border-pink-600 bg-pink-600/10 shadow-[0_0_15px_rgba(219,39,119,0.2)]" 
             : "bg-zinc-800 border-transparent hover:border-zinc-700")}>
           <input type="radio" value="EXPRESS" {...register('deliveryMethod')} className="hidden" />
-          <span className={clsx("font-bold text-lg", selectedMethod === 'EXPRESS' ? "text-pink-500" : "text-gray-300")}>Express ($350)</span>
-          <span className="text-xs text-gray-400">Mismo día (Solo MVD)</span>
+          <span className={clsx("font-bold text-lg", selectedMethod === 'EXPRESS' ? "text-pink-500" : "text-gray-300")}>Express ($250)</span>
+          <span className="text-xs text-gray-400">Mismo día (Solo MVD / dias habiles)</span>
         </label>
 
         {/* Card: PICKUP */}
@@ -106,7 +134,7 @@ export const AddressForm = ({ userStoredAddress = {} }: Props) => {
             ? "border-pink-600 bg-pink-600/10 shadow-[0_0_15px_rgba(219,39,119,0.2)]" 
             : "bg-zinc-800 border-transparent hover:border-zinc-700")}>
           <input type="radio" value="PICKUP" {...register('deliveryMethod')} className="hidden" />
-          <span className={clsx("font-bold text-lg", selectedMethod === 'PICKUP' ? "text-pink-500" : "text-gray-300")}>Locker ($100)</span>
+          <span className={clsx("font-bold text-lg", selectedMethod === 'PICKUP' ? "text-pink-500" : "text-gray-300")}>Locker ($50)</span>
           <span className="text-xs text-gray-400">Retiro en punto Pick-up</span>
         </label>
 
