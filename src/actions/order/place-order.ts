@@ -12,9 +12,9 @@ interface ProductToOrder {
 
 // Precios de envío (puedes ajustarlos aquí)
 const shippingPrices = {
-  EXPRESS: 350,
-  STANDARD: 220,
-  PICKUP: 100,
+  EXPRESS: 260,
+  STANDARD: 160,
+  PICKUP: 60,
 };
 
 export const placeOrder = async (

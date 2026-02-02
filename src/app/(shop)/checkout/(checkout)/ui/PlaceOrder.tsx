@@ -35,6 +35,34 @@ export const PlaceOrder = () => {
     PICKUP: 50,
   };
 
+  const lockerAddresses: Record<string, string> = {
+  "Parking Euskadi": "Coronel Brandzen 2086 (Cordón)",
+  "Disa Buceo": "Humberto 1ro. 3862 y Bv. José Batlle y Ordoñez",
+  "Red Pagos RedRodó (Pque. Rodó)": "José Enrique Rodó 1801 esq. Gaboto",
+  "Parking Catedral (Ciudad Vieja)": "Rincón 517 esq. Ituzaingo",
+  "Mercado Williman": "Claudio Williman 626",
+  "Ancap Brito del Pino": "Bartolito Mitre 2553 esq. Gral. Brito del Pino",
+  "Ancap Servicentro Sayago": "Av. Gral. Eugenio Garzón 1028 esq. Cno. Ariel",
+  "Ancap Barra de Carrasco": "Rambla Costanera s/n esq. Gral Lavalleja",
+  "Disa Malvín": "Av. Italia 4763 esq. Valencia",
+  "Galeria Paso Molino": "Av. Agraciada 4141",
+  "Ancap Parque Posadas": "Av. Millán 3771 esq. Av. Joaquín Suarez",
+  "Ancap Libertador (Centro)": "Av. Gral. Rondeau 1579",
+  "MOM (Buceo)": "Luis Alberto de Herrera 1279 esq. Luis Lamas y Plácido Ellauri",
+  "Farmacia Pigalle (Cordon)": "Av. 18 de Julio 2102 esq. Martin C. Martinez",
+  "Farmacia Pigalle - 3 (Pocitos)": "Juan Benito Blanco 994 esq. José Martí",
+  "UAM (Unidad Agroalimentaria)": "Camino Luis Eduardo Pérez 6651 (Nave Polivalente - Nave C)",
+  "Parking Española (Tres Cruces)": "Palmar 2275 esq. Acevedo Díaz",
+  "Parking Independencia(Ciudad Vieja)": "Florida 1440 esq. Mercedes",
+  "Ancap Punto Clinicas": "Av. Italia 2905 esq. Dr. Jose Brito Foresti",
+  "RedPagos - Del Parque (Parque Rodo)": "Bvr Artigas 1149 esq Maldonado",
+  "Districad - Oficina Central": "Rafael Hortiguera 3830 esq. Av. Gral. San Martín",
+  "Ancap Shangrilá": "Rambla Costanera s/n esq. Ecuador",
+  "Ancap El Pinar": "Avda. Giannattasio Km. 28.500 esq. Av. Guillermo Perez Butler",
+  "Ancap Las Piedras": "Av. Dr. Enrique Pouey 662 esq. Dr. Francisco Soca",
+  "Punta Shopping": "Parada. 7 - Mansa esq. Av. Roosevelt",
+};
+
   const shippingCost = shippingPrices[address.deliveryMethod] || 0;
   const finalTotal = subTotal + shippingCost;
 
@@ -96,19 +124,25 @@ if (!loaded) return <p className="animate-pulse text-pink-500">Cargando resumen.
     <p className="text-pink-400 font-bold text-lg leading-tight">
       📍 {address.lockerLocation}
     </p>
+    {/* DIRECCIÓN FÍSICA EN LETRA CHICA */}
+      {address.lockerLocation && lockerAddresses[address.lockerLocation] && (
+      <p className="text-[11px] text-gray-400 italic font-medium ml-6 mt-0.5">
+        {lockerAddresses[address.lockerLocation]}
+      </p>
+    )}
 
     {/* Bloque de Información Adicional del Punto */}
     <div className="mt-3 grid grid-cols-1 gap-2 bg-black/20 p-3 rounded-lg border border-zinc-700/30">
       <div className="flex items-start gap-2">
         <span className="text-pink-500 text-sm">🕒</span>
         <p className="text-[11px] text-gray-400 leading-snug">
-          Recibirás un <strong className="text-gray-200">SMS y un email</strong> con el código de retiro en cuanto el paquete llegue al locker.
+          Recibirás un <strong className="text-gray-200">un email</strong> con el código QR de retiro en cuanto el paquete llegue al locker.
         </p>
       </div>
       <div className="flex items-start gap-2">
         <span className="text-pink-500 text-sm">🔑</span>
         <p className="text-[11px] text-gray-400 leading-snug">
-          Tendrás <strong className="text-gray-200">48 horas</strong> para retirar tu pedido una vez depositado.
+          Tendrás <strong className="text-gray-200">4 dias</strong> para retirar tu pedido una vez depositado.
         </p>
       </div>
     </div>
