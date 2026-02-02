@@ -72,7 +72,7 @@ export const Sidebar = () => {
                 onClick={closeMenu}
                 className="flex items-center justify-end w-2/3 p-2 hover:text-pink-500 transition-all group"
               >
-                <span className="mr-3 text-sm font-light">Perfil</span>
+                <span className="mr-3 text-xl font-light">Perfil</span>
                 <IoPersonOutline size={20} className="text-gray-500 group-hover:text-pink-500" />
               </Link>
 
@@ -81,7 +81,7 @@ export const Sidebar = () => {
                 onClick={closeMenu}
                 className="flex items-center justify-end w-2/3 p-2 hover:text-pink-500 transition-all group"
               >
-                <span className="mr-3 text-sm font-light">Órdenes</span>
+                <span className="mr-3 text-xl font-light">Órdenes</span>
                 <IoTicketOutline size={20} className="text-gray-500 group-hover:text-pink-500" />
               </Link>
 
@@ -89,7 +89,7 @@ export const Sidebar = () => {
                 onClick={() => { logout(); closeMenu(); }}
                 className="flex items-center justify-end w-2/3 p-2 hover:text-red-400 transition-all group"
               >
-                <span className="mr-3 text-sm font-light">Salir</span>
+                <span className="mr-3 text-xl font-light">Salir</span>
                 <IoLogOutOutline size={20} className="text-gray-500 group-hover:text-red-400" />
               </button>
             </>
@@ -99,7 +99,7 @@ export const Sidebar = () => {
               onClick={closeMenu}
               className="flex items-center justify-end w-2/3 p-2 text-pink-500 hover:brightness-125 transition-all font-medium mt-4 border-r-2 border-pink-500/30 pr-2"
             >
-              <span className="mr-3 text-sm italic">Ingresar</span>
+              <span className="mr-3 text-xl italic">Ingresar</span>
               <IoLogInOutline size={22} />
             </Link>
           )}
