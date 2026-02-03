@@ -140,9 +140,9 @@ const uploadImages = async( images: File[] ) => {
         const buffer = await image.arrayBuffer();
         const base64Image = Buffer.from(buffer).toString('base64');
   
-        return cloudinary.uploader.upload(`data:image/png;base64,${ base64Image }`)
-          .then( r => r.secure_url );
-        
+return cloudinary.uploader.upload(`data:image/${image.type.split('/')[1]};base64,${ base64Image }`, {
+      folder: 'vibra-lover-products' // <--- Esto organiza tus fotos en Cloudinary
+    }).then( r => r.secure_url ); // <--- El .then se queda para capturar la URL final        
       } catch (error) {
         console.log(error);
         return null;
