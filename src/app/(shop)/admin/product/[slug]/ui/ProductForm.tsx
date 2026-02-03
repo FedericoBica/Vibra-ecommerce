@@ -104,7 +104,7 @@ const onColorChanged = (color: Color) => {
           <span>Título</span>
           <input
             type="text"
-            className="p-2 border rounded-md bg-gray-200"
+            className="p-2 border rounded-md bg-gray-200 text-black"
             {...register("title", { required: true })}
           />
         </div>
@@ -113,7 +113,7 @@ const onColorChanged = (color: Color) => {
           <span>Slug</span>
           <input
             type="text"
-            className="p-2 border rounded-md bg-gray-200"
+            className="p-2 border rounded-md bg-gray-200 text-black"
             {...register("slug", { required: true })}
           />
         </div>
@@ -122,7 +122,7 @@ const onColorChanged = (color: Color) => {
           <span>Descripción</span>
           <textarea
             rows={5}
-            className="p-2 border rounded-md bg-gray-200"
+            className="p-2 border rounded-md bg-gray-200 text-black"
             {...register("description", { required: true })}
           ></textarea>
         </div>
@@ -131,7 +131,7 @@ const onColorChanged = (color: Color) => {
           <span>Price</span>
           <input
             type="number"
-            className="p-2 border rounded-md bg-gray-200"
+            className="p-2 border rounded-md bg-gray-200 text-black"
             {...register("price", { required: true, min: 0 })}
           />
         </div>
@@ -140,7 +140,7 @@ const onColorChanged = (color: Color) => {
           <span>Tags</span>
           <input
             type="text"
-            className="p-2 border rounded-md bg-gray-200"
+            className="p-2 border rounded-md bg-gray-200 text-black"
             {...register("tags", { required: true })}
           />
         </div>
@@ -148,7 +148,7 @@ const onColorChanged = (color: Color) => {
         <div className="flex flex-col mb-2">
           <span>Categoria</span>
           <select
-            className="p-2 border rounded-md bg-gray-200"
+            className="p-2 border rounded-md bg-gray-200 text-black"
             {...register("categoryId", { required: true })}
           >
             <option value="">[Seleccione]</option>
@@ -160,7 +160,7 @@ const onColorChanged = (color: Color) => {
           </select>
         </div>
 
-        <button className="btn-primary w-full">Guardar</button>
+        <button className="btn-primary w-full bg-pink-600 border-pink-700">Guardar</button>
       </div>
 
       {/* Selector de tallas y fotos */}
@@ -169,7 +169,7 @@ const onColorChanged = (color: Color) => {
           <span>Inventario</span>
           <input
             type="number"
-            className="p-2 border rounded-md bg-gray-200"
+            className="p-2 border rounded-md bg-gray-200 text-black"
             {...register("inStock", { required: true, min: 0 })}
           />
         </div>
