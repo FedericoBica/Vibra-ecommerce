@@ -81,9 +81,12 @@ export const createUpdateProduct = async( formData: FormData ) => {
       
       // Proceso de carga y guardado de imagenes
       // Recorrer las imagenes y guardarlas
-      if ( formData.getAll('images') ) {
-        // [https://url.jpg, https://url.jpg]
-        const images = await uploadImages(formData.getAll('images') as File[]);
+      const imagesFiles = formData.getAll('images') as File[];
+
+      // Solo intentamos subir si el primer archivo existe y tiene tamaño (no está vacío)
+      if ( imagesFiles.length > 0 && imagesFiles[0].size > 0 ) {
+        const images = await uploadImages(imagesFiles);
+        
         if ( !images ) {
           throw new Error('No se pudo cargar las imágenes, rollingback');
         }
@@ -94,12 +97,8 @@ export const createUpdateProduct = async( formData: FormData ) => {
             productId: product.id,
           }))
         });
-
-      }
+      }  
   
-  
-  
-      
       return {
         product
       }

@@ -31,25 +31,24 @@ export const TopMenu = () => {
 
       {/* Center Menu - Estilo Minimalista y Elegante */}
       <div className="hidden sm:block">
-        <Link
+        {/* <Link
           className="m-2 p-2 rounded-md transition-all text-gray-300 hover:text-pink-500 hover:bg-pink-500/10 font-medium"
           href="/category/vibradores"
         >
           Vibradores
-        </Link>
+        </Link> */}
         {/* <Link
           className="m-2 p-2 rounded-md transition-all text-gray-300 hover:text-pink-500 hover:bg-pink-500/10 font-medium"
           href="/category/lubricantes"
         >
           Lubricantes
         </Link> */}
-        <Link
+        {/* <Link
           className="m-2 p-2 rounded-md transition-all text-gray-300 hover:text-pink-500 hover:bg-pink-500/10 font-medium"
           href="/category/juegos"
         >
-          Juegos
-        </Link>
-      </div>
+          Juegos */}
+      </div> 
 
       {/* Iconos - Search, Cart, Menu */}
       <div className="flex items-center text-gray-300">

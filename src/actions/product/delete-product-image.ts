@@ -15,14 +15,16 @@ export const deleteProductImage = async( imageId: number, imageUrl: string ) => 
     }
   }
 
-  const imageName = imageUrl
+const imageName = imageUrl
     .split('/')
-    .pop()
-    ?.split('.')[0] ?? '';
+    .slice(-2) // Toma los últimos dos pedazos (carpeta y archivo)
+    .join('/') // Los une con una barra
+    .split('.')[0] ?? ''; // Quita el .jpg o .png
 
   try {
 
     await cloudinary.uploader.destroy( imageName );
+
     const deletedImage = await prisma.productImage.delete({
       where: {
         id: imageId
@@ -42,6 +44,8 @@ export const deleteProductImage = async( imageId: number, imageUrl: string ) => 
     revalidatePath(`/admin/products`)
     revalidatePath(`/admin/product/${ deletedImage.product.slug }`);
     revalidatePath(`/product/${ deletedImage.product.slug }`);
+
+    return {ok:true}
 
   } catch (error) {
     console.log(error);
