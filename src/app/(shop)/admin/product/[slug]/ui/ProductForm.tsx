@@ -218,11 +218,20 @@ const onColorChanged = (color: Color) => {
                 <button
                   type="button"
                   onClick={async () => {
-                    if (confirm('¿Estás seguro de borrar esta imagen?')) {
-                      await deleteProductImage(image.id, image.url);
-                    }
-                  }}
-                  className="btn-danger w-full rounded-b-xl"
+                      if (!image.id) {
+                        alert("No se pudo encontrar el ID de la imagen");
+                        return;
+                      } // Seguridad extra
+                      
+                      if (confirm('¿Deseas eliminar esta imagen?')) {
+                        const { ok, message } = await deleteProductImage(image.id, image.url);
+                        
+                        if (!ok) {
+                          alert(message || "Error al eliminar");
+                        } 
+                      }
+                    }}                  
+                    className="btn-danger w-full rounded-b-xl"
                 >
                   Eliminar
                 </button>
