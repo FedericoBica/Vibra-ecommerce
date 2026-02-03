@@ -118,6 +118,15 @@ export const Sidebar = () => {
                 <span className="mr-3 text-[13px] font-light text-gray-400">Órdenes</span>
                 <IoTicketOutline size={18} />
               </Link>
+
+              <Link 
+                href="/admin/users" 
+                onClick={closeMenu} 
+                className="flex items-center justify-end w-2/3 p-2 hover:text-white transition-all"
+              >
+                <span className="mr-3 text-[13px] font-light text-gray-400">Usuarios</span>
+                <IoPeopleOutline size={18} />
+              </Link>
             </div>
           )}
         </div>
