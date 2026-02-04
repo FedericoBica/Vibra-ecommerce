@@ -30,7 +30,7 @@ export const ProductMobileSlideshow = ( { images, title, className }: Props ) =>
 
       <Swiper
         style={{
-          width: '100vw',
+          width: '100%',
           height: '500px'
         }}
         pagination
@@ -49,7 +49,7 @@ export const ProductMobileSlideshow = ( { images, title, className }: Props ) =>
                 height={ 500 }
                 src={ `/products/${ image }` }
                 alt={ title }
-                className="object-fill"
+                className="object-cover"
               />
             </SwiperSlide>
 
