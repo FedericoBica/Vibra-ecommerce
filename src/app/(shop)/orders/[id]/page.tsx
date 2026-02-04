@@ -8,6 +8,7 @@ import { currencyFormat } from "@/utils";
 import { OrderStatus, Title } from "@/components";
 import { createMercadoPagoPreference } from "@/actions/payments/mercado-pago-preference";
 import { MercadoPagoButton } from "@/components/mercadopago/MercadoPagoButton";
+import { OrderTracker } from "@/components/orders/OrderTracker";
 
 
 interface Props {
@@ -197,10 +198,19 @@ return (
                 </div>
               )}
               {order.isPaid && (
+                <> 
+                {/* El tracker invisible de Meta */}
+                  <OrderTracker 
+                    total={order.total} 
+                    orderId={order.id} 
+                    items={order.OrderItem} 
+                  />
+                
                 <div className="bg-emerald-950/20 border border-emerald-500/50 text-emerald-500 p-4 rounded-xl text-center font-bold shadow-[0_0_20px_rgba(16,185,129,0.1)]">
                   <span className="block text-2xl mb-1">✨</span>
                   Pago confirmado. ¡Gracias por confiar en Vibra!
                 </div>
+                </>
               )}            
             </div>
           </div>

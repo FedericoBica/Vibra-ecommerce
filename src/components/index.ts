@@ -13,7 +13,7 @@ export * from './mercadopago/MercadoPagoButton';
 
 
 export * from './providers/Providers';
-
+export * from './providers/MetaPixel';
 
 export * from './product/slideshow/ProductSlideshow';
 export * from './product/slideshow/ProductMobileSlideshow';

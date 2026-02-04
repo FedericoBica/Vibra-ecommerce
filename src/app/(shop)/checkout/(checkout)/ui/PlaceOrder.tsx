@@ -9,6 +9,12 @@ import { useAddressStore, useCartStore } from "@/store";
 import { currencyFormat } from '@/utils';
 import { CouponInput } from "@/components/coupon/CouponInput";
 
+declare global {
+  interface Window {
+    fbq: any;
+  }
+}
+
 export const PlaceOrder = () => {
 
   const router = useRouter();
@@ -27,6 +33,19 @@ export const PlaceOrder = () => {
   
   const cart = useCartStore( state => state.cart );
   const clearCart = useCartStore( state => state.clearCart );
+
+  //DISPARAMOS EL EVENTO CUANDO CARGA EL RESUMEN
+  useEffect(() => {
+    if (loaded && typeof window.fbq !== 'undefined' && cart.length > 0) {
+      window.fbq('track', 'InitiateCheckout', {
+        content_ids: cart.map(p => p.id),
+        content_type: 'product',
+        value: subTotal, // Usamos el subtotal (antes de envíos/cupones) o el finalTotal
+        currency: 'UYU',
+        num_items: itemsInCart
+      });
+    }
+  }, [loaded, cart, itemsInCart, subTotal]);
 
   useEffect(() => {
     setLoaded(true);

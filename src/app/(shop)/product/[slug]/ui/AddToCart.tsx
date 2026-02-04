@@ -5,6 +5,12 @@ import { QuantitySelector, ColorSelector } from "@/components"; // Importás Col
 import type { CartProduct, Product, Color, ProductCategory } from "@/interfaces";
 import { useCartStore } from '@/store';
 
+declare global {
+  interface Window {
+    fbq: any;
+  }
+}
+
 interface Props {
   product: Product;
   category: ProductCategory;
@@ -35,6 +41,19 @@ export const AddToCart = ({ product }: Props) => {
     }
 
     addProductToCart(cartProduct);
+
+    // DISPARAMOS EL EVENTO DE META
+    if (typeof window.fbq !== 'undefined') {
+      window.fbq('track', 'AddToCart', {
+        content_name: product.title,
+        content_ids: [product.id],
+        content_type: 'product',
+        value: product.price * quantity,
+        currency: 'UYU', 
+        content_category: product.category,
+      });
+    }
+
     setPosted(false);
     setQuantity(1);
     setColor(undefined); // Reseteamos color
@@ -48,17 +67,14 @@ export const AddToCart = ({ product }: Props) => {
         </span>
       )}
 
-      {/* 2. USAMOS EL COMPONENTE CORRECTO: ColorSelector */}
       <ColorSelector
         selectedColor={color}
         availableColors={product.color} // Asegurate que tu interfaz product tenga colors
         onColorChanged={setColor}
       />
 
-      {/* Selector de Cantidad */}
       <QuantitySelector quantity={quantity} onQuantityChanged={setQuantity} />
 
-      {/* Button */}
       <button onClick={addToCart} className="btn-primary my-5">
         Agregar al carrito
       </button>
