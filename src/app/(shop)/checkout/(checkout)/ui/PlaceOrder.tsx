@@ -116,7 +116,7 @@ if (!loaded) return <p className="animate-pulse text-pink-500">Cargando resumen.
   <div className="text-gray-300">
     <div className="flex items-center gap-2 mb-1">
       <p className="text-xs text-gray-500 uppercase font-bold">Punto de Retiro:</p>
-      <span className="text-[10px] bg-emerald-500/10 text-emerald-400 px-2 py-0.5 rounded border border-emerald-500/20 uppercase">
+      <span className="text-[8px] sm:text-[10px] bg-emerald-500/10 text-emerald-400 px-2 py-0.5 rounded border border-emerald-500/20 uppercase">
         Listo en 24-48hs
       </span>
     </div>
@@ -126,7 +126,7 @@ if (!loaded) return <p className="animate-pulse text-pink-500">Cargando resumen.
     </p>
     {/* DIRECCIÓN FÍSICA EN LETRA CHICA */}
       {address.lockerLocation && lockerAddresses[address.lockerLocation] && (
-      <p className="text-[11px] text-gray-400 italic font-medium ml-6 mt-0.5">
+      <p className="text-[11px] sm text-gray-400 italic font-medium ml-6 mt-0.5">
         {lockerAddresses[address.lockerLocation]}
       </p>
     )}

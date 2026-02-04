@@ -25,6 +25,7 @@ const productSchema = z.object({
   categoryId: z.string().uuid(),
   color: z.coerce.string().transform( val => val.split(',').map(c => c.trim()) ), 
   tags: z.string(),
+  isPublished: z.coerce.boolean(),
 });
 
 
@@ -50,6 +51,7 @@ export const createUpdateProduct = async( formData: FormData ) => {
     .replace(/[^a-z0-9 -]/g, "") // Quita cualquier cosa que no sea letra, número o espacio
     .replace(/\s+/g, '-') // Cambia espacios por guiones
     .replace(/-+/g, '-'); // Evita guiones dobles (--)
+    
 
   const { id, ...rest } = product;
 
@@ -61,9 +63,9 @@ export const createUpdateProduct = async( formData: FormData ) => {
   
       const productData = {
         ...rest,
-        // En Prisma ahora usamos colors en lugar de sizes
         color: rest.color, 
         tags: tagsArray,
+        isPublished: productParsed.data.isPublished,
       };
 
       if ( id ) {

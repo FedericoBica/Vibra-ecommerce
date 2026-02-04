@@ -10,7 +10,7 @@ import { ProductImage } from '@/components';
 import { deleteProduct } from "@/actions/product/delete-product";
 
 interface Props {
-  product: Partial<Product> & { ProductImage?: ProductWithImage[] };
+  product: Partial<Product> & { ProductImage?: ProductWithImage[],isPublished?: boolean };
   categories: Category[];
 }
 
@@ -24,7 +24,7 @@ interface FormInputs {
   color: Color[];
   tags: string;
   categoryId: string;
-
+  isPublished: boolean;
   images?: FileList;
 }
 
@@ -44,7 +44,7 @@ export const ProductForm = ({ product, categories }: Props) => {
       ...product,
       tags: product.tags?.join(", "),
       color: product.color ?? [],
-
+      isPublished: product.isPublished ?? true,
       images: undefined,
     },
   });
@@ -73,6 +73,7 @@ const onColorChanged = (color: Color) => {
     formData.append("color", productToSave.color.join(','));
     formData.append("tags", productToSave.tags);
     formData.append("categoryId", productToSave.categoryId);
+    formData.append("isPublished", productToSave.isPublished.toString());
     
     if ( images ) {
       for ( let i = 0; i < images.length; i++  ) {
@@ -160,7 +161,16 @@ const onColorChanged = (color: Color) => {
             ))}
           </select>
         </div>
-
+        <div className="flex flex-col mb-4"> {/* Aumenté el margen inferior */}
+          <span className="font-bold mb-1">Estado de Publicación</span>
+          <select 
+            {...register("isPublished")} 
+            className="p-2 border rounded-md bg-gray-200 text-black"
+          >
+            <option value="true">Publicado (Visible)</option>
+            <option value="false">Oculto (Borrador)</option>
+          </select>
+        </div>
         <button className="btn-primary w-full bg-pink-600 border-pink-700">Guardar</button>
         {/* Botón de borrar producto (solo si no es nuevo) */}
           {product.id && (

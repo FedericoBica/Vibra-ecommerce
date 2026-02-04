@@ -10,6 +10,7 @@ export interface Product {
   category: ProductCategory;
   color: Color[]
   categoryId: string
+  isPublished: boolean;
 }
 
 export interface CartProduct {

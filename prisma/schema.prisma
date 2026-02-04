@@ -45,13 +45,13 @@ model Product {
   tags        String[] @default([])
   color     String[] @default([])
 
-  // Relaciones
-
   category   Category @relation(fields: [categoryId], references: [id])
   categoryId String
 
   ProductImage ProductImage[]
   OrderItem    OrderItem[]
+
+  isPublished Boolean @default(true)
 }
 
 model ProductImage {
