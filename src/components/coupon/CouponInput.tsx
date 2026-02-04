@@ -8,22 +8,26 @@ export const CouponInput = ({ onApply }: { onApply: (discount: number, code: str
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const handleApply = async () => {
-    if (code.length < 3) return;
-    
-    setLoading(true);
-    // Llamamos a la Server Action que consulta la DB
-    const resp = await validateCoupon(code);
-    setLoading(false);
+    const [status, setStatus] = useState<{message: string, isError: boolean} | null>(null);
 
-    if (resp.ok && resp.discount) {
-      onApply(resp.discount, code.toUpperCase().trim());
-      setError("");
-    } else {
-      onApply(0, "");
-      setError(resp.message || "Cupón no válido");
-    }
-  };
+    const handleApply = async () => {
+        setLoading(true);
+        const resp = await validateCoupon(code);
+        setLoading(false);
+
+        if (resp.ok && resp.discount) {
+            onApply(resp.discount, code.toUpperCase().trim());
+            setStatus({ message: "¡Cupón aplicado con éxito!", isError: false });
+            
+            // Limpiamos el mensaje después de 2 segundos
+            setTimeout(() => setStatus(null), 2000);
+            setError(""); // Limpiamos error previo si existía
+        } else {
+            onApply(0, "");
+            setError(resp.message || "Cupón no válido");
+            setStatus(null);
+        }
+    };
 
   return (
     <div className="mb-6 bg-zinc-800/20 p-4 rounded-xl border border-zinc-700/50">
@@ -38,6 +42,11 @@ export const CouponInput = ({ onApply }: { onApply: (discount: number, code: str
           placeholder="CÓDIGO"
           className="flex-1 bg-black/40 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-pink-500 transition-colors uppercase"
         />
+        {status && !status.isError && (
+        <p className="text-emerald-400 text-[10px] mt-2 font-bold animate-fade-in">
+            {status.message}
+        </p>
+        )}
         <button 
           onClick={handleApply}
           disabled={loading}

@@ -171,10 +171,6 @@ if (!loaded) return <p className="animate-pulse text-pink-500">Cargando resumen.
       }} />
 
       <div className="space-y-3 text-gray-300">
-        <div className="flex justify-between">
-          <span className="text-gray-500">Subtotal</span>
-          <span>{currencyFormat(subTotal)}</span>
-        </div>
 
         {/* MOSTRAR DESCUENTO SI EXISTE */}
         {discountPercent > 0 && (
@@ -202,9 +198,12 @@ if (!loaded) return <p className="animate-pulse text-pink-500">Cargando resumen.
         <div className="flex justify-between items-end">
           <span className="text-lg font-bold text-gray-100">Total</span>
           <div className="text-right">
-            <span className="block text-3xl font-black text-pink-500 drop-shadow-[0_0_10px_rgba(219,39,119,0.3)]">
+            <span className={clsx(
+              "block text-3xl font-black text-pink-500 transition-all duration-500",
+              discountPercent > 0 ? "scale-110 text-emerald-400" : "" // Se agranda y cambia a verde un momento
+            )}>
               {currencyFormat(finalTotal)}
-            </span>
+            </span>            
             <span className="text-[10px] text-gray-500 uppercase">IVA Incluido</span>
           </div>
         </div>      
