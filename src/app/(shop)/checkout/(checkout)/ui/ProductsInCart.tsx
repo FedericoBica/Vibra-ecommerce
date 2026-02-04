@@ -33,7 +33,13 @@ export const ProductsInCart = () => {
       {productsInCart.map((product) => (
         <div key={ `${ product.slug }-${ product.color }`  } className="flex mb-5">
           <Image
-            src={`/products/${product.image }`}
+            src={ 
+              product.image.startsWith('/') 
+                ? product.image                     // Si ya tiene /, la dejamos
+                : product.image.startsWith('http') 
+                  ? product.image                   // Si es link externo, lo dejamos
+                  : `/products/${product.image}`    // Si es solo el nombre, le ponemos el prefijo
+            }
             width={100}
             height={100}
             style={{
@@ -41,7 +47,7 @@ export const ProductsInCart = () => {
               height: "100px",
             }}
             alt={product.title}
-            className="mr-5 rounded"
+            className="mr-5 rounded object-cover"
           />
 
           <div>
