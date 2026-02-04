@@ -7,6 +7,7 @@ import clsx from "clsx";
 import { createUpdateProduct, deleteProductImage } from "@/actions";
 import { useRouter } from 'next/navigation';
 import { ProductImage } from '@/components';
+import { deleteProduct } from "@/actions/product/delete-product";
 
 interface Props {
   product: Partial<Product> & { ProductImage?: ProductWithImage[] };
@@ -161,6 +162,22 @@ const onColorChanged = (color: Color) => {
         </div>
 
         <button className="btn-primary w-full bg-pink-600 border-pink-700">Guardar</button>
+        {/* Botón de borrar producto (solo si no es nuevo) */}
+          {product.id && (
+            <button
+              type="button"
+              onClick={async () => {
+                if (confirm('¿Estás seguro de borrar TODO el producto? Esta acción no se puede deshacer.')) {
+                  const { ok, message } = await deleteProduct(product.id!);
+                  if (ok) window.location.replace('/admin/products');
+                  else alert(message);
+                }
+              }}
+              className="btn-danger mt-10 w-full p-2 text-center"
+            >
+              Eliminar Producto Definitivamente
+            </button>
+          )}
       </div>
 
       {/* Selector de tallas y fotos */}
