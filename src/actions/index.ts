@@ -17,6 +17,8 @@ export * from './order/place-order';
 export * from './order/get-order-by-id';
 export * from './order/get-paginated-orders';
 export * from './order/get-orders-by-user';
+export * from './order/validate-coupon';
+
 
 export * from './payments/mercado-pago-preference';
 

@@ -7,6 +7,7 @@ export * from './products/product-grid/ProductGridItem';
 
 export * from './orders/OrderStatus';
 
+export * from './coupon/CouponInput'
 
 export * from './mercadopago/MercadoPagoButton';
 
