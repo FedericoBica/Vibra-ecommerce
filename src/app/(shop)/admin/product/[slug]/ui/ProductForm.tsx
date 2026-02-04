@@ -51,7 +51,7 @@ export const ProductForm = ({ product, categories }: Props) => {
 
   watch("color");
 
-const onColorChanged = (color: Color) => {
+  const onColorChanged = (color: Color) => {
     const currentColors = new Set(getValues("color"));
     currentColors.has(color) ? currentColors.delete(color) : currentColors.add(color);
     setValue("color", Array.from(currentColors));
@@ -201,7 +201,7 @@ const onColorChanged = (color: Color) => {
           />
         </div>
 
-<div className="flex flex-col">
+      <div className="flex flex-col">
           <span>Colores Disponibles</span>
           <div className="flex flex-wrap mt-2">
             {availableColors.map((color) => (

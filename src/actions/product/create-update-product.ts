@@ -25,7 +25,7 @@ const productSchema = z.object({
   categoryId: z.string().uuid(),
   color: z.coerce.string().transform( val => val.split(',').map(c => c.trim()) ), 
   tags: z.string(),
-  isPublished: z.coerce.boolean(),
+  isPublished: z.preprocess((val) => val === 'true', z.boolean()),
 });
 
 
@@ -65,7 +65,6 @@ export const createUpdateProduct = async( formData: FormData ) => {
         ...rest,
         color: rest.color, 
         tags: tagsArray,
-        isPublished: productParsed.data.isPublished,
       };
 
       if ( id ) {
