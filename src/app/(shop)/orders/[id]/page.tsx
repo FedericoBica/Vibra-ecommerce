@@ -118,7 +118,7 @@ return (
             </div>
           </div>
 
-{/* Columna Derecha: Resumen y Pago */}
+        {/* Columna Derecha: Resumen y Pago */}
           <div className="bg-zinc-900/50 backdrop-blur-md rounded-2xl border border-zinc-800 p-7 h-fit shadow-2xl">
             <h2 className="text-xl mb-4 font-bold text-gray-200 uppercase tracking-widest">Detalles de Entrega</h2>
             
@@ -160,7 +160,7 @@ return (
                 <span className="opacity-50">📞</span> {address?.phone ?? 'N/A'}
               </p>
             </div>
-            
+
             <h2 className="text-xl mb-4 font-bold text-gray-200 uppercase tracking-widest">Resumen de pago</h2>
             <div className="grid grid-cols-2 text-gray-400 gap-y-2 text-sm">
               <span>Productos</span>
@@ -169,6 +169,16 @@ return (
               <span>Subtotal</span>
               <span className="text-right font-medium text-gray-200">{currencyFormat(order.subTotal)}</span>
 
+              {/* Si el descuento es mayor a 0, lo mostramos */}
+              {order.discount > 0 && (
+                <>
+                  <span className="text-emerald-400 font-bold italic">Descuento aplicado</span>
+                  <span className="text-right text-emerald-400 font-bold italic">
+                    -{currencyFormat(order.discount)}
+                  </span>
+                </>
+              )}
+              
               <span>Envío ({order.deliveryMethod})</span>
               <span className="text-right font-medium text-gray-200">{currencyFormat(order.shippingCost)}</span>
 

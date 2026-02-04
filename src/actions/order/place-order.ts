@@ -91,6 +91,7 @@ export const placeOrder = async (
           itemsInOrder: itemsInOrder,
           subTotal: subTotal,
           tax: 0,
+          discount: discountAmount,
           total: total,
           deliveryMethod: address.deliveryMethod,
           lockerLocation: address.lockerLocation,
