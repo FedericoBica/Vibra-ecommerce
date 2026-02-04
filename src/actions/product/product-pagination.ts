@@ -19,7 +19,6 @@ export const getPaginatedProductsWithImages = async ({
   if (page < 1) page = 1;
 
   try {
-    // 1. Obtener los productos
     const products = await prisma.product.findMany({
       take: take,
       skip: (page - 1) * take,
@@ -27,20 +26,19 @@ export const getPaginatedProductsWithImages = async ({
         ProductImage: {
           take: 2,
           select: {
+            id: true,  // <--- ¡IMPORTANTE! Agregamos el ID para poder borrar
             url: true,
           },
         },
-        category: true, // Incluimos la info de la categoría para tener el nombre
+        category: true,
       },
-      // Filtrado por categoría
       where: {
         category: category ? {
-          name: category.toLowerCase() // Buscamos por el nombre de la categoría
+          name: category.toLowerCase()
         } : undefined,
       },
     });
 
-    // 2. Obtener el total de productos para la paginación
     const totalCount = await prisma.product.count({
       where: {
         category: category ? {
@@ -56,7 +54,10 @@ export const getPaginatedProductsWithImages = async ({
       totalPages: totalPages,
       products: products.map((product) => ({
         ...product,
+        // Mapeamos las imágenes para el array de strings que usa la Home
         images: product.ProductImage.map((image) => image.url),
+        // Mantenemos ProductImage para que el Admin tenga los IDs
+        ProductImage: product.ProductImage, 
         category: product.category.name as any,
         color: product.color as Color[],
       })),
