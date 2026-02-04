@@ -41,20 +41,20 @@ export const ProductMobileSlideshow = ( { images, title, className }: Props ) =>
         className="mySwiper2"
       >
 
-        {
-          images.map( image => (
-            <SwiperSlide key={ image }>
-              <Image
-                width={ 600 }
-                height={ 500 }
-                src={ `/products/${ image }` }
-                alt={ title }
-                className="object-cover"
-              />
-            </SwiperSlide>
-
-          ) )
-        }
+      {
+        images.map( (image, index) => (
+          <SwiperSlide key={ `${image}-${index}` }> {/* Key más única */}
+            <Image
+              width={ 600 }
+              height={ 500 }
+              src={ image.startsWith('http') ? image : `/products/${ image }` }
+              alt={ title }
+              className="object-cover" // Cambiado de fill a cover
+              priority={ index === 0 } // Carga la primera imagen con prioridad
+            />
+          </SwiperSlide>
+        ))
+      }      
       </Swiper>
 
 
