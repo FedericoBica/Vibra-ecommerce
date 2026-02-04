@@ -7,6 +7,7 @@ import clsx from 'clsx';
 import { placeOrder } from '@/actions';
 import { useAddressStore, useCartStore } from "@/store";
 import { currencyFormat } from '@/utils';
+import { CouponInput } from "@/components/coupon/CouponInput";
 
 export const PlaceOrder = () => {
 
@@ -14,6 +15,8 @@ export const PlaceOrder = () => {
   const [loaded, setLoaded] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [isPlacingOrder, setIsPlacingOrder] = useState(false);
+  const [discountPercent, setDiscountPercent] = useState(0);
+  const [appliedCoupon, setAppliedCoupon] = useState("");
 
   const address = useAddressStore((state) => state.address);
 
@@ -64,7 +67,9 @@ export const PlaceOrder = () => {
 };
 
   const shippingCost = shippingPrices[address.deliveryMethod] || 0;
-  const finalTotal = subTotal + shippingCost;
+  const subTotalWithDiscount = subTotal * (1 - discountPercent / 100);
+  const discountAmount = subTotal * (discountPercent / 100);
+  const finalTotal = subTotalWithDiscount + shippingCost;
 
   const onPlaceOrder = async() => {
     setIsPlacingOrder(true);
@@ -76,7 +81,7 @@ export const PlaceOrder = () => {
     }))
 
     // Server Action mejorada para Guest Checkout
-    const resp = await placeOrder( productsToOrder, address);
+    const resp = await placeOrder( productsToOrder, address, appliedCoupon);
     
     if ( !resp.ok ) {
       setIsPlacingOrder(false);
@@ -160,8 +165,26 @@ if (!loaded) return <p className="animate-pulse text-pink-500">Cargando resumen.
         </p>
       </div>
 
-      {/* Resumen de Costos */}
+      <CouponInput onApply={(discount, code) => {
+        setDiscountPercent(discount);
+        setAppliedCoupon(code);
+      }} />
+
       <div className="space-y-3 text-gray-300">
+        <div className="flex justify-between">
+          <span className="text-gray-500">Subtotal</span>
+          <span>{currencyFormat(subTotal)}</span>
+        </div>
+
+        {/* MOSTRAR DESCUENTO SI EXISTE */}
+        {discountPercent > 0 && (
+          <div className="flex justify-between text-emerald-400 text-sm font-bold italic">
+            <span>Descuento ({appliedCoupon})</span>
+            <span>-{currencyFormat(discountAmount)}</span>
+          </div>
+          )}
+
+      {/* Resumen de Costos */}
         <div className="flex justify-between">
           <span className="text-gray-500">Productos ({itemsInCart})</span>
           <span>{currencyFormat(subTotal)}</span>

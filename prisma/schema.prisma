@@ -158,3 +158,11 @@ model OrderAddress {
   Order   Order  @relation(fields: [orderId], references: [id])
   orderId String @unique
 }
+
+model Coupon {
+  id          String   @id @default(uuid())
+  code        String   @unique
+  discount    Int      // Porcentaje (ej: 10 para 10%)
+  isActive    Boolean  @default(true)
+  validUntil  DateTime?
+}

@@ -19,7 +19,8 @@ const shippingPrices = {
 
 export const placeOrder = async (
   productIds: ProductToOrder[],
-  address: Address
+  address: Address,
+  couponCode?: string,
 ) => {
   const session = await auth();
   const userId = session?.user.id; // Puede ser undefined si es invitado
@@ -34,7 +35,7 @@ export const placeOrder = async (
   // 2. Calcular montos de productos
   const itemsInOrder = productIds.reduce((count, p) => count + p.quantity, 0);
 
-const { subTotal } = productIds.reduce(
+  const { subTotal } = productIds.reduce(
   (totals, item) => {
     const product = products.find((p) => p.id === item.productId);
     if (!product) throw new Error(`${item.productId} no existe`);
@@ -47,9 +48,19 @@ const { subTotal } = productIds.reduce(
   { subTotal: 0 } // Quitamos tax de aquí
 );
 
-  const tax = 0; // Impuestos eliminados
+  let discountAmount = 0;
+  if (couponCode) {
+    const dbCoupon = await prisma.coupon.findUnique({
+      where: { code: couponCode.toUpperCase().trim(), isActive: true }
+    });
+
+    if (dbCoupon) {
+      // Si existe y está activo, aplicamos SU descuento
+      discountAmount = subTotal * (dbCoupon.discount / 100);
+    }  }
+
   const shippingCost = shippingPrices[address.deliveryMethod] || 0;
-  const total = subTotal + shippingCost; // Total es solo productos + envío
+  const total = (subTotal - discountAmount) + shippingCost; // <--- Total con descuento  
   
   // 3. Lógica de Envío
   try {
