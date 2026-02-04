@@ -33,6 +33,7 @@ export const getPaginatedProductsWithImages = async ({
         category: true,
       },
       where: {
+        isPublished: true,
         category: category ? {
           name: category.toLowerCase()
         } : undefined,
@@ -41,6 +42,7 @@ export const getPaginatedProductsWithImages = async ({
 
     const totalCount = await prisma.product.count({
       where: {
+        isPublished:true,
         category: category ? {
           name: category.toLowerCase()
         } : undefined,
