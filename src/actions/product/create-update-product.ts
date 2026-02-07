@@ -2,9 +2,10 @@
 
 import prisma from '@/lib/prisma';
 import { revalidatePath } from 'next/cache';
-import { Product } from '@prisma/client';
+import { Prisma, Product } from '@prisma/client';
 import { z } from 'zod';
 import {v2 as cloudinary} from 'cloudinary';
+
 cloudinary.config( process.env.CLOUDINARY_URL ?? '' );
 
 
@@ -26,6 +27,8 @@ const productSchema = z.object({
   color: z.coerce.string().transform( val => val.split(',').map(c => c.trim()) ), 
   tags: z.string(),
   isPublished: z.preprocess((val) => val === 'true', z.boolean()),
+  isPremiumUI: z.preprocess((val) => val === 'true', z.boolean()),
+  premiumData: z.string().optional().nullable(), // Recibimos el string JSON del form
 });
 
 
@@ -53,7 +56,20 @@ export const createUpdateProduct = async( formData: FormData ) => {
     .replace(/-+/g, '-'); // Evita guiones dobles (--)
     
 
-  const { id, ...rest } = product;
+  const { id, premiumData, ...rest } = product;
+
+  // PARSEAR EL JSON DE PREMIUM DATA
+  let parsedPremiumData: any = null;
+  if (premiumData) {
+    try {
+      parsedPremiumData = typeof premiumData === 'string' 
+      ? JSON.parse(premiumData) 
+      : premiumData;
+    } catch (e) {
+      console.error("Error parsing premiumData JSON", e);
+      parsedPremiumData = null;
+    }
+  }
 
   try {
     const prismaTx = await prisma.$transaction( async (tx) => {
@@ -65,6 +81,8 @@ export const createUpdateProduct = async( formData: FormData ) => {
         ...rest,
         color: rest.color, 
         tags: tagsArray,
+        isPremiumUI: rest.isPremiumUI,
+        premiumData: parsedPremiumData,
       };
 
       if ( id ) {

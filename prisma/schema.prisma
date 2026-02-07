@@ -52,6 +52,9 @@ model Product {
   OrderItem    OrderItem[]
 
   isPublished Boolean @default(true)
+
+  isPremiumUI Boolean @default(false)
+  premiumData Json?
 }
 
 model ProductImage {

@@ -13,6 +13,8 @@ import {
 } from "@/components";
 import { getProductBySlug } from "@/actions";
 import { AddToCart } from './ui/AddToCart';
+import { PremiumFeatures } from "@/components/product/ui/PremiumFeatures";
+import { ProductSteps } from "@/components/product/ui/ProductSteps";
 
 interface Props {
   params: {
@@ -53,6 +55,8 @@ export default async function ProductBySlugPage({ params }: Props) {
   if (!product) {
     notFound();
   }
+
+  const premiumData = product.premiumData as any;
 
   return (
     <div className="mt-5 mb-20 grid grid-cols-1 md:grid-cols-3 gap-3">
@@ -95,6 +99,22 @@ export default async function ProductBySlugPage({ params }: Props) {
         <h3 className="font-bold text-sm">Descripción</h3>
         <p className="font-light">{product.description}</p>
       </div>
+      {/* SECCIÓN ULTRA UI: Solo aparece si el switch está activo */}
+      {product.isPremiumUI && (
+        <div className="col-span-1 md:col-span-3 mt-10 fade-in">
+          
+          {/* 1. Características con Iconos */}
+          <PremiumFeatures 
+            headline={premiumData?.bannerHeadline}
+            features={premiumData?.features ?? []}
+          />
+
+          {/* 2. Guía de Uso paso a paso */}
+          {premiumData?.steps && (
+            <ProductSteps steps={premiumData.steps} />
+          )}
+      </div>
+      )}
     </div>
   );
 }
