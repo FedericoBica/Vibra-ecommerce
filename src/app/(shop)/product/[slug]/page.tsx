@@ -1,19 +1,19 @@
 export const revalidate = 604800; //7 días
 
 import { Metadata, ResolvingMetadata } from "next";
-
 import { notFound } from "next/navigation";
 
 import { titleFont } from "@/config/fonts";
 import {
   ProductMobileSlideshow,
   ProductSlideshow,
-  QuantitySelector,
-  StockLabel,
 } from "@/components";
 import { getProductBySlug } from "@/actions";
 import { AddToCart } from './ui/AddToCart';
-import { PremiumFeatures } from "@/components/product/ui/PremiumFeatures";
+
+// NUEVOS COMPONENTES PREMIUM
+import { ProductHighlights } from "@/components/product/ui/ProductHighlights";
+import { ProductDetailedFeature } from "@/components/product/ui/PremiumFeatures";
 import { ProductSteps } from "@/components/product/ui/ProductSteps";
 
 interface Props {
@@ -26,14 +26,8 @@ export async function generateMetadata(
   { params }: Props,
   parent: ResolvingMetadata
 ): Promise<Metadata> {
-  // read route params
   const slug = params.slug;
-
-  // fetch data
   const product = await getProductBySlug(slug);
-
-  // optionally access and extend (rather than replace) parent metadata
-  // const previousImages = (await parent).openGraph?.images || []
 
   return {
     title: product?.title ?? "Producto no encontrado",
@@ -41,7 +35,6 @@ export async function generateMetadata(
     openGraph: {
       title: product?.title ?? "Producto no encontrado",
       description: product?.description ?? "",
-      // images: [], // https://misitioweb.com/products/image.png
       images: [ `/products/${ product?.images[1] }`],
     },
   };
@@ -50,7 +43,6 @@ export async function generateMetadata(
 export default async function ProductBySlugPage({ params }: Props) {
   const { slug } = params;
   const product = await getProductBySlug(slug);
-  console.log(product);
 
   if (!product) {
     notFound();
@@ -60,60 +52,74 @@ export default async function ProductBySlugPage({ params }: Props) {
 
   return (
     <div className="mt-5 mb-20 grid grid-cols-1 md:grid-cols-3 gap-3">
-      {/* Slideshow */}
+      
+      {/* 1. SECCIÓN DE CABECERA (Slideshow y Compra) */}
       <div className="col-span-1 md:col-span-2 ">
-        {/* Mobile Slideshow */}
         <ProductMobileSlideshow
           title={product.title}
           images={product.images}
           className="block md:hidden"
         />
-
-        {/* Desktop Slideshow */}
-        <ProductSlideshow
-          title={product.title}
-          images={product.images}
-          className="hidden md:block"
-        />
+        <div className="hidden md:block max-h-[600px] overflow-hidden"> 
+          <ProductSlideshow
+            title={product.title}
+            images={product.images}
+          />
+        </div>
       </div>
 
-      {/* Detalles */}
       <div className="col-span-1 px-5">
-        {/* <StockLabel slug={product.slug} /> */}
-
-        <h1 className={` ${titleFont.className} antialiased font-bold text-xl`}>
+        <h1 className={`${titleFont.className} antialiased font-bold text-xl uppercase tracking-tight`}>
           {product.title}
         </h1>
+        <p className="text-2xl mb-5 font-light">${product.price}</p>
 
-        <p className="text-lg mb-5">${product.price}</p>
+        <AddToCart 
+          product={{
+            ...product,
+            category: product.category as any,
+            color: product.color as any,
+          }} 
+          category={product.category as any}
+        />        
 
-      <AddToCart 
-        product={{
-          ...product,
-          category: product.category as any,
-          color: product.color as any, // Forzamos a que acepte el array de strings como Color[]
-        }} 
-        category={product.category as any}
-      />        
-      {/* Descripción */}
-        <h3 className="font-bold text-sm">Descripción</h3>
-        <p className="font-light">{product.description}</p>
+        <h3 className="font-bold text-sm mt-10 uppercase tracking-widest">Descripción</h3>
+        <p className="font-light text-zinc-300 leading-relaxed">{product.description}</p>
       </div>
-      {/* SECCIÓN ULTRA UI: Solo aparece si el switch está activo */}
+
+      {/* 2. SECCIÓN ULTRA UI (LOVENSE STYLE) */}
       {product.isPremiumUI && (
-        <div className="col-span-1 md:col-span-3 mt-10 fade-in">
+        <div className="col-span-1 md:col-span-3 mt-10 fade-in space-y-20">
           
-          {/* 1. Características con Iconos */}
-          <PremiumFeatures 
+          {/* PARTE 1: Aspectos Destacados (Iconos en fondo negro) */}
+          <ProductHighlights 
             headline={premiumData?.bannerHeadline}
-            features={premiumData?.features ?? []}
+            items={premiumData?.highlights ?? []}
           />
 
-          {/* 2. Guía de Uso paso a paso */}
-          {premiumData?.steps && (
-            <ProductSteps steps={premiumData.steps} />
-          )}
-      </div>
+          {/* PARTE 2: Guía de Uso (Pasos con imágenes en B&N) */}
+          <div className="bg-white">
+             <ProductSteps
+                steps={premiumData?.usage ?? []} 
+                images={product.images} 
+             />
+          </div>
+
+          {/* PARTE 3: Características de Impacto (Fotos grandes + Títulos gigantes) */}
+          <div className="bg-black py-10">
+            {premiumData?.features?.map((feat: any, index: number) => (
+              <ProductDetailedFeature 
+                key={index}
+                title={feat.title}
+                desc={feat.desc}
+                // Mapeamos a partir de la 4ta imagen para no repetir las del inicio
+                image={product.images[index + 3] || product.images[0]} 
+              />
+            ))}
+          </div>
+
+        </div>
+        
       )}
     </div>
   );

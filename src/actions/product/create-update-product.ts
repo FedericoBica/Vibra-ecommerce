@@ -2,7 +2,7 @@
 
 import prisma from '@/lib/prisma';
 import { revalidatePath } from 'next/cache';
-import { Prisma, Product } from '@prisma/client';
+import { Product } from '@prisma/client';
 import { z } from 'zod';
 import {v2 as cloudinary} from 'cloudinary';
 
@@ -19,6 +19,12 @@ const productSchema = z.object({
     .number()
     .min(0)
     .transform( val => Number(val.toFixed(2)) ),
+  oldPrice: z.coerce
+    .number()
+    .min(0)
+    .optional()
+    .nullable()
+    .transform( val => val ? Number(val.toFixed(2)) : null ),
   inStock: z.coerce
     .number()
     .min(0)
@@ -79,6 +85,7 @@ export const createUpdateProduct = async( formData: FormData ) => {
   
       const productData = {
         ...rest,
+        oldPrice: rest.oldPrice,
         color: rest.color, 
         tags: tagsArray,
         isPremiumUI: rest.isPremiumUI,

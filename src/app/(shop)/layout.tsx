@@ -1,4 +1,6 @@
 import { Footer, Sidebar, TopMenu } from '@/components';
+import { PromoModal } from '@/components/product/ui/PromoCartel';
+import { ScrollToTop } from '@/components/product/ui/ScrollToTop';
 
 export default function ShopLayout( { children }: {
   children: React.ReactNode;
@@ -13,6 +15,9 @@ export default function ShopLayout( { children }: {
         { children }
 
       </div>
+
+      <ScrollToTop />
+      <PromoModal />
 
       <Footer />
     </main>

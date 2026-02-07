@@ -1,39 +1,54 @@
-// 1. Definimos qué es una Feature
-interface Feature {
-  icon: string;
-  title: string;
-  description: string;
-}
+import Image from "next/image";
 
-// 2. Actualizamos las Props para incluir el headline
 interface Props {
-  features: Feature[];
-  headline?: string; // <-- Agregamos esto como opcional
+  title: string;
+  desc: string;
+  image: string;
+  reverse?: boolean;
 }
 
-export const PremiumFeatures = ({ features, headline }: Props) => {
-  return (
-    <section className="bg-black text-white py-16 px-4 rounded-3xl mt-10">
-      {/* Si hay headline, lo mostramos */}
-      {headline && (
-        <h2 className="text-center text-2xl md:text-4xl font-black uppercase mb-12 tracking-tighter italic">
-          {headline}
-        </h2>
-      )}
+export const ProductDetailedFeature = ({ title, desc, image, reverse = false }: Props) => {
+  if (!title) return null;
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-        {features.map((feature, index) => (
-          <div key={index} className="flex flex-col items-center text-center p-4 border border-zinc-800 rounded-2xl hover:bg-zinc-900 transition-colors">
-            {/* Aquí luego podemos mapear los iconos dinámicamente */}
-            <div className="text-pink-500 mb-4">
-              <span className="text-xs font-bold uppercase tracking-widest bg-pink-500/10 px-3 py-1 rounded-full">
-                {feature.icon}
-              </span>
-            </div>
-            <h3 className="font-bold text-lg mb-2 uppercase">{feature.title}</h3>
-            <p className="text-zinc-400 text-sm">{feature.description}</p>
+  return (
+    <section className="py-16 px-4 max-w-7xl mx-auto italic">
+      {/* Título con acento rosa */}
+      <div className="flex items-center gap-4 mb-10">
+        <div className="h-8 w-1.5 bg-pink-600 rounded-full"></div>
+        <h2 className="text-2xl md:text-3xl font-black uppercase tracking-tighter text-white">
+          {title}
+        </h2>
+      </div>
+      
+      <div className={`flex flex-col ${reverse ? 'md:flex-row-reverse' : 'md:flex-row'} items-stretch gap-8`}>
+        
+        {/* Contenedor de Imagen con Glow Rosa al Hover */}
+        <div className="w-full md:w-5/12 group relative">
+          <div className="absolute -inset-1 bg-pink-600 rounded-[2.5rem] blur opacity-0 group-hover:opacity-20 transition duration-1000"></div>
+          <div className="relative aspect-square overflow-hidden rounded-[2.5rem] bg-zinc-900 border border-zinc-800 shadow-2xl">
+            <Image 
+              src={image} 
+              alt={title} 
+              fill 
+              sizes="(max-width: 768px) 100vw, 30vw"
+              className="object-cover group-hover:scale-110 transition-transform duration-1000" 
+            />
           </div>
-        ))}
+        </div>
+
+        {/* Bloque de Texto con gradiente sutil y borde rosa */}
+        <div className="w-full md:w-7/12 relative group">
+          <div className="h-full p-8 md:p-12 bg-gradient-to-br from-zinc-900 to-black rounded-[2.5rem] border border-zinc-800 group-hover:border-pink-500/30 transition-colors duration-500 flex items-center">
+            <div className="space-y-4">
+              <p className="text-zinc-300 text-lg md:text-2xl font-light leading-relaxed">
+                {desc}
+              </p>
+              {/* Detalle decorativo al final del texto */}
+              <div className="h-1 w-12 bg-pink-600 opacity-50 group-hover:w-24 transition-all duration-500"></div>
+            </div>
+          </div>
+        </div>
+
       </div>
     </section>
   );

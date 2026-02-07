@@ -4,6 +4,7 @@ export interface Product {
   images: string[];
   inStock: number;
   price: number;
+  oldPrice?: number | null;
   slug: string;
   tags: string[];
   title: string;
@@ -11,6 +12,9 @@ export interface Product {
   color: Color[]
   categoryId: string
   isPublished: boolean;
+
+  isPremiumUI?: boolean;
+  premiumData?: any;
 }
 
 export interface CartProduct {

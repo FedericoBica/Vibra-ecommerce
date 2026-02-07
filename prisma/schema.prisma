@@ -41,6 +41,7 @@ model Product {
   description String
   inStock     Int
   price       Float    @default(0)
+  oldPrice     Float?
   slug        String   @unique
   tags        String[] @default([])
   color     String[] @default([])
