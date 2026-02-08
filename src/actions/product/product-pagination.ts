@@ -32,6 +32,10 @@ export const getPaginatedProductsWithImages = async ({
         },
         category: true,
       },
+      orderBy: [
+        { sortOrder: 'asc' }, // Primero por prioridad manual (0, 1, 2...)
+        { title: 'asc' }      // Si tienen el mismo número, por orden alfabético
+      ],
       where: {
         isPublished: true,
         category: category ? {
