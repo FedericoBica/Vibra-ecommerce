@@ -29,6 +29,7 @@ const productSchema = z.object({
     .number()
     .min(0)
     .transform( val => Number(val.toFixed(0)) ),
+  sortOrder: z.coerce.number().int().default(0),
   categoryId: z.string().uuid(),
   color: z.coerce.string().transform( val => val.split(',').map(c => c.trim()) ), 
   tags: z.string(),
@@ -85,6 +86,7 @@ export const createUpdateProduct = async( formData: FormData ) => {
   
       const productData = {
         ...rest,
+        sortOrder: rest.sortOrder,
         oldPrice: rest.oldPrice,
         color: rest.color, 
         tags: tagsArray,
