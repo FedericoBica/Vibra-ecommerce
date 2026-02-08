@@ -20,8 +20,9 @@ interface FormInputs {
   slug: string;
   description: string;
   price: number;
-  oldPrice?: number; // Campo para descuento
+  oldPrice?: number;
   inStock: number;
+  sortOrder: number; // NUEVO: Para elegir posición en la web
   color: Color[];
   tags: string;
   categoryId: string;
@@ -31,19 +32,13 @@ interface FormInputs {
   // --- CAMPOS PREMIUM ULTRA UI ---
   isPremiumUI: boolean;
   premiumHeadline?: string;
-
-  // 1. Aspectos Destacados (Iconos)
   high_title_1?: string; high_desc_1?: string; high_icon_1?: string;
   high_title_2?: string; high_desc_2?: string; high_icon_2?: string;
   high_title_3?: string; high_desc_3?: string; high_icon_3?: string;
   high_title_4?: string; high_desc_4?: string; high_icon_4?: string;
-
-  // 2. Cómo Utilizar (Pasos)
   step_title_1?: string; step_desc_1?: string;
   step_title_2?: string; step_desc_2?: string;
   step_title_3?: string; step_desc_3?: string;
-
-  // 3. Características (Filas de impacto)
   feat_title_1?: string; feat_desc_1?: string;
   feat_title_2?: string; feat_desc_2?: string;
 }
@@ -62,13 +57,13 @@ export const ProductForm = ({ product, categories }: Props) => {
   } = useForm<FormInputs>({
     defaultValues: {
       ...restProduct as any,
-      tags: product.tags?.join(", "),
+      tags: product.tags?.join(", ") || "",
       color: product.color ?? [],
+      sortOrder: product.sortOrder ?? 0,
       isPublished: product.isPublished ?? true,
       isPremiumUI: product.isPremiumUI ?? false,
       premiumHeadline: premiumData?.bannerHeadline ?? '',
-      
-      // Mapeo Highlights (Iconos)
+      // ... (mapeos premium se mantienen igual)
       high_title_1: premiumData?.highlights?.[0]?.title ?? '',
       high_desc_1: premiumData?.highlights?.[0]?.desc ?? '',
       high_icon_1: premiumData?.highlights?.[0]?.icon ?? 'Zap',
@@ -77,20 +72,16 @@ export const ProductForm = ({ product, categories }: Props) => {
       high_icon_2: premiumData?.highlights?.[1]?.icon ?? 'Shield',
       high_title_3: premiumData?.highlights?.[2]?.title ?? '',
       high_desc_3: premiumData?.highlights?.[2]?.desc ?? '',
-      high_icon_3: premiumData?.highlights?.[3]?.icon ?? 'Smartphone',
+      high_icon_3: premiumData?.highlights?.[2]?.icon ?? 'Smartphone',
       high_title_4: premiumData?.highlights?.[3]?.title ?? '',
       high_desc_4: premiumData?.highlights?.[3]?.desc ?? '',
       high_icon_4: premiumData?.highlights?.[3]?.icon ?? 'Wind',
-
-      // Mapeo Usage (Pasos)
       step_title_1: premiumData?.usage?.[0]?.title ?? '',
       step_desc_1: premiumData?.usage?.[0]?.desc ?? '',
       step_title_2: premiumData?.usage?.[1]?.title ?? '',
       step_desc_2: premiumData?.usage?.[1]?.desc ?? '',
       step_title_3: premiumData?.usage?.[2]?.title ?? '',
       step_desc_3: premiumData?.usage?.[2]?.desc ?? '',
-
-      // Mapeo Features (Filas)
       feat_title_1: premiumData?.features?.[0]?.title ?? '',
       feat_desc_1: premiumData?.features?.[0]?.desc ?? '',
       feat_title_2: premiumData?.features?.[1]?.title ?? '',
@@ -98,12 +89,14 @@ export const ProductForm = ({ product, categories }: Props) => {
     },
   });
 
+  // Observamos los cambios en tiempo real
   const isPremiumEnabled = watch("isPremiumUI");
+  const selectedColors = watch("color") || [];
 
   const onColorChanged = (color: Color) => {
-    const currentColors = new Set(getValues("color"));
+    const currentColors = new Set(selectedColors);
     currentColors.has(color) ? currentColors.delete(color) : currentColors.add(color);
-    setValue("color", Array.from(currentColors));
+    setValue("color", Array.from(currentColors), { shouldValidate: true });
   };
 
   const onSubmit = async (data: FormInputs) => {
@@ -116,35 +109,37 @@ export const ProductForm = ({ product, categories }: Props) => {
     formData.append("slug", productToSave.slug);
     formData.append("description", productToSave.description);
     formData.append("price", productToSave.price.toString());
+    formData.append("sortOrder", productToSave.sortOrder.toString()); // ENVÍO DE PRIORIDAD
     if (productToSave.oldPrice) formData.append("oldPrice", productToSave.oldPrice.toString());
     formData.append("inStock", productToSave.inStock.toString());
-    formData.append("color", productToSave.color.join(','));
-    formData.append("tags", productToSave.tags);
+    formData.append("color", (productToSave.color || []).join(','));
+    formData.append("tags", productToSave.tags || "");
     formData.append("categoryId", productToSave.categoryId);
     formData.append("isPublished", productToSave.isPublished.toString());
     formData.append("isPremiumUI", productToSave.isPremiumUI.toString());
     
+    // ... (Logica PremiumData JSON se mantiene igual)
     if (productToSave.isPremiumUI) {
-      const premiumJson = {
-        bannerHeadline: data.premiumHeadline,
-        highlights: [
-          { icon: data.high_icon_1, title: data.high_title_1, desc: data.high_desc_1 },
-          { icon: data.high_icon_2, title: data.high_title_2, desc: data.high_desc_2 },
-          { icon: data.high_icon_3, title: data.high_title_3, desc: data.high_desc_3 },
-          { icon: data.high_icon_4, title: data.high_title_4, desc: data.high_desc_4 },
-        ],
-        usage: [
-          { title: data.step_title_1, desc: data.step_desc_1 },
-          { title: data.step_title_2, desc: data.step_desc_2 },
-          { title: data.step_title_3, desc: data.step_desc_3 },
-        ],
-        features: [
-          { title: data.feat_title_1, desc: data.feat_desc_1 },
-          { title: data.feat_title_2, desc: data.feat_desc_2 },
-        ]
-      };
-      formData.append("premiumData", JSON.stringify(premiumJson));
-    }
+        const premiumJson = {
+          bannerHeadline: data.premiumHeadline,
+          highlights: [
+            { icon: data.high_icon_1, title: data.high_title_1, desc: data.high_desc_1 },
+            { icon: data.high_icon_2, title: data.high_title_2, desc: data.high_desc_2 },
+            { icon: data.high_icon_3, title: data.high_title_3, desc: data.high_desc_3 },
+            { icon: data.high_icon_4, title: data.high_title_4, desc: data.high_desc_4 },
+          ],
+          usage: [
+            { title: data.step_title_1, desc: data.step_desc_1 },
+            { title: data.step_title_2, desc: data.step_desc_2 },
+            { title: data.step_title_3, desc: data.step_desc_3 },
+          ],
+          features: [
+            { title: data.feat_title_1, desc: data.feat_desc_1 },
+            { title: data.feat_title_2, desc: data.feat_desc_2 },
+          ]
+        };
+        formData.append("premiumData", JSON.stringify(premiumJson));
+      }
 
     if (images) {
       for (let i = 0; i < images.length; i++) {
@@ -192,7 +187,12 @@ export const ProductForm = ({ product, categories }: Props) => {
         </div>
 
         <div className="flex flex-col text-black mb-2">
-            <span>Tags</span>
+            <span>Posición en Web (0 arriba, 99 abajo)</span>
+            <input type="number" className="p-2 border rounded-md bg-gray-200" {...register("sortOrder", { required: true })} />
+        </div>
+
+        <div className="flex flex-col text-black mb-2">
+            <span>Tags (separados por coma)</span>
             <input type="text" className="p-2 border rounded-md bg-gray-200" {...register("tags", { required: true })} />
         </div>
 
@@ -215,10 +215,9 @@ export const ProductForm = ({ product, categories }: Props) => {
 
         {/* CAMPOS PREMIUM DINÁMICOS */}
         {isPremiumEnabled && (
-          <div className="mt-8 border-t border-zinc-800 pt-6 space-y-10">
-            
-            {/* 1. ASPECTOS DESTACADOS (ICONOS) */}
-            <div className="bg-black/40 p-5 rounded-2xl border border-zinc-800 space-y-4">
+           <div className="mt-8 border-t border-zinc-800 pt-6 space-y-10 text-black">
+                {/* ... (Contenido Premium se mantiene igual) */}
+                <div className="bg-black/40 p-5 rounded-2xl border border-zinc-800 space-y-4">
               <span className="text-xs font-bold text-pink-500 uppercase tracking-widest flex items-center gap-2">
                 <div className="w-2 h-2 bg-pink-500 rounded-full animate-pulse"></div>
                 1. Aspectos Destacados (Iconos)
@@ -234,7 +233,7 @@ export const ProductForm = ({ product, categories }: Props) => {
                       <option value="Smartphone">App (Celular)</option>
                       <option value="Wind">Wind (Aire)</option>
                     </select>
-                    <input placeholder="Título" className="flex-1 bg-transparent border-b border-zinc-700 text-xs py-1 outline-none focus:border-pink-500" {...register(`high_title_${n}` as any)} />
+                    <input placeholder="Título" className="flex-1 bg-transparent border-b border-zinc-700 text-xs py-1 outline-none focus:border-pink-500 text-white" {...register(`high_title_${n}` as any)} />
                     <input placeholder="Desc. Breve" className="flex-1 bg-transparent border-b border-zinc-700 text-[10px] py-1 outline-none text-zinc-400" {...register(`high_desc_${n}` as any)} />
                   </div>
                 ))}
@@ -247,7 +246,7 @@ export const ProductForm = ({ product, categories }: Props) => {
               <div className="space-y-3">
                 {[1, 2, 3].map((n) => (
                   <div key={n} className="flex flex-col gap-1 p-3 bg-zinc-900/30 rounded border border-zinc-800">
-                    <input placeholder={`Paso ${n}: Título`} className="bg-transparent border-b border-zinc-700 text-sm font-bold outline-none" {...register(`step_title_${n}` as any)} />
+                    <input placeholder={`Paso ${n}: Título`} className="bg-transparent border-b border-zinc-700 text-sm font-bold outline-none text-white" {...register(`step_title_${n}` as any)} />
                     <textarea placeholder="Descripción detallada del paso..." className="bg-transparent text-xs text-zinc-400 outline-none resize-none" rows={2} {...register(`step_desc_${n}` as any)} />
                   </div>
                 ))}
@@ -259,15 +258,15 @@ export const ProductForm = ({ product, categories }: Props) => {
               <span className="text-xs font-bold text-pink-500 uppercase tracking-widest">3. Características de Impacto (2 Filas)</span>
               {[1, 2].map(n => (
                 <div key={n} className="p-3 bg-black/40 rounded-xl border border-zinc-800">
-                  <input placeholder={`Título Largo Fila ${n}`} className="w-full bg-transparent border-b border-zinc-700 text-sm font-black uppercase italic mb-2 outline-none" {...register(`feat_title_${n}` as any)} />
+                  <input placeholder={`Título Largo Fila ${n}`} className="w-full bg-transparent border-b border-zinc-700 text-sm font-black uppercase italic mb-2 outline-none text-white" {...register(`feat_title_${n}` as any)} />
                   <textarea placeholder="Descripción larga con detalles técnicos..." className="w-full bg-transparent text-xs text-zinc-300 outline-none" rows={3} {...register(`feat_desc_${n}` as any)} />
                 </div>
               ))}
             </div>
-
-          </div>
+           </div>
         )}
 
+        {/* ... Resto de botones y lógica de eliminación ... */}
         <div className="flex flex-col my-6 p-4 bg-zinc-900/50 rounded-xl border border-zinc-800">
           <label className="inline-flex items-center cursor-pointer">
             <input type="checkbox" {...register('isPublished')} className="sr-only peer" />
@@ -306,7 +305,7 @@ export const ProductForm = ({ product, categories }: Props) => {
         </div>
 
         <div className="flex flex-col">
-          <span>Variantes de Color</span>
+          <span>Variantes de Color (Click para seleccionar)</span>
           <div className="flex flex-wrap mt-2">
             {availableColors.map((color) => (
               <div 
@@ -314,14 +313,17 @@ export const ProductForm = ({ product, categories }: Props) => {
                 onClick={() => onColorChanged(color)} 
                 className={clsx(
                   "p-2 border cursor-pointer rounded-md mr-2 mb-2 min-w-[70px] transition-all text-center text-xs font-medium", 
-                  { "bg-pink-500 text-white border-pink-600 shadow-lg": getValues("color").includes(color), "bg-white text-gray-700": !getValues("color").includes(color) }
+                  { 
+                    "bg-pink-500 text-white border-pink-600 shadow-lg scale-105": selectedColors.includes(color), 
+                    "bg-white text-gray-700 border-gray-300": !selectedColors.includes(color) 
+                  }
                 )}
               >
                 {color}
               </div>
             ))}
           </div>
-
+          {/* ... Galeria de Imágenes se mantiene igual ... */}
           <div className="flex flex-col mt-4 mb-4">
             <span className="font-bold">Galería de Imágenes</span>
             <input type="file" {...register('images')} multiple className="p-2 border rounded-md bg-gray-200 text-black mt-2" accept="image/*" />

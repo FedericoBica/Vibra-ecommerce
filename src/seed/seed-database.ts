@@ -56,8 +56,10 @@ async function main() {
     const dbProduct = await prisma.product.create({
       data: {
         ...rest,
+        oldPrice: (product as any).oldPrice ?? null,
+        sortOrder: (product as any).sortOrder ?? 0,
         color: colors, 
-        categoryId: dbCategory.id // Ahora estamos seguros de que no es undefined
+        categoryId: dbCategory.id 
       }
     });
 

@@ -15,6 +15,7 @@ export interface Product {
 
   isPremiumUI?: boolean;
   premiumData?: any;
+  sortOrder:number;
 }
 
 export interface CartProduct {
