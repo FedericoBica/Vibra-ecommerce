@@ -127,6 +127,16 @@ return (
               <p className="text-xl font-bold text-pink-500">
                 {address?.firstName ?? 'Invitado'} {address?.lastName ?? ''}
               </p>              
+              <div className="flex flex-col gap-1 mt-2 mb-3">
+                <p className="text-blue-400 text-sm font-medium italic">
+                  📧 {address?.email || order.guestEmail || 'Sin email registrado'}
+                </p>
+                {address?.dni && (
+                  <p className="text-zinc-400 text-xs font-mono uppercase tracking-wider">
+                    🆔 CI/DNI: <span className="text-zinc-200">{address.dni}</span>
+                  </p>
+                )}
+              </div>
               
               <div className="h-px bg-zinc-700/50 my-3" />
 

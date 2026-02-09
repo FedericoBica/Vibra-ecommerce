@@ -154,11 +154,13 @@ model OrderAddress {
   id         String  @id @default(uuid())
   firstName  String
   lastName   String
+  email      String?
   address    String
   address2   String?
   postalCode String
   city       String
   phone      String
+  dni        String?
 
   departamento String 
 
