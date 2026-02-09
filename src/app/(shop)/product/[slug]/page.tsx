@@ -87,39 +87,35 @@ export default async function ProductBySlugPage({ params }: Props) {
         <p className="font-light text-zinc-300 leading-relaxed">{product.description}</p>
       </div>
 
-      {/* 2. SECCIÓN ULTRA UI (LOVENSE STYLE) */}
+{/* 2. SECCIÓN ULTRA UI (LOVENSE STYLE) */}
       {product.isPremiumUI && (
         <div className="col-span-1 md:col-span-3 mt-10 fade-in space-y-20">
           
-          {/* PARTE 1: Aspectos Destacados (Iconos en fondo negro) */}
           <ProductHighlights 
             headline={premiumData?.bannerHeadline}
             items={premiumData?.highlights ?? []}
           />
 
-          {/* PARTE 2: Guía de Uso (Pasos con imágenes en B&N) */}
           <div className="bg-white">
+             {/* ✅ Ya no pasamos product.images, el componente usará step.img */}
              <ProductSteps
                 steps={premiumData?.usage ?? []} 
-                images={product.images} 
              />
           </div>
 
-          {/* PARTE 3: Características de Impacto (Fotos grandes + Títulos gigantes) */}
           <div className="bg-black py-10">
             {premiumData?.features?.map((feat: any, index: number) => (
               <ProductDetailedFeature 
                 key={index}
                 title={feat.title}
                 desc={feat.desc}
-                // Mapeamos a partir de la 4ta imagen para no repetir las del inicio
-                image={product.images[index + 3] || product.images[0]} 
+                // ✅ Usamos feat.img. Si no existe, fallback a una imagen del producto
+                image={feat.img || product.images[0]} 
+                reverse={index % 2 !== 0} // Toque extra: alterna el lado de la imagen
               />
             ))}
           </div>
-
         </div>
-        
       )}
     </div>
   );

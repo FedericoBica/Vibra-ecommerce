@@ -14,7 +14,7 @@ export const ProductSteps = ({ steps, images }: { steps: any[], images: string[]
             {/* Imagen B&N */}
             <div className="relative w-24 h-24 md:w-28 md:h-28 flex-shrink-0 overflow-hidden rounded-2xl bg-zinc-100 border border-zinc-200">
               <Image 
-                src={images[i + 1] || images[0]} 
+                src={step.img || '/imgs/placeholder.jpg'} 
                 alt={step.title}
                 fill
                 className="object-cover grayscale group-hover:grayscale-0 transition-all duration-700"
