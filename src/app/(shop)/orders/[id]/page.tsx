@@ -9,6 +9,7 @@ import { OrderStatus, Title } from "@/components";
 import { createMercadoPagoPreference } from "@/actions/payments/mercado-pago-preference";
 import { MercadoPagoButton } from "@/components/mercadopago/MercadoPagoButton";
 import { OrderTracker } from "@/components/orders/OrderTracker";
+import { InstagramContact } from "@/components/product/ui/InstagramContact";
 
 
 interface Props {
@@ -202,9 +203,18 @@ return (
             </div>
 
             <div className="mt-8 mb-2 w-full">
-              {!order.isPaid && preferenceId && (
-                <div className="animate-in fade-in zoom-in duration-300">
-                   <MercadoPagoButton preferenceId={preferenceId} />
+              {!order.isPaid && (
+                  <div className="animate-in fade-in zoom-in duration-300 space-y-4">
+                  {/* Botón de Mercado Pago (o Bamboo en el futuro) */}
+                  {preferenceId && (
+                    <MercadoPagoButton preferenceId={preferenceId} />
+                  )}
+                  
+                  {/* Botón de Instagram como soporte técnico de pagos */}
+                  <InstagramContact 
+                    message="¿Problemas con el pago?" 
+                    className="w-full" 
+                  />
                 </div>
               )}
               {order.isPaid && (

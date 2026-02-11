@@ -23,6 +23,8 @@ export * from './product/color-selector/ColorSelector';
 export * from './product/stock-label/StockLabel';
 export * from './product/product-image/ProductImage'
 
+export * from './ui/search/SearchBar'
+
 export * from './ui/footer/Footer';
 export * from './ui/not-found/PageNotFound';
 export * from './ui/pagination/Pagination'
