@@ -107,14 +107,14 @@ export const Sidebar = () => {
             
           )}
 
-          {/* Link del Blog (Visible para todos) */}
+          {/* Link del Blog (Visible para todos en el celu) */}
           <Link
             href="/blog"
             onClick={closeMenu}
-            className="flex items-center justify-end w-2/3 p-2 hover:text-pink-500 transition-all group"
+            className="flex items-center justify-end w-full p-4 hover:text-pink-500 transition-all group border-b border-zinc-800/50"
           >
-            <span className="mr-3 text-xl font-light">Blog</span>
-            <IoBookOutline size={20} className="text-gray-500 group-hover:text-pink-500" />
+            <span className="mr-3 text-xl font-light">Nuestro Blog</span>
+            <IoBookOutline size={24} className="text-gray-500 group-hover:text-pink-500" />
           </Link>
 
           {/* Sección Admin Slim */}

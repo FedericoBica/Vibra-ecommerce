@@ -69,7 +69,7 @@ export const TopMenu = () => {
         </button>
 
       <Link 
-        className="m-2 p-2 rounded-md transition-all hover:bg-zinc-800 text-pink-500 font-bold" 
+        className="hidden md:block m-2 p-2 rounded-md transition-all hover:bg-zinc-800 text-pink-500 font-bold" 
         href="/blog"
       >
         Blog
