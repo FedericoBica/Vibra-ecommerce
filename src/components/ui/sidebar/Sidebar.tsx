@@ -87,6 +87,16 @@ export const Sidebar = () => {
                 <IoTicketOutline size={20} className="text-gray-500 group-hover:text-pink-500" />
               </Link>
 
+              <Link
+                href="/blog"
+                onClick={closeMenu}
+                className="flex items-center justify-end w-full p-4 hover:text-pink-500 transition-all group border-b border-zinc-800/50"
+              >
+                <span className="mr-3 text-xl font-light">Nuestro Blog</span>
+                <IoBookOutline size={24} className="text-gray-500 group-hover:text-pink-500" />
+              </Link>
+
+
               <button
                 onClick={() => { logout(); closeMenu(); }}
                 className="flex items-center justify-end w-2/3 p-2 hover:text-red-400 transition-all group"
@@ -96,26 +106,27 @@ export const Sidebar = () => {
               </button>
             </>
           ) : (
-            <Link
-              href="/auth/login"
-              onClick={closeMenu}
-              className="flex items-center justify-end w-2/3 p-2 text-pink-500 hover:brightness-125 transition-all font-medium mt-4 border-r-2 border-pink-500/30 pr-2"
-            >
-              <span className="mr-3 text-xl italic">Ingresar</span>
-              <IoLogInOutline size={22} />
-            </Link>
-            
-          )}
+            <div>
+              <Link
+                href="/auth/login"
+                onClick={closeMenu}
+                className="flex items-center justify-end w-2/3 p-2 text-pink-500 hover:brightness-125 transition-all font-medium mt-4 border-r-2 border-pink-500/30 pr-2"
+              >
+                <span className="mr-3 text-xl italic">Ingresar</span>
+                <IoLogInOutline size={22} />
+              </Link>
 
-          {/* Link del Blog (Visible para todos en el celu) */}
-          <Link
-            href="/blog"
-            onClick={closeMenu}
-            className="flex items-center justify-end w-full p-4 hover:text-pink-500 transition-all group border-b border-zinc-800/50"
-          >
-            <span className="mr-3 text-xl font-light">Nuestro Blog</span>
-            <IoBookOutline size={24} className="text-gray-500 group-hover:text-pink-500" />
-          </Link>
+              <Link
+                href="/blog"
+                onClick={closeMenu}
+                className="flex items-center justify-end w-full p-4 text-pink-500 hover:brightness-125 transition-all group border-b border-pink-500/30"
+              >
+                <span className="mr-3 text-xl font-light">Nuestro Blog</span>
+                <IoBookOutline size={24} className="text-pink-500 group-hover:text-pink-700" />
+              </Link>
+
+            </div>
+          )}
 
           {/* Sección Admin Slim */}
           {isAdmin && (
