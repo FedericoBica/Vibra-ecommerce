@@ -56,6 +56,7 @@ export const TopMenu = () => {
         </form>
       </div> 
 
+      
       {/* Iconos - Cart, Menu */}
       <div className="flex items-center text-gray-300">
         
@@ -66,6 +67,14 @@ export const TopMenu = () => {
         >
           <IoSearchOutline className="w-6 h-6" />
         </button>
+
+      <Link 
+        className="m-2 p-2 rounded-md transition-all hover:bg-zinc-800 text-pink-500 font-bold" 
+        href="/blog"
+      >
+        Blog
+      </Link>
+
 
         <Link href={(totalItemsInCart === 0 && loaded) ? '/empty' : "/cart"} className="mx-2 hover:text-pink-500 transition-colors">
           <div className="relative">

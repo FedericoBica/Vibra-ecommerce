@@ -12,6 +12,11 @@ export * from './auth/register';
 
 export * from './category/get-categories';
 
+export * from './blog/get-posts';
+export * from './blog/get-post-by-slug';
+export * from './blog/get-all-posts';
+export * from './blog/create-update-post';
+
 
 export * from './order/place-order';
 export * from './order/get-order-by-id';

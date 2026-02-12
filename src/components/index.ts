@@ -11,6 +11,7 @@ export * from './coupon/CouponInput'
 
 export * from './mercadopago/MercadoPagoButton';
 
+export * from './blog/PostCard';
 
 export * from './providers/Providers';
 export * from './providers/MetaPixel';

@@ -12,6 +12,8 @@ import {
   IoSearchOutline,
   IoShirtOutline,
   IoTicketOutline,
+  IoBookOutline,
+  IoDocumentTextOutline,
 } from "react-icons/io5";
 
 import { useUIStore } from "@/store";
@@ -102,7 +104,18 @@ export const Sidebar = () => {
               <span className="mr-3 text-xl italic">Ingresar</span>
               <IoLogInOutline size={22} />
             </Link>
+            
           )}
+
+          {/* Link del Blog (Visible para todos) */}
+          <Link
+            href="/blog"
+            onClick={closeMenu}
+            className="flex items-center justify-end w-2/3 p-2 hover:text-pink-500 transition-all group"
+          >
+            <span className="mr-3 text-xl font-light">Blog</span>
+            <IoBookOutline size={20} className="text-gray-500 group-hover:text-pink-500" />
+          </Link>
 
           {/* Sección Admin Slim */}
           {isAdmin && (
@@ -126,6 +139,16 @@ export const Sidebar = () => {
               >
                 <span className="mr-3 text-[13px] font-light text-gray-400">Usuarios</span>
                 <IoPeopleOutline size={18} />
+              </Link>
+
+              {/* GESTIÓN DE BLOG PARA ADMIN */}
+              <Link 
+                href="/admin/posts" 
+                onClick={closeMenu} 
+                className="flex items-center justify-end w-2/3 p-2 hover:text-white transition-all"
+              >
+                <span className="mr-3 text-[13px] font-light text-gray-400">Gestionar Blog</span>
+                <IoDocumentTextOutline size={18} />
               </Link>
             </div>
           )}
