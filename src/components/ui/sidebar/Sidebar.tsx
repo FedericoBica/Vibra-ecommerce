@@ -119,10 +119,10 @@ export const Sidebar = () => {
               <Link
                 href="/blog"
                 onClick={closeMenu}
-                className="flex items-center justify-end w-full p-4 text-pink-500 hover:brightness-125 transition-all group border-b border-pink-500/30"
+                className="flex items-center justify-end w-2/3 p-2 text-pink-500 hover:brightness-125 transition-all font-medium mt-4 border-r-2 border-pink-500/30 pr-2"
               >
-                <span className="mr-3 text-xl font-light">Nuestro Blog</span>
-                <IoBookOutline size={24} className="text-pink-500 group-hover:text-pink-700" />
+                <span className="mr-3 text-xl italic">Nuestro Blog</span>
+                <IoBookOutline size={22} className="text-pink-500 group-hover:text-pink-700" />
               </Link>
 
             </div>
