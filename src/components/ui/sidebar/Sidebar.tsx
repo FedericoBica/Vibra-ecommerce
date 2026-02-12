@@ -14,6 +14,7 @@ import {
   IoTicketOutline,
   IoBookOutline,
   IoDocumentTextOutline,
+  IoPaperPlaneOutline,
 } from "react-icons/io5";
 
 import { useUIStore } from "@/store";
@@ -31,135 +32,89 @@ export const Sidebar = () => {
     <div className="z-[999] relative">
       {/* Overlay */}
       {isSideMenuOpen && (
-        <div
-          onClick={closeMenu}
-          className="fixed top-0 left-0 w-screen h-screen z-[60] bg-black/40 backdrop-blur-[2px] transition-all"
-        />
+        <div onClick={closeMenu} className="fixed top-0 left-0 w-screen h-screen z-[60] bg-black/40 backdrop-blur-[2px] transition-all" />
       )}
 
       {/* Sidemenu Slim */}
-      <nav
-        className={clsx(
-          "fixed p-4 right-0 top-0 w-[75%] sm:w-[320px] h-screen bg-zinc-900/95 text-gray-100 z-[70] shadow-2xl transform transition-all duration-300 border-l border-white/5 overflow-y-auto",
+      <nav className={clsx(
+          "fixed p-6 right-0 top-0 w-[75%] sm:w-[320px] h-screen bg-zinc-900/95 text-gray-100 z-[70] shadow-2xl transform transition-all duration-300 border-l border-white/5 overflow-y-auto",
           { "translate-x-full": !isSideMenuOpen }
-        )}
-      >
+        )}>
         
-        {/* LÍNEA SUPERIOR: Buscador + Cerrar */}
-        <div className="flex items-center gap-2 mt-8 mb-10">
+        {/* BUSCADOR Y CIERRE */}
+        <div className="flex items-center gap-2 mt-8 mb-12">
           <div className="relative flex-1">
             <IoSearchOutline size={16} className="absolute top-2.5 left-3 text-gray-500" />
             <input
               type="text"
               placeholder="Buscar..."
-              className="w-full bg-zinc-800/50 rounded-lg pl-9 py-2 text-sm border border-zinc-700 text-white focus:outline-none focus:border-pink-500/50 transition-all placeholder:text-gray-600"
+              className="w-full bg-zinc-800/50 rounded-lg pl-9 py-2 text-sm border border-zinc-700 text-white focus:outline-none focus:border-pink-500/50 transition-all"
             />
           </div>
-          
-          <button 
-            onClick={closeMenu}
-            className="text-gray-400 hover:text-pink-500 transition-colors p-1"
-          >
-            <IoCloseOutline size={32} />
-          </button>
+          <button onClick={closeMenu} className="text-gray-400 hover:text-pink-500 p-1"><IoCloseOutline size={32} /></button>
         </div>
 
-        {/* CONTENEDOR DE LINKS - Alineados a la derecha y más angostos */}
-        <div className="flex flex-col items-end space-y-1">
+        {/* LISTA ÚNICA DE LINKS */}
+        <div className="flex flex-col items-end space-y-6">
           
-          {isAuthenticated ? (
-            <>
-              <Link
-                href="/profile"
-                onClick={closeMenu}
-                className="flex items-center justify-end w-2/3 p-2 hover:text-pink-500 transition-all group"
-              >
-                <span className="mr-3 text-xl font-light">Perfil</span>
-                <IoPersonOutline size={20} className="text-gray-500 group-hover:text-pink-500" />
-              </Link>
-
-              <Link
-                href="/orders"
-                onClick={closeMenu}
-                className="flex items-center justify-end w-2/3 p-2 hover:text-pink-500 transition-all group"
-              >
-                <span className="mr-3 text-xl font-light">Órdenes</span>
-                <IoTicketOutline size={20} className="text-gray-500 group-hover:text-pink-500" />
-              </Link>
-
-              <Link
-                href="/blog"
-                onClick={closeMenu}
-                className="flex items-center justify-end w-full p-4 hover:text-pink-500 transition-all group border-b border-zinc-800/50"
-              >
-                <span className="mr-3 text-xl font-light">Nuestro Blog</span>
-                <IoBookOutline size={24} className="text-gray-500 group-hover:text-pink-500" />
-              </Link>
-
-
-              <button
-                onClick={() => { logout(); closeMenu(); }}
-                className="flex items-center justify-end w-2/3 p-2 hover:text-red-400 transition-all group"
-              >
-                <span className="mr-3 text-xl font-light">Salir</span>
-                <IoLogOutOutline size={20} className="text-gray-500 group-hover:text-red-400" />
-              </button>
-            </>
+          {/* 1. LINKS DE USUARIO */}
+          {!isAuthenticated ? (
+            <Link href="/auth/login" onClick={closeMenu} className="flex items-center group">
+              <span className="mr-4 text-xl font-light group-hover:text-pink-500 transition-all">Ingresar</span>
+              <IoLogInOutline size={24} className="text-gray-500 group-hover:text-pink-500" />
+            </Link>
           ) : (
-            <div>
-              <Link
-                href="/auth/login"
-                onClick={closeMenu}
-                className="flex items-center justify-end w-2/3 p-2 text-pink-500 hover:brightness-125 transition-all font-medium mt-4 border-r-2 border-pink-500/30 pr-2"
-              >
-                <span className="mr-3 text-xl italic">Ingresar</span>
-                <IoLogInOutline size={22} />
+            <>
+              <Link href="/profile" onClick={closeMenu} className="flex items-center group">
+                <span className="mr-4 text-xl font-light group-hover:text-pink-500 transition-all">Perfil</span>
+                <IoPersonOutline size={24} className="text-gray-500 group-hover:text-pink-500" />
               </Link>
-
-              <Link
-                href="/blog"
-                onClick={closeMenu}
-                className="flex items-center justify-end w-2/3 p-2 text-pink-500 hover:brightness-125 transition-all font-medium mt-4 border-r-2 border-pink-500/30 pr-2"
-              >
-                <span className="mr-3 text-xl italic">Nuestro Blog</span>
-                <IoBookOutline size={22} className="text-pink-500 group-hover:text-pink-700" />
+              <Link href="/orders" onClick={closeMenu} className="flex items-center group">
+                <span className="mr-4 text-xl font-light group-hover:text-pink-500 transition-all">Mis Órdenes</span>
+                <IoTicketOutline size={24} className="text-gray-500 group-hover:text-pink-500" />
               </Link>
-
-            </div>
+            </>
           )}
 
-          {/* Sección Admin Slim */}
+          {/* 2. LINKS DE CONTENIDO (Ahora integrados a la lista) */}
+          <Link href="/blog" onClick={closeMenu} className="flex items-center group">
+            <span className="mr-4 text-xl font-light group-hover:text-pink-500 transition-all">Nuestro Blog</span>
+            <IoBookOutline size={24} className="text-gray-500 group-hover:text-pink-500" />
+          </Link>
+
+          <Link href="/envios" onClick={closeMenu} className="flex items-center group">
+            <span className="mr-4 text-xl font-light group-hover:text-pink-500 transition-all">Info Envíos</span>
+            <IoPaperPlaneOutline size={24} className="text-gray-500 group-hover:text-pink-500" />
+          </Link>
+
+          {/* 3. CERRAR SESIÓN */}
+          {isAuthenticated && (
+            <button onClick={() => { logout(); closeMenu(); }} className="flex items-center group pt-4">
+              <span className="mr-4 text-xl font-light text-gray-500 group-hover:text-red-400 transition-all">Salir</span>
+              <IoLogOutOutline size={24} className="text-gray-600 group-hover:text-red-400" />
+            </button>
+          )}
+
+          {/* 4. SECCIÓN ADMIN */}
           {isAdmin && (
-            <div className="w-full flex flex-col items-end mt-8 pt-6 border-t border-zinc-800/50 space-y-1">
-              <span className="text-[9px] uppercase tracking-[0.2em] text-gray-600 mb-2 pr-2">Admin</span>
+            <div className="w-full flex flex-col items-end mt-10 pt-10 border-t border-zinc-800 space-y-5">
+              <span className="text-[10px] uppercase tracking-[0.4em] text-pink-600 font-bold mb-2">Administración</span>
               
-              <Link href="/admin/products" onClick={closeMenu} className="flex items-center justify-end w-2/3 p-2 hover:text-white transition-all">
-                <span className="mr-3 text-[13px] font-light text-gray-400">Productos</span>
-                <IoShirtOutline size={18} />
+              <Link href="/admin/products" onClick={closeMenu} className="flex items-center group">
+                <span className="mr-4 text-sm font-light text-gray-400 group-hover:text-white transition-all">Productos</span>
+                <IoShirtOutline size={20} className="text-zinc-600 group-hover:text-pink-500" />
               </Link>
-
-              <Link href="/admin/orders" onClick={closeMenu} className="flex items-center justify-end w-2/3 p-2 hover:text-white transition-all">
-                <span className="mr-3 text-[13px] font-light text-gray-400">Órdenes</span>
-                <IoTicketOutline size={18} />
+              <Link href="/admin/orders" onClick={closeMenu} className="flex items-center group">
+                <span className="mr-4 text-sm font-light text-gray-400 group-hover:text-white transition-all">Órdenes</span>
+                <IoTicketOutline size={20} className="text-zinc-600 group-hover:text-pink-500" />
               </Link>
-
-              <Link 
-                href="/admin/users" 
-                onClick={closeMenu} 
-                className="flex items-center justify-end w-2/3 p-2 hover:text-white transition-all"
-              >
-                <span className="mr-3 text-[13px] font-light text-gray-400">Usuarios</span>
-                <IoPeopleOutline size={18} />
+              <Link href="/admin/posts" onClick={closeMenu} className="flex items-center group">
+                <span className="mr-4 text-sm font-light text-gray-400 group-hover:text-white transition-all">Blog</span>
+                <IoDocumentTextOutline size={20} className="text-zinc-600 group-hover:text-pink-500" />
               </Link>
-
-              {/* GESTIÓN DE BLOG PARA ADMIN */}
-              <Link 
-                href="/admin/posts" 
-                onClick={closeMenu} 
-                className="flex items-center justify-end w-2/3 p-2 hover:text-white transition-all"
-              >
-                <span className="mr-3 text-[13px] font-light text-gray-400">Gestionar Blog</span>
-                <IoDocumentTextOutline size={18} />
+              <Link href="/admin/users" onClick={closeMenu} className="flex items-center group">
+                <span className="mr-4 text-sm font-light text-gray-400 group-hover:text-white transition-all">Usuarios</span>
+                <IoPeopleOutline size={20} className="text-zinc-600 group-hover:text-pink-500" />
               </Link>
             </div>
           )}
