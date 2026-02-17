@@ -49,7 +49,7 @@ export const TopMenu = () => {
             autoFocus={isSearchOpen} // Auto-focus al abrir en móvil
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder="Buscar placer..."
+            placeholder="Buscar productos..."
             className="w-full bg-zinc-900/50 border border-pink-900/20 rounded-full py-1.5 pl-10 pr-10 text-sm text-gray-200 focus:outline-none focus:border-pink-500/50 focus:bg-zinc-800 transition-all"
           />
           <IoSearchOutline className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" size={18} />
