@@ -22,6 +22,15 @@ const config: Config = {
         'sexshop-violet': '#8a2be2',
     }
     },
+    animation: {
+        'marquee': 'marquee 25s linear infinite',
+      },
+      keyframes: {
+        marquee: {
+          '0%': { transform: 'translateX(0%)' },
+          '100%': { transform: 'translateX(-50%)' }, // Se mueve la mitad para un loop infinito fluido
+        },
+      },
   },
   plugins: [],
 }

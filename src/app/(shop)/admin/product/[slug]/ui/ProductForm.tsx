@@ -30,6 +30,7 @@ interface FormInputs {
   images?: FileList;
   isPremiumUI: boolean;
   premiumHeadline?: string;
+  isBestSeller?: boolean,
   high_title_1?: string; high_desc_1?: string; high_icon_1?: string;
   high_title_2?: string; high_desc_2?: string; high_icon_2?: string;
   high_title_3?: string; high_desc_3?: string; high_icon_3?: string;
@@ -55,6 +56,7 @@ export const ProductForm = ({ product, categories }: Props) => {
       isPublished: product.isPublished ?? true,
       isPremiumUI: product.isPremiumUI ?? false,
       premiumHeadline: premiumData?.bannerHeadline ?? '',
+      isBestSeller: product.isBestSeller ?? false,
       high_title_1: premiumData?.highlights?.[0]?.title ?? '',
       high_desc_1: premiumData?.highlights?.[0]?.desc ?? '',
       high_icon_1: premiumData?.highlights?.[0]?.icon ?? 'Zap',
@@ -100,7 +102,7 @@ export const ProductForm = ({ product, categories }: Props) => {
     formData.append("price", productToSave.price.toString());
     formData.append("sortOrder", productToSave.sortOrder.toString());
     if (productToSave.oldPrice) formData.append("oldPrice", productToSave.oldPrice.toString());
-    formData.append("inStock", productToSave.inStock.toString());
+    formData.append("isBestSeller", productToSave.isBestSeller?.toString() || "false");    formData.append("inStock", productToSave.inStock.toString());
     formData.append("color", (productToSave.color || []).join(','));
     formData.append("tags", productToSave.tags || "");
     formData.append("categoryId", productToSave.categoryId);
@@ -180,6 +182,18 @@ export const ProductForm = ({ product, categories }: Props) => {
                 <span className="font-bold text-sm">Precio Original</span>
                 <input type="number" step="0.01" className="p-2 border rounded-md bg-white" {...register("oldPrice", { min: 0 })} />
             </div>
+          </div>
+
+          <div className="flex items-center p-3 bg-pink-50 rounded-xl border border-pink-100 transition-all">
+            <input
+              type="checkbox"
+              id="isBestSeller"
+              {...register('isBestSeller')}
+              className="w-5 h-5 text-pink-600 border-pink-300 rounded focus:ring-pink-500 cursor-pointer"
+            />
+            <label htmlFor="isBestSeller" className="ml-3 text-sm font-bold text-pink-700 cursor-pointer uppercase tracking-tight">
+              Marcar como Best Seller 
+            </label>
           </div>
 
           <div className="grid grid-cols-2 gap-2 text-black">

@@ -53,6 +53,7 @@ model Product {
   OrderItem    OrderItem[]
 
   isPublished Boolean @default(true)
+  isBestSeller Boolean @default(false)
 
   isPremiumUI Boolean @default(false)
   premiumData Json?

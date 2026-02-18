@@ -12,6 +12,7 @@ export interface Product {
   color: Color[]
   categoryId: string
   isPublished: boolean;
+  isBestSeller?: boolean;
 
   isPremiumUI?: boolean;
   premiumData?: any;

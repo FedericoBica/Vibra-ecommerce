@@ -1,4 +1,4 @@
-import { Footer, Sidebar, TopMenu } from '@/components';
+import { Footer, Sidebar, TopBar, TopMenu } from '@/components';
 import { PromoModal } from '@/components/product/ui/PromoCartel';
 import { ScrollToTop } from '@/components/product/ui/ScrollToTop';
 
@@ -8,6 +8,7 @@ export default function ShopLayout( { children }: {
   return (
     <main className="min-h-screen flex flex-col bg-zinc-950 text-gray-100">
 
+      <TopBar />
       <TopMenu />
       <Sidebar />
 

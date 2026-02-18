@@ -37,18 +37,16 @@ export const ProductDetailedFeature = ({ title, desc, image, reverse = false }: 
         </div>
 
         {/* Bloque de Texto con gradiente sutil y borde rosa */}
-        <div className="w-full md:w-7/12 relative group">
-          <div className="h-full p-8 md:p-12 bg-gradient-to-br from-zinc-900 to-black rounded-[2.5rem] border border-zinc-800 group-hover:border-pink-500/30 transition-colors duration-500 flex items-center">
-            <div className="space-y-4">
-              <p className="text-zinc-300 text-lg md:text-2xl font-light leading-relaxed">
-                {desc}
-              </p>
-              {/* Detalle decorativo al final del texto */}
-              <div className="h-1 w-12 bg-pink-600 opacity-50 group-hover:w-24 transition-all duration-500"></div>
-            </div>
+      <div className="w-full md:w-7/12 relative group">
+        <div className="h-full p-8 md:p-14 bg-zinc-900/20 rounded-[2.5rem] border border-zinc-800 group-hover:border-pink-500/20 transition-all duration-700 flex items-center">
+          <div className="space-y-6">
+            <p className="text-zinc-400 text-lg md:text-xl font-light leading-relaxed italic">
+              {desc}
+            </p>
+            <div className="h-[2px] w-8 bg-pink-600/30 group-hover:w-16 group-hover:bg-pink-600 transition-all duration-700"></div>
           </div>
         </div>
-
+      </div>
       </div>
     </section>
   );

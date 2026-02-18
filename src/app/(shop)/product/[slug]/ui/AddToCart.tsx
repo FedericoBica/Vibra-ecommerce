@@ -75,8 +75,18 @@ export const AddToCart = ({ product }: Props) => {
 
       <QuantitySelector quantity={quantity} onQuantityChanged={setQuantity} />
 
-      <button onClick={addToCart} className="btn-primary my-5">
-        Agregar al carrito
+      <button 
+        onClick={addToCart} 
+        className="relative group w-full mt-8 overflow-hidden rounded-2xl bg-pink-600 py-4 transition-all hover:bg-pink-500 active:scale-95 shadow-[0_0_20px_rgba(219,39,119,0.3)]"
+      >
+        {/* Efecto de brillo que recorre el botón al pasar el mouse */}
+        <div className="absolute inset-0 flex h-full w-full justify-center [transform:skew(-12deg)_translateX(-100%)] group-hover:duration-1000 group-hover:[transform:skew(-12deg)_translateX(100%)]">
+          <div className="relative h-full w-10 bg-white/20" />
+        </div>
+
+        <span className="relative text-sm font-black uppercase tracking-[0.2em] text-white italic">
+          Agregar al carrito
+        </span>
       </button>
     </>
   );
