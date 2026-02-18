@@ -26,20 +26,23 @@ export const ProductGridItem = ({ product }: Props) => {
   return (
     <div className="rounded-xl overflow-hidden fade-in bg-zinc-900/30 border border-zinc-800 hover:border-pink-500/50 transition-all group relative flex flex-col h-full">
       
-      {/* 1. BADGE IZQUIERDA: Best Seller */}
-      {product.isBestSeller && !isOutOfStock && (
-        <div className="absolute top-3 left-3 z-30">
-          <span className="bg-pink-600 text-white text-[10px] font-black px-3 py-1 rounded-md uppercase tracking-widest shadow-xl italic">
-            Mas vendido
-          </span>
-        </div>
-      )}
+        <div className="absolute top-2 left-2 right-2 z-30 flex flex-col sm:flex-row sm:justify-between items-start gap-1.5 sm:gap-0">
+          
+          {/* 1. Badge Best Seller (Siempre a la izquierda) */}
+          {product.isBestSeller && !isOutOfStock && (
+            <span className="bg-pink-600 text-white text-[8px] sm:text-[10px] font-black px-2.5 py-1 rounded-md uppercase tracking-wider shadow-xl italic border border-pink-400/20">
+              Más vendido
+            </span>
+          )}
 
-      {/* 2. BADGE DERECHA: Descuento o Agotado - POSICIONADO CORRECTAMENTE */}
-      <div className="absolute top-3 right-3 z-30">
-        <DiscountBadge price={product.price} oldPrice={product.oldPrice} inStock={product.inStock} />
-      </div>      
+          {/* 2. Badge de Descuento o Agotado */}
+          {/* En móvil: queda debajo del "Más vendido" gracias a flex-col */}
+          {/* En escritorio: se va a la derecha gracias a sm:flex-row y sm:justify-between */}
+          <div className="sm:ml-auto">
+            <DiscountBadge price={product.price} oldPrice={product.oldPrice} inStock={product.inStock} />
+          </div>
 
+        </div>      
       <Link href={`/product/${product.slug}`}>
         <div className="relative aspect-square w-full overflow-hidden bg-zinc-800">
           <ProductImage
