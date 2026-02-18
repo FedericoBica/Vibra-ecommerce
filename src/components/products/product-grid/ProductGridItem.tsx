@@ -6,7 +6,7 @@ import { useState, useMemo } from 'react';
 import { ProductImage } from '@/components/product/product-image/ProductImage';
 import { DiscountBadge } from '@/components/product/ui/DiscountBadge';
 import clsx from 'clsx';
-import { IoStar } from 'react-icons/io5';
+import { IoStar, IoStarHalf, IoStarOutline } from 'react-icons/io5';
 
 interface Props {
   product: Product;
@@ -20,29 +20,25 @@ export const ProductGridItem = ({ product }: Props) => {
   const [displayImage, setDisplayImage] = useState(images[0]);
   const isOutOfStock = product.inStock === 0;
 
-  // Lógica de estrellas "Fake" pero individual para cada producto
-  const { rating, reviewsCount } = useMemo(() => {
-    // Generamos una semilla basada en el ID del producto
-    const seed = product.id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
-    const fakeRating = (4 + (seed % 10) / 10).toFixed(1);
-    const fakeReviews = 10 + (seed % 40); // Entre 10 y 50 reseñas
-    return { rating: parseFloat(fakeRating), reviewsCount: fakeReviews };
-  }, [product.id]);
+  const rating = product.rating || 5;
+  const reviewCount = product.reviewCount || 0;
 
   return (
     <div className="rounded-xl overflow-hidden fade-in bg-zinc-900/30 border border-zinc-800 hover:border-pink-500/50 transition-all group relative flex flex-col h-full">
       
-      {/* 1. BADGE IZQUIERDA: Best Seller (Si aplica) */}
+      {/* 1. BADGE IZQUIERDA: Best Seller */}
       {product.isBestSeller && !isOutOfStock && (
-        <span className="absolute top-3 left-3 z-20 bg-pink-600 text-white text-[9px] font-black px-2 py-1 rounded-md uppercase tracking-widest shadow-lg shadow-pink-900/20">
-          Best Seller
-        </span>
+        <div className="absolute top-3 left-3 z-30">
+          <span className="bg-pink-600 text-white text-[10px] font-black px-3 py-1 rounded-md uppercase tracking-widest shadow-xl italic">
+            Mas vendido
+          </span>
+        </div>
       )}
 
-      {/* 2. BADGE DERECHA: Descuento o Agotado (Usando tu DiscountBadge) */}
-      <div className="absolute top-3 right-3 z-20">
+      {/* 2. BADGE DERECHA: Descuento o Agotado - POSICIONADO CORRECTAMENTE */}
+      <div className="absolute top-3 right-3 z-30">
         <DiscountBadge price={product.price} oldPrice={product.oldPrice} inStock={product.inStock} />
-      </div>
+      </div>      
 
       <Link href={`/product/${product.slug}`}>
         <div className="relative aspect-square w-full overflow-hidden bg-zinc-800">
@@ -78,16 +74,22 @@ export const ProductGridItem = ({ product }: Props) => {
         {/* RATING DINÁMICO */}
         <div className="flex items-center gap-1.5 mt-1">
           <div className="flex text-yellow-500">
-            {[...Array(5)].map((_, i) => (
-              <IoStar 
-                key={i} 
-                size={11} 
-                className={i < Math.floor(rating) ? "text-yellow-400" : "text-zinc-700"} 
-              />
-            ))}
+            {[1, 2, 3, 4, 5].map((index) => {
+              return (
+                <span key={index}>
+                  {rating >= index ? (
+                    <IoStar size={11} className="text-yellow-400" />
+                  ) : rating >= index - 0.5 ? (
+                    <IoStarHalf size={11} className="text-yellow-400" />
+                  ) : (
+                    <IoStarOutline size={11} className="text-zinc-700" />
+                  )}
+                </span>
+              );
+            })}
           </div>
           <span className="text-[10px] text-zinc-500 font-medium tracking-wide">
-            ({reviewsCount} reseñas)
+            ({reviewCount} reseñas)
           </span>
         </div>
 

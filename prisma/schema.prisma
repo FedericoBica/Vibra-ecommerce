@@ -59,6 +59,9 @@ model Product {
   premiumData Json?
 
   sortOrder Int @default(0)
+
+  rating    Float @default(5.0)
+  reviewCount Int @default(0)
 }
 
 model ProductImage {

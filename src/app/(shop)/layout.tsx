@@ -18,7 +18,7 @@ export default function ShopLayout( { children }: {
       </div>
 
       <ScrollToTop />
-      <PromoModal />
+      {/* <PromoModal /> */}
 
       <Footer />
     </main>

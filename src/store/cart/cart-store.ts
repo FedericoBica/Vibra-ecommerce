@@ -11,6 +11,9 @@ interface State {
     tax: number;
     total: number;
     itemsInCart: number;
+    shippingCost: number;
+    isFreeShipping: boolean;
+    amountToFreeShipping: number;
   };
 
   addProductTocart: (product: CartProduct) => void;
@@ -38,8 +41,12 @@ export const useCartStore = create<State>()(
           (subTotal, product) => product.quantity * product.price + subTotal,
           0
         );
-        const tax = subTotal * 0.15;
-        const total = subTotal;
+        const shippingThreshold = 2500
+        const isFreeShipping = subTotal >= shippingThreshold;
+        const shippingCost = subTotal > 0 && !isFreeShipping ? 300 : 0; // 300 es un ejemplo de costo base
+        
+        const tax = subTotal * 0.0
+        const total = subTotal + shippingCost;
         const itemsInCart = cart.reduce(
           (total, item) => total + item.quantity,
           0
@@ -50,6 +57,9 @@ export const useCartStore = create<State>()(
           tax,
           total,
           itemsInCart,
+          shippingCost,
+          isFreeShipping,
+          amountToFreeShipping: Math.max(0, shippingThreshold - subTotal)
         };
       },
 

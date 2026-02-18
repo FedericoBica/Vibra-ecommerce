@@ -16,6 +16,7 @@ import { ProductHighlights } from "@/components/product/ui/ProductHighlights";
 import { ProductDetailedFeature } from "@/components/product/ui/PremiumFeatures";
 import { ProductSteps } from "@/components/product/ui/ProductSteps";
 import { RelatedProducts } from "@/components/product/related/RelatedProducts";
+import { IoStar, IoStarHalf, IoStarOutline } from "react-icons/io5";
 
 interface Props {
   params: {
@@ -71,34 +72,50 @@ export default async function ProductBySlugPage({ params }: Props) {
         </div>
 
         <div className="col-span-1 px-5">
+          <div className="flex items-center gap-2 mb-2">
+            <div className="flex text-pink-500">
+              {[1, 2, 3, 4, 5].map((index) => (
+                <span key={index}>
+                  {product.rating >= index ? (
+                    <IoStar size={14} className="fill-current" />
+                  ) : product.rating >= index - 0.5 ? (
+                    <IoStarHalf size={14} className="fill-current" />
+                  ) : (
+                    <IoStarOutline size={14} className="text-zinc-700" />
+                  )}
+                </span>
+              ))}
+            </div>            
+            <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-tighter">
+              {product.reviewCount || 0} Ratings
+            </span>
+          </div>
           <h1 className={`${titleFont.className} antialiased font-bold text-2xl uppercase tracking-tight italic`}>
             {product.title}
           </h1>
           
           {/* PRECIO CON DESCUENTO DINÁMICO */}
-          <div className="flex flex-col gap-2 mt-4 mb-6">
-
-            <div className="flex items-center gap-3">
+          <div className="flex flex-col gap-1 mt-4 mb-6">
+            <div className="flex flex-wrap items-baseline gap-3">
               {/* Precio Vigente */}
               <span className="text-4xl font-black text-white italic tracking-tighter">
                 ${product.price.toLocaleString('es-UY')}
               </span>
 
-              {/* Contenedor de Precio Viejo y Badge */}
+              {/* Contenedor de Precio Viejo y Badge - Ahora más compacto */}
               {product.oldPrice && product.oldPrice > product.price && (
-                <div className="flex items-center gap-2 bg-zinc-800/30 py-1 px-2 rounded-lg border border-zinc-800">
-                  <span className="text-sm text-zinc-500 line-through decoration-pink-500/40">
+                <div className="flex items-center gap-2 bg-pink-500/10 border border-pink-500/20 py-1 px-2 rounded-lg">
+                  <span className="text-sm text-zinc-500 line-through decoration-white/30">
                     ${product.oldPrice.toLocaleString('es-UY')}
                   </span>
                   
-                  <span className="bg-pink-500/10 text-pink-500 text-[10px] font-black px-1.5 py-0.5 rounded uppercase tracking-tighter border border-pink-500/20">
+                  <span className="text-pink-500 text-[10px] font-black uppercase tracking-tighter">
                     -{Math.round(((product.oldPrice - product.price) / product.oldPrice) * 100)}% OFF
                   </span>
                 </div>
               )}
             </div>
           </div>
-
           <AddToCart 
             product={{
               ...product,

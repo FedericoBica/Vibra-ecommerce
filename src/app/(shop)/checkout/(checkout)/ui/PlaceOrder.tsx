@@ -27,7 +27,7 @@ export const PlaceOrder = () => {
   const address = useAddressStore((state) => state.address);
 
   // Traemos la info del carrito
-  const { itemsInCart, subTotal } = useCartStore((state) =>
+  const { itemsInCart, subTotal, isFreeShipping } = useCartStore((state) =>
     state.getSummaryInformation()
   );
   
@@ -85,7 +85,7 @@ export const PlaceOrder = () => {
   "Punta Shopping": "Parada. 7 - Mansa esq. Av. Roosevelt",
 };
 
-  const shippingCost = shippingPrices[address.deliveryMethod] || 0;
+  const baseShippingCost = shippingPrices[address.deliveryMethod] || 0;  const shippingCost = subTotal >= 2500 ? 0 : baseShippingCost;
   const subTotalWithDiscount = subTotal * (1 - discountPercent / 100);
   const discountAmount = subTotal * (discountPercent / 100);
   const finalTotal = subTotalWithDiscount + shippingCost;
@@ -205,13 +205,24 @@ if (!loaded) return <p className="animate-pulse text-pink-500">Cargando resumen.
           <span>{currencyFormat(subTotal)}</span>
         </div>
 
-        <div className="flex justify-between items-center">
-          <span className="text-gray-500">Envío</span>
-          <span className="text-sm font-medium text-pink-400/80">
-            {shippingCost === 0 ? 'Gratis' : `+ ${currencyFormat(shippingCost)}`}
-          </span>
+        <div className="flex justify-between items-center py-1">
+          <span className="text-gray-500 text-sm">Envío ({address.deliveryMethod})</span>
+          <div className="text-right">
+            <span className={clsx(
+              "text-sm font-black italic tracking-tight",
+              isFreeShipping ? "text-emerald-400 animate-pulse" : "text-gray-200"
+            )}>
+              {isFreeShipping ? '¡ENVÍO GRATIS!' : `+ ${currencyFormat(shippingCost)}`}
+            </span>
+          </div>
         </div>
 
+        {/* Aviso si le falta poco */}
+        {!isFreeShipping && subTotal > 0 && (
+          <p className="text-[10px] text-zinc-500 italic text-right bg-zinc-800/20 py-1 px-2 rounded">
+            Agregá <span className="text-pink-500 font-bold">{currencyFormat(2500 - subTotal)}</span> más para envío gratis
+          </p>
+        )}
         <div className="h-px bg-zinc-800 my-4" />
 
         <div className="flex justify-between items-end">

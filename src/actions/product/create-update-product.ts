@@ -23,6 +23,9 @@ const productSchema = z.object({
   isPublished: z.preprocess((val) => val === 'true', z.boolean()),
   isPremiumUI: z.preprocess((val) => val === 'true', z.boolean()),
   premiumData: z.string().optional().nullable(),
+  isBestSeller: z.preprocess((val) => val === 'true', z.boolean()),
+  rating: z.coerce.number().min(0).max(5).default(5),
+  reviewCount: z.coerce.number().int().min(0).default(0),
 });
 
 export const createUpdateProduct = async (formData: FormData) => {
@@ -90,6 +93,9 @@ export const createUpdateProduct = async (formData: FormData) => {
     }
   }
 
+  const ratingValue = Number(formData.get("rating")) || 5.0;
+  const reviewCountValue = Number(formData.get("reviewCount")) || 0;
+
   try {
     const prismaTx = await prisma.$transaction(async (tx) => {
       let product: Product;
@@ -100,6 +106,8 @@ export const createUpdateProduct = async (formData: FormData) => {
         color: rest.color,
         tags: tagsArray,
         premiumData: parsedPremiumData, // Guardamos el JSON con las URLs inyectadas
+        rating: ratingValue,       
+        reviewCount: reviewCountValue,
       };
 
       if (id) {

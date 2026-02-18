@@ -23,45 +23,45 @@ export const placeOrder = async (
   couponCode?: string,
 ) => {
   const session = await auth();
-  const userId = session?.user.id; // Puede ser undefined si es invitado
+  const userId = session?.user.id;
 
   // 1. Obtener la información de los productos en la DB
   const products = await prisma.product.findMany({
-    where: {
-      id: { in: productIds.map((p) => p.productId) },
-    },
+    where: { id: { in: productIds.map((p) => p.productId) } },
   });
 
   // 2. Calcular montos de productos
   const itemsInOrder = productIds.reduce((count, p) => count + p.quantity, 0);
 
   const { subTotal } = productIds.reduce(
-  (totals, item) => {
-    const product = products.find((p) => p.id === item.productId);
-    if (!product) throw new Error(`${item.productId} no existe`);
+    (totals, item) => {
+      const product = products.find((p) => p.id === item.productId);
+      if (!product) throw new Error(`${item.productId} no existe`);
+      totals.subTotal += product.price * item.quantity;
+      return totals;
+    },
+    { subTotal: 0 }
+  );
 
-    const itemSubtotal = product.price * item.quantity;
-    totals.subTotal += itemSubtotal;
-
-    return totals;
-  },
-  { subTotal: 0 } // Quitamos tax de aquí
-);
-
+  // --- LÓGICA DE CUPÓN ---
   let discountAmount = 0;
   if (couponCode) {
     const dbCoupon = await prisma.coupon.findUnique({
       where: { code: couponCode.toUpperCase().trim(), isActive: true }
     });
-
     if (dbCoupon) {
-      // Si existe y está activo, aplicamos SU descuento
       discountAmount = subTotal * (dbCoupon.discount / 100);
-    }  }
+    }
+  }
 
-  const shippingCost = shippingPrices[address.deliveryMethod] || 0;
-  const total = (subTotal - discountAmount) + shippingCost; // <--- Total con descuento  
+  // --- LÓGICA DE ENVÍO RECALCULADA EN SERVIDOR ---
+  const baseShippingCost = shippingPrices[address.deliveryMethod] || 0;
   
+  // REGLA DE ORO: Si subtotal >= 2500, el costo es 0. Sino, el precio base.
+  const finalShippingCost = subTotal >= 2500 ? 0 : baseShippingCost;
+
+  // TOTAL FINAL SEGURO
+  const total = (subTotal - discountAmount) + finalShippingCost;  
   // 3. Lógica de Envío
   try {
     const prismaTx = await prisma.$transaction(async (tx) => {
@@ -95,7 +95,7 @@ export const placeOrder = async (
           total: total,
           deliveryMethod: address.deliveryMethod,
           lockerLocation: address.lockerLocation,
-          shippingCost: shippingCost,
+          shippingCost: finalShippingCost,
 
           OrderItem: {
             createMany: {

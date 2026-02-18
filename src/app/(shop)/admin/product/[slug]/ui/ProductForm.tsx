@@ -30,7 +30,9 @@ interface FormInputs {
   images?: FileList;
   isPremiumUI: boolean;
   premiumHeadline?: string;
-  isBestSeller?: boolean,
+  isBestSeller?: boolean;
+  rating: number;
+  reviewCount: number;
   high_title_1?: string; high_desc_1?: string; high_icon_1?: string;
   high_title_2?: string; high_desc_2?: string; high_icon_2?: string;
   high_title_3?: string; high_desc_3?: string; high_icon_3?: string;
@@ -57,6 +59,8 @@ export const ProductForm = ({ product, categories }: Props) => {
       isPremiumUI: product.isPremiumUI ?? false,
       premiumHeadline: premiumData?.bannerHeadline ?? '',
       isBestSeller: product.isBestSeller ?? false,
+      rating: product.rating ?? 5.0,    
+      reviewCount: product.reviewCount ?? 0, 
       high_title_1: premiumData?.highlights?.[0]?.title ?? '',
       high_desc_1: premiumData?.highlights?.[0]?.desc ?? '',
       high_icon_1: premiumData?.highlights?.[0]?.icon ?? 'Zap',
@@ -108,7 +112,9 @@ export const ProductForm = ({ product, categories }: Props) => {
     formData.append("categoryId", productToSave.categoryId);
     formData.append("isPublished", productToSave.isPublished.toString());
     formData.append("isPremiumUI", productToSave.isPremiumUI.toString());
-    
+    formData.append("rating", productToSave.rating.toString());
+    formData.append("reviewCount", productToSave.reviewCount.toString());
+
     [1, 2, 3].forEach(n => {
       const file = (data as any)[`file_step_${n}`]?.[0];
       if (file) formData.append(`file_step_${n}`, file);
@@ -305,6 +311,41 @@ export const ProductForm = ({ product, categories }: Props) => {
 
       {/* Columna Derecha: Stock, Colores y Galería */}
       <div className="w-full space-y-4">
+        <div className="flex flex-col p-4 bg-gray-50 border rounded-lg text-black">
+          <span className="font-bold text-sm mb-2">Stock Disponible</span>
+          <input type="number" className="p-2 border rounded-md bg-white" {...register("inStock", { required: true, min: 0 })} />
+        </div>
+
+        {/* NUEVO BLOQUE DE RESEÑAS (ADMIN CONTROL) */}
+        <div className="grid grid-cols-2 gap-4 p-4 bg-zinc-900 rounded-xl border border-zinc-800 text-white shadow-lg">
+          <div className="flex flex-col">
+            <span className="font-black text-[10px] uppercase tracking-widest text-pink-500 mb-2 italic">
+              Estrellas (Rating)
+            </span>
+            <input 
+              type="number" 
+              step="0.1" 
+              max="5" 
+              min="0"
+              className="p-2 border border-zinc-700 rounded-md bg-black text-white outline-none focus:border-pink-500 transition-colors" 
+              {...register("rating", { required: true, min: 0, max: 5, valueAsNumber: true })} 
+            />
+          </div>
+          <div className="flex flex-col">
+            <span className="font-black text-[10px] uppercase tracking-widest text-pink-500 mb-2 italic">
+              Nº de Reseñas
+            </span>
+            <input 
+              type="number" 
+              className="p-2 border border-zinc-700 rounded-md bg-black text-white outline-none focus:border-pink-500 transition-colors" 
+              {...register("reviewCount", { required: true, min: 0, valueAsNumber: true })} 
+            />
+          </div>
+          <p className="col-span-2 text-[9px] text-zinc-500 italic mt-1 leading-tight">
+            * Estos valores se mostrarán en la página del producto para generar confianza (Social Proof).
+          </p>
+        </div>
+
         <div className="flex flex-col p-4 bg-gray-50 border rounded-lg text-black">
           <span className="font-bold text-sm mb-2">Stock Disponible</span>
           <input type="number" className="p-2 border rounded-md bg-white" {...register("inStock", { required: true, min: 0 })} />
