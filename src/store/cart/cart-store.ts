@@ -43,8 +43,8 @@ export const useCartStore = create<State>()(
         );
         const shippingThreshold = 2500
         const isFreeShipping = subTotal >= shippingThreshold;
-        const shippingCost = subTotal > 0 && !isFreeShipping ? 300 : 0; // 300 es un ejemplo de costo base
-        
+        const shippingCost = 0;
+                
         const tax = subTotal * 0.0
         const total = subTotal + shippingCost;
         const itemsInCart = cart.reduce(
