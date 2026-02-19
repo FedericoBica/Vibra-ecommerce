@@ -37,7 +37,8 @@ export const AddToCart = ({ product }: Props) => {
       price: product.price,
       quantity: quantity,
       color: color, // Usamos la variable color
-      image: product.images[0]
+      image: product.images[0],
+      category: product.category,
     }
 
     addProductToCart(cartProduct);

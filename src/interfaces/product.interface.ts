@@ -29,6 +29,7 @@ export interface CartProduct {
   quantity: number;
   image: string;
   color: Color;
+  category: string;
 }
 
 
@@ -39,4 +40,4 @@ export interface ProductImage {
 }
 
 export type Color = 'Rosa' | 'Negro' | 'Violeta' | 'Rojo' | 'Azul' | 'Gris' | 'Blanco';
-export type ProductCategory = 'juguetes' | 'juegos' | 'lubricantes' | 'bdsm';
+export type ProductCategory = 'juguetes' | 'juegos' | 'lubricantes';

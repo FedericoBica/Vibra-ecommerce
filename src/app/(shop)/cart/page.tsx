@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { Title } from '@/components';
 import { ProductsInCart } from './ui/ProductsInCart';
 import { OrderSummary } from './ui/OrderSummary';
+import { CartRecommendations } from './ui/CartRecommendations';
 
 
 
@@ -65,6 +66,7 @@ return (
               </p>
             </div>
           </div>
+          <CartRecommendations />
 
         </div>
       </div>
