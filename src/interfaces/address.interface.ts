@@ -8,7 +8,7 @@ export interface Address {
   city: string;
   departamento: string;
   phone: string;
-  // Nuevos campos
+  dni?: string;
   email: string; 
   deliveryMethod: 'EXPRESS' | 'STANDARD' | 'PICKUP';
   lockerLocation?: string;

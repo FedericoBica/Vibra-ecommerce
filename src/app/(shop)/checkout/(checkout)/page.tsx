@@ -1,11 +1,16 @@
-import Link from "next/link";
+// src/app/(shop)/checkout/(checkout)/page.tsx
 
+import Link from "next/link";
 import { Title } from "@/components";
-import Image from "next/image";
 import { ProductsInCart } from "./ui/ProductsInCart";
 import { PlaceOrder } from './ui/PlaceOrder';
+import { getStoreConfig } from "@/actions/config/store-config"; // <--- Importá la acción
 
-export default function CheckoutPage() {
+export default async function CheckoutPage() {
+
+  // 1. Obtenemos la configuración aquí (Server Side)
+  const shippingConfig = await getStoreConfig('shipping');
+
   return (
     <div className="flex justify-center items-center mb-72 px-4 sm:px-0 mt-10">
       <div className="flex flex-col w-full max-w-[1100px]">
@@ -23,14 +28,14 @@ export default function CheckoutPage() {
                 </Link>
               </div>
 
-              {/* Items */}
               <ProductsInCart />
             </div>
           </div>
 
           {/* Columna Derecha: PlaceOrder */}
           <div className="relative">
-             <PlaceOrder />
+             {/* 2. Pasamos la configuración al componente de cliente */}
+             <PlaceOrder shippingConfig={shippingConfig} />
           </div>
           
         </div>

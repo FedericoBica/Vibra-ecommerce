@@ -3,19 +3,13 @@
 import prisma from "@/lib/prisma";
 import { auth } from "@/auth.config";
 import type { Address } from "@/interfaces";
+import { getStoreConfig } from "../config/store-config";
 
 interface ProductToOrder {
   productId: string;
   quantity: number;
   color: string;
 }
-
-// Precios de envío (puedes ajustarlos aquí)
-const shippingPrices = {
-  EXPRESS: 260,
-  STANDARD: 160,
-  PICKUP: 60,
-};
 
 export const placeOrder = async (
   productIds: ProductToOrder[],
@@ -24,6 +18,9 @@ export const placeOrder = async (
 ) => {
   const session = await auth();
   const userId = session?.user.id;
+
+  // 0. Obtener la configuración de envío de la DB en el Servidor
+  const shippingConfig = await getStoreConfig('shipping');
 
   // 1. Obtener la información de los productos en la DB
   const products = await prisma.product.findMany({
@@ -55,10 +52,9 @@ export const placeOrder = async (
   }
 
   // --- LÓGICA DE ENVÍO RECALCULADA EN SERVIDOR ---
-  const baseShippingCost = shippingPrices[address.deliveryMethod] || 0;
+  const baseShippingCost = shippingConfig.prices[address.deliveryMethod as keyof typeof shippingConfig.prices] || 0 || 0;
   
-  // REGLA DE ORO: Si subtotal >= 2500, el costo es 0. Sino, el precio base.
-  const finalShippingCost = subTotal >= 2500 ? 0 : baseShippingCost;
+  const finalShippingCost = subTotal >= shippingConfig.freeShippingThreshold ? 0 : baseShippingCost;
 
   // TOTAL FINAL SEGURO
   const total = (subTotal - discountAmount) + finalShippingCost;  

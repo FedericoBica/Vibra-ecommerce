@@ -28,7 +28,7 @@ export const Footer = () => {
         <div className="flex flex-col items-center md:items-start">
           <Link href="/">
             <span className="text-2xl font-black uppercase tracking-tighter italic text-white">
-              VIBRA<span className="text-pink-600">LOVER</span>
+              VIBRA <span className="text-pink-600">LOVER</span>
             </span>
           </Link>
           <p className="mt-2 text-xs text-zinc-500 uppercase tracking-widest">

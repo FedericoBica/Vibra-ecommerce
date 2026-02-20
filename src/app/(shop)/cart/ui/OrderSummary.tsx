@@ -5,32 +5,33 @@ import { currencyFormat } from "@/utils";
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from "react";
 
-export const OrderSummary = () => {
+interface Props {
+  threshold: number; // Viene de la DB (admin panel)
+}
+
+export const OrderSummary = ({ threshold }: Props) => {
 
   const router = useRouter();
-
   const [loaded, setLoaded] = useState(false);
-  const { itemsInCart, subTotal, tax, total } = useCartStore((state) =>
-    state.getSummaryInformation()
+  
+  // 1. Extraemos todo del store, pasándole el threshold dinámico
+  const { itemsInCart, subTotal, amountToFreeShipping, isFreeShipping } = useCartStore((state) =>
+    state.getSummaryInformation(threshold)
   );
 
   useEffect(() => {
     setLoaded(true);
   }, []);
 
-
   useEffect(() => {
-
     if ( itemsInCart === 0 && loaded === true )   {
       router.replace('/empty')
     }
-
-
   },[ itemsInCart, loaded, router ])
 
+  if (!loaded) return <p className="animate-pulse text-pink-500">Cargando resumen...</p>;
 
-
-  if (!loaded) return <p>Cargando...</p>;
+  // --- BORRAMOS LA LÍNEA QUE ESTABA ACÁ (const isFreeShipping = ...) ---
 
   return (
     <div className="grid grid-cols-2 gap-y-3">
@@ -40,11 +41,25 @@ export const OrderSummary = () => {
       <span className="text-gray-400">Subtotal</span>
       <span className="text-right text-gray-200">{currencyFormat(subTotal)}</span>
 
+      {/* Info dinámica de envío */}
+      <span className="text-gray-400">Envío</span>
+      <span className={`text-right font-bold italic ${isFreeShipping ? 'text-emerald-400 animate-pulse' : 'text-zinc-500'}`}>
+        {isFreeShipping ? '¡GRATIS!' : 'A calcular'}
+      </span>
+
       <div className="col-span-2 h-px bg-zinc-800 my-2" />
 
       <span className="text-xl font-bold text-gray-100">Total:</span>
       <span className="text-xl text-right font-bold text-pink-500">
-        {currencyFormat(total)}
+        {currencyFormat(subTotal)}
       </span>
-    </div>  );
+
+      {/* Usamos amountToFreeShipping que ya calculó el store */}
+      {!isFreeShipping && (
+        <p className="col-span-2 text-[10px] text-zinc-500 text-right mt-2 bg-pink-600/5 p-2 rounded-lg border border-pink-500/10 animate-in fade-in duration-500">
+          Agregá <span className="text-pink-500 font-black">{currencyFormat(amountToFreeShipping)}</span> más para tener <span className="text-emerald-400">ENVÍO GRATIS</span>
+        </p>
+      )}
+    </div>  
+  );
 };

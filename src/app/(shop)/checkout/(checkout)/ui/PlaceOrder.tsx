@@ -15,7 +15,14 @@ declare global {
   }
 }
 
-export const PlaceOrder = () => {
+interface Props {
+  shippingConfig: {
+    prices: { EXPRESS: number; STANDARD: number; PICKUP: number };
+    freeShippingThreshold: number;
+  }
+}
+
+export const PlaceOrder = ({shippingConfig}:Props) => {
 
   const router = useRouter();
   const [loaded, setLoaded] = useState(false);
@@ -28,7 +35,7 @@ export const PlaceOrder = () => {
 
   // Traemos la info del carrito
   const { itemsInCart, subTotal, isFreeShipping } = useCartStore((state) =>
-    state.getSummaryInformation()
+    state.getSummaryInformation(shippingConfig.freeShippingThreshold)
   );
   
   const cart = useCartStore( state => state.cart );
@@ -51,12 +58,7 @@ export const PlaceOrder = () => {
     setLoaded(true);
   }, []);
 
-  const shippingPrices = {
-    EXPRESS: 260,
-    STANDARD: 160,
-    PICKUP: 60,
-  };
-
+  
   const lockerAddresses: Record<string, string> = {
   "Parking Euskadi": "Coronel Brandzen 2086 (Cordón)",
   "Disa Buceo": "Humberto 1ro. 3862 y Bv. José Batlle y Ordoñez",
@@ -85,7 +87,8 @@ export const PlaceOrder = () => {
   "Punta Shopping": "Parada. 7 - Mansa esq. Av. Roosevelt",
 };
 
-  const baseShippingCost = shippingPrices[address.deliveryMethod] || 0;  const shippingCost = subTotal >= 2500 ? 0 : baseShippingCost;
+  const baseShippingCost = shippingConfig.prices[address.deliveryMethod as keyof typeof shippingConfig.prices] || 0;
+  const shippingCost = isFreeShipping ? 0 : baseShippingCost;
   const subTotalWithDiscount = subTotal * (1 - discountPercent / 100);
   const discountAmount = subTotal * (discountPercent / 100);
   const finalTotal = subTotalWithDiscount + shippingCost;
@@ -155,6 +158,16 @@ if (!loaded) return <p className="animate-pulse text-pink-500">Cargando resumen.
       </p>
     )}
 
+    {/* --- NUEVO: MOSTRAR CÉDULA DE IDENTIDAD --- */}
+    <div className="flex items-center gap-2 mt-2 bg-pink-500/5 p-2 rounded-lg border border-pink-500/10">
+      <span className="text-xs text-gray-400 uppercase font-bold">Documento de retiro:</span>
+      <span className="text-sm font-mono text-pink-300">
+        {/* Extraemos los últimos 4 dígitos del string de dirección si es necesario, 
+            o simplemente mostramos que se guardó correctamente */}
+        ****{ address.address.split('CI: ****')[1] || 'Asociada' }
+      </span>
+    </div>
+
     {/* Bloque de Información Adicional del Punto */}
     <div className="mt-3 grid grid-cols-1 gap-2 bg-black/20 p-3 rounded-lg border border-zinc-700/30">
       <div className="flex items-start gap-2">
@@ -220,7 +233,9 @@ if (!loaded) return <p className="animate-pulse text-pink-500">Cargando resumen.
         {/* Aviso si le falta poco */}
         {!isFreeShipping && subTotal > 0 && (
           <p className="text-[10px] text-zinc-500 italic text-right bg-zinc-800/20 py-1 px-2 rounded">
-            Agregá <span className="text-pink-500 font-bold">{currencyFormat(2500 - subTotal)}</span> más para envío gratis
+            Agregá <span className="text-pink-500 font-bold">
+              {currencyFormat(shippingConfig.freeShippingThreshold - subTotal)}
+            </span> más para envío gratis
           </p>
         )}
         <div className="h-px bg-zinc-800 my-4" />

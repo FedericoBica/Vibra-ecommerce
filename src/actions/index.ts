@@ -12,6 +12,8 @@ export * from './auth/register';
 
 export * from './category/get-categories';
 
+export * from './config/store-config';
+
 export * from './blog/get-posts';
 export * from './blog/get-post-by-slug';
 export * from './blog/get-all-posts';

@@ -6,7 +6,7 @@ interface State {
   cart: CartProduct[];
 
   getTotalItems: () => number;
-  getSummaryInformation: () => {
+  getSummaryInformation: (threshold?: number) => {
     subTotal: number;
     tax: number;
     total: number;
@@ -34,15 +34,16 @@ export const useCartStore = create<State>()(
         return cart.reduce((total, item) => total + item.quantity, 0);
       },
 
-      getSummaryInformation: () => {
+      getSummaryInformation: (threshold = 2500) => {
         const { cart } = get();
 
         const subTotal = cart.reduce(
           (subTotal, product) => product.quantity * product.price + subTotal,
           0
         );
-        const shippingThreshold = 2500
-        const isFreeShipping = subTotal >= shippingThreshold;
+
+        // USAMOS EL THRESHOLD QUE VIENE POR PARÁMETRO
+        const isFreeShipping = subTotal >= threshold;
         const shippingCost = 0;
                 
         const tax = subTotal * 0.0
@@ -59,7 +60,7 @@ export const useCartStore = create<State>()(
           itemsInCart,
           shippingCost,
           isFreeShipping,
-          amountToFreeShipping: Math.max(0, shippingThreshold - subTotal)
+          amountToFreeShipping: Math.max(0, threshold - subTotal)
         };
       },
 

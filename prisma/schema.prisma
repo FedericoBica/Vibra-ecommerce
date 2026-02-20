@@ -178,6 +178,7 @@ model Coupon {
   discount    Int      // Porcentaje (ej: 10 para 10%)
   isActive    Boolean  @default(true)
   validUntil  DateTime?
+  createdAt   DateTime  @default(now())
 }
 
 model Post {
@@ -192,3 +193,11 @@ model Post {
   updatedAt   DateTime @updatedAt
 
 }
+
+model StoreConfig {
+  id        String   @id @default(uuid())
+  key       String   @unique
+  value     Json     // Aquí guardaremos los paquetes de configuración
+  updatedAt DateTime @updatedAt
+}
+
