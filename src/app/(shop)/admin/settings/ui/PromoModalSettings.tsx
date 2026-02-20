@@ -8,7 +8,7 @@ import { IoGiftOutline, IoEyeOutline } from "react-icons/io5";
 
 interface Props {
   initialConfig: any;
-  availableCoupons: { id: string, code: string }[];
+  availableCoupons: { id: string, code: string, discount:number }[];
 }
 
 export const PromoModalSettingsForm = ({ initialConfig, availableCoupons }: Props) => {
@@ -70,7 +70,7 @@ export const PromoModalSettingsForm = ({ initialConfig, availableCoupons }: Prop
               {...register("couponId")}
               className="w-full bg-zinc-950 border border-zinc-800 rounded-2xl px-5 py-4 text-sm text-white focus:border-pink-500 outline-none transition-all appearance-none"
             >
-              <option value="">Ninguno (Solo informativo)</option>
+              <option value="">Ninguno</option>
               {availableCoupons.map((coupon) => (
                 <option key={coupon.id} value={coupon.id}>
                   {coupon.code} ({coupon.discount}%)
