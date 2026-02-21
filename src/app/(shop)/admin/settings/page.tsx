@@ -8,6 +8,7 @@ import prisma from '@/lib/prisma';
 import { CouponSettings } from './ui/CouponSettings';
 import { TopBarSettingsForm } from './ui/TopBarSettings';
 import { PromoModalSettingsForm } from './ui/PromoModalSettings';
+import { HomeSettingsForm } from './ui/HomeSettings';
 
 // Forzamos a que no se guarde en cache para ver cambios en tiempo real
 export const revalidate = 0;
@@ -68,11 +69,7 @@ export default async function SettingsPage() {
       label: 'Personalizar Home',
       icon: '🏠',
       desc: 'Textos y banners principales',
-      content: (
-        <div className="p-10 text-center border border-dashed border-zinc-800 rounded-2xl">
-          <p className="text-zinc-500 italic">Próximamente: Textos del Hero</p>
-        </div>
-      ),
+      content: <HomeSettingsForm initialConfig={config.home}/>
     },
   ];
 

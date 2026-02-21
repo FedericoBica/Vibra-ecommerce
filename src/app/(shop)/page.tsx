@@ -3,7 +3,7 @@ export const revalidate = 60; // 60 segundos
 
 import { redirect } from 'next/navigation';
 
-import { getPaginatedProductsWithImages } from '@/actions';
+import { getAllStoreConfig, getPaginatedProductsWithImages } from '@/actions';
 import { Pagination, ProductGrid, Title } from '@/components';
 import { ProductHero } from '@/components/ui/product-hero/ProductHero';
 
@@ -22,6 +22,7 @@ export default async function Home({ searchParams }: Props) {
 
   const { products, currentPage, totalPages } = await getPaginatedProductsWithImages({ page });
 
+  const { home } = await getAllStoreConfig();
 
   if ( products.length === 0 ) {
     redirect('/');
@@ -31,7 +32,7 @@ export default async function Home({ searchParams }: Props) {
   return (
     <>
 
-      <ProductHero />
+      <ProductHero config={home}/>
 
       <Title
         title="Todos los productos"

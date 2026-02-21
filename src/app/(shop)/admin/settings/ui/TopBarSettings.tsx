@@ -26,7 +26,7 @@ export const TopBarSettingsForm = ({ initialConfig }: Props) => {
 
   const onSubmit = async (data: {message1: string; message2: string}) => {
     setIsSaving(true);
-    
+
     const configToSave = {
       messages: [data.message1, data.message2],
       backgroundColor: '#db2777', // Mantenemos el color por defecto
@@ -53,7 +53,7 @@ export const TopBarSettingsForm = ({ initialConfig }: Props) => {
             <IoMegaphoneOutline size={24} />
           </div>
           <div>
-            <h4 className="text-sm font-black text-white uppercase tracking-widest">Mensajes de la Marquesina</h4>
+            <h4 className="text-sm font-black text-white uppercase tracking-widest">Mensajes del Top Bar</h4>
             <p className="text-[10px] text-zinc-500 uppercase tracking-tighter">Personaliza los anuncios globales de la tienda</p>
           </div>
         </div>

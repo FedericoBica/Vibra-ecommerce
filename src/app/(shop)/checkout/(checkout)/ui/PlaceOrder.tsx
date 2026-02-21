@@ -158,13 +158,12 @@ if (!loaded) return <p className="animate-pulse text-pink-500">Cargando resumen.
       </p>
     )}
 
-    {/* --- NUEVO: MOSTRAR CÉDULA DE IDENTIDAD --- */}
+    {/* --- MOSTRAR CÉDULA DE IDENTIDAD EN PLACE ORDER --- */}
     <div className="flex items-center gap-2 mt-2 bg-pink-500/5 p-2 rounded-lg border border-pink-500/10">
       <span className="text-xs text-gray-400 uppercase font-bold">Documento de retiro:</span>
       <span className="text-sm font-mono text-pink-300">
-        {/* Extraemos los últimos 4 dígitos del string de dirección si es necesario, 
-            o simplemente mostramos que se guardó correctamente */}
-        ****{ address.address.split('CI: ****')[1] || 'Asociada' }
+        {/* Usamos directamente address.dni que viene del store */}
+        { address.dni ? `****${address.dni.slice(-4)}` : 'No proporcionado' }
       </span>
     </div>
 

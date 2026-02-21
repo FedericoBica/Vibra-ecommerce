@@ -78,16 +78,18 @@ export const AddressForm = ({ userStoredAddress = {}, shippingConfig }: Props) =
     if ( address.firstName ) reset(address);
   },[address, reset]);
 
-  const onSubmit = async( data: FormInputs ) => {
+const onSubmit = async( data: FormInputs ) => {
     if (data.deliveryMethod === 'PICKUP') {
-      // Guardamos la info del locker y la CI en el campo de dirección para la orden
-      data.address = `Locker: ${data.lockerLocation} | CI: ****${data.dni}`;
+      // Dejamos el DNI intacto en el objeto 'data'
+      data.address = data.lockerLocation || ''; 
       data.city = data.departamento;
       data.postalCode = '11000';
       data.address2 = '';
-    }
-    
-    setAddress(data);
+    }    
+    setAddress({
+      ...data,
+      dni: data.dni || '',
+    });
     router.push('/checkout');
   };
 

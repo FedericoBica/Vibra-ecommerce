@@ -13,7 +13,8 @@ interface State {
     departamento: string;
     phone: string;
     deliveryMethod: 'EXPRESS' | 'STANDARD' | 'PICKUP'; // <--- Nuevo
-    lockerLocation?: string; // <--- Nuevo
+    lockerLocation?: string; 
+    dni: string;
   };
 
   // Methods
@@ -35,6 +36,7 @@ export const useAddressStore = create<State>()(
         phone: "",
         deliveryMethod: 'STANDARD',
         lockerLocation: "",
+        dni:'',
       },
 
       setAddress: (address) => {

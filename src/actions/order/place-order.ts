@@ -118,6 +118,7 @@ export const placeOrder = async (
           phone:        address.phone,
           departamento: address.departamento,
           orderId:      order.id,
+          dni:          address.dni,
         },
       });
 
