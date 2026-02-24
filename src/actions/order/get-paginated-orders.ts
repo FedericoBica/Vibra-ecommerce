@@ -46,7 +46,8 @@ export const getPaginatedOrders = async({
         OrderAddress: {
           select: {
             firstName: true,
-            lastName: true
+            lastName: true,
+            email:true,
           }
         }
       }
