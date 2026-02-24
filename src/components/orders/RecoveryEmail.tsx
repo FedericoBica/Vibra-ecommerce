@@ -1,5 +1,5 @@
-export const generateEmail = (order: any) => {
-  const emailCliente = order.OrderAddress?.email || '';
+export const recoveryEmail = (order: any) => {
+  const emailCliente = order.OrderAddress?.email || order.user?.email || '';
   const firstName = order.OrderAddress?.firstName || 'cliente';
   const orderId = order.id.split("-").at(-1);
   const checkoutUrl = `https://vibralover.com/orders/${order.id}`; // Cambiá por tu web real

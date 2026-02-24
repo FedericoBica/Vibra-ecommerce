@@ -119,6 +119,9 @@ model Order {
   lockerLocation  String?        // Nombre del Locker si aplica
   shippingCost    Float          @default(0)
 
+  isDelivered     Boolean @default(false)
+  deliveredAt     DateTime?
+
   // Para el Guest Checkout (Shopify Style)
   guestEmail      String?
 }

@@ -116,6 +116,7 @@ export const placeOrder = async (
           postalCode:   address.postalCode || "N/A",
           city:         address.city,
           phone:        address.phone,
+          email:        address.email,
           departamento: address.departamento,
           orderId:      order.id,
           dni:          address.dni,

@@ -2,10 +2,13 @@ export const revalidate = 0;
 
 import { getPaginatedOrders } from "@/actions";
 import { getOrdersSummary } from "@/actions/order/get-order-summary";
+import { setOrderAsDelivered } from "@/actions/order/set-delivered";
 import { Pagination, Title } from "@/components";
-import { generateEmail } from "@/components/orders/GenerateEmail";
+import { DeliveredButton } from "@/components/orders/DeliveredButton";
 import { OrderFilters } from "@/components/orders/OrderFilters"; // Importamos el nuevo componente
+import { recoveryEmail } from "@/components/orders/RecoveryEmail";
 import { SummaryCards } from "@/components/orders/SummaryCards";
+import { trackingEmail } from "@/components/orders/TrackingEmail";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { IoCardOutline } from "react-icons/io5";
@@ -14,7 +17,10 @@ interface Props {
   searchParams: {
     page?: string;
     status?: string;
-  };
+    delivery?: string; // 'PICKUP', 'STANDARD', 'EXPRESS'
+    delivered?: string; // 'si', 'no'
+    search?: string;
+    };
 }
 
 export default async function OrdersPage({ searchParams }: Props) {
@@ -25,7 +31,10 @@ export default async function OrdersPage({ searchParams }: Props) {
 
   const { ok, orders = [], totalPages = 1 } = await getPaginatedOrders({ 
     page, 
-    status 
+    status: searchParams.status,
+    delivery: searchParams.delivery,
+    delivered: searchParams.delivered,
+    search: searchParams.search
   });
 
   if (!ok) {
@@ -79,7 +88,7 @@ export default async function OrdersPage({ searchParams }: Props) {
                       
                       {/* BOTÓN DE RECUPERACIÓN POR EMAIL */}
                       <a 
-                        href={generateEmail(order)}
+                        href={recoveryEmail(order)}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-[10px] text-zinc-500 hover:text-pink-400 transition underline flex items-center gap-1"
@@ -90,10 +99,35 @@ export default async function OrdersPage({ searchParams }: Props) {
                     )}
                   </div>
                 </td>
-                <td className="text-sm px-6">
-                  <Link href={`/orders/${order.id}`} className="text-pink-500 hover:text-pink-400 font-bold transition">
-                    Ver detalle
-                  </Link>
+               {/* OPCIONES */}
+                <td className="text-sm font-bold text-zinc-300 px-6 py-4 text-left min-w-[220px]">
+                  <div className="flex items-center gap-3">
+                    {/* 1. Ver Detalle (Icono o Texto discreto) */}
+                    <Link 
+                      href={`/orders/${order.id}`} 
+                      className="text-[11px] uppercase tracking-tighter font-bold text-zinc-500 hover:text-pink-500 transition border border-zinc-800 px-2 py-1 rounded"
+                    >
+                      Detalle
+                    </Link>
+                    
+                    {/* 2. Botón Entregado (El componente que ya tenés) */}
+                    <DeliveredButton 
+                      orderId={order.id} 
+                      isDelivered={order.isDelivered} 
+                    />
+
+                    {/* 3. Botón Tracking (Unificado visualmente) */}
+                    {order.deliveryMethod === 'STANDARD' && order.isPaid && !order.isDelivered && (
+                      <a 
+                        href={trackingEmail(order)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-[10px] font-bold uppercase text-blue-400 hover:text-blue-300 transition border border-blue-500/20 px-2 py-1 rounded bg-blue-500/5 flex items-center gap-1"
+                      >
+                        <span>🚚</span> Tracking
+                      </a>
+                    )}
+                  </div>
                 </td>
               </tr>
             ))}

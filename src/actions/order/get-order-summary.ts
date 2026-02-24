@@ -1,4 +1,6 @@
-import prisma from '@/lib/prisma';
+// src/actions/order/get-order-summary.ts
+
+import prisma from "@/lib/prisma";
 
 export const getOrdersSummary = async () => {
   try {
@@ -6,32 +8,32 @@ export const getOrdersSummary = async () => {
       select: {
         total: true,
         isPaid: true,
+        isDelivered: true,
       }
     });
 
-    const totalOrders = orders.length;
-    const paidOrders = orders.filter(o => o.isPaid).length;
-    const pendingOrders = totalOrders - paidOrders;
+    // Filtramos lo que realmente importa ahora:
+    const paidOrders = orders.filter(o => o.isPaid);
     
-    // Suma de ventas (solo las pagadas)
-    const totalRevenue = orders
-      .filter(o => o.isPaid)
-      .reduce((acc, order) => acc + order.total, 0);
+    // LO URGENTE: Pagado pero NO entregado
+    const pendingDelivery = paidOrders.filter(o => !o.isDelivered).length;
+    
+    // LO LISTO: Pagado y Entregado
+    const completedOrders = paidOrders.filter(o => o.isDelivered).length;
 
-    // Ticket promedio
-    const averageTicket = paidOrders > 0 ? totalRevenue / paidOrders : 0;
+    const totalRevenue = paidOrders.reduce((acc, order) => acc + order.total, 0);
 
     return {
       ok: true,
       summary: {
-        totalOrders,
-        paidOrders,
-        pendingOrders,
+        totalOrders: orders.length,
+        paidOrders: paidOrders.length,
+        pendingDelivery, // <--- Nueva métrica estrella
+        completedOrders,
         totalRevenue,
-        averageTicket,
       }
     };
   } catch (error) {
-    return { ok: false, message: 'Error al calcular métricas' };
+    return { ok: false, message: 'Error' };
   }
 };
