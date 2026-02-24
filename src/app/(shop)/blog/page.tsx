@@ -2,12 +2,13 @@
 import { getPosts } from "@/actions"; // Importamos la función plural
 import { PostCard } from "@/components/blog/PostCard";
 import { Title } from "@/components";
+import { Post } from "@/interfaces";
 
 export const revalidate = 3600; 
 
 export default async function BlogPage() {
   // Llamamos a getPosts() que devuelve el array de artículos
-  const posts = await getPosts();
+  const posts = await getPosts() as Post[];
 
   return (
     <div className="px-5 mb-20 max-w-[1200px] mx-auto min-h-screen">

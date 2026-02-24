@@ -7,23 +7,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum Size {
-  XS
-  S
-  M
-  L
-  XL
-  XXL
-  XXXL
-}
-
-enum Gender {
-  men
-  women
-  kid
-  unisex
-}
-
 enum Role {
   admin
   user
@@ -185,6 +168,7 @@ model Post {
   id          String   @id @default(uuid())
   title       String
   slug        String   @unique
+  tags        String[]
   excerpt     String   // Un resumen corto para la lista
   content     String   @db.Text // El contenido largo
   image       String   // URL de la imagen de portada

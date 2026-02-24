@@ -2,6 +2,7 @@ import { getPostBySlug } from "@/actions/blog/get-post-by-slug";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { titleFont } from "@/config/fonts";
+import { Post } from "@/interfaces";
 
 interface Props {
   params: {
@@ -11,7 +12,7 @@ interface Props {
 
 export default async function PostBySlugPage({ params }: Props) {
   const { slug } = params;
-  const post = await getPostBySlug(slug);
+  const post = await getPostBySlug(slug) as Post | null;
 
   if (!post) {
     notFound();

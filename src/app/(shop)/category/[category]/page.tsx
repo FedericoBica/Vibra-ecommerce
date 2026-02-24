@@ -1,66 +1,46 @@
-export const revalidate = 60; // 60 segundos
+// app/(shop)/category/[slug]/page.tsx
+
+export const revalidate = 60;
 
 import { getPaginatedProductsWithImages } from '@/actions';
 import { Pagination, ProductGrid, Title } from '@/components';
-
-import { Gender } from '@prisma/client';
 import { redirect } from 'next/navigation';
-
-
 
 interface Props {
   params: {
-    gender: string;
+    slug: string; // Cambiamos gender por slug
   },
   searchParams: {
     page?: string; 
   }
 }
 
+export default async function CategoryByPage({ params, searchParams }: Props) {
 
-export default async function GenderByPage({ params, searchParams }: Props) {
-
-  const { gender } = params;
-
+  const { slug } = params;
   const page = searchParams.page ? parseInt( searchParams.page ) : 1;
 
+  // IMPORTANTE: Tu Server Action debe estar preparado para recibir 'category' en vez de 'gender'
   const { products, currentPage, totalPages } = await getPaginatedProductsWithImages({ 
     page, 
-    gender: gender as Gender,
+    category: slug, // <--- Aquí pasamos el slug de la categoría
   });
 
-
   if ( products.length === 0 ) {
-    redirect(`/gender/${ gender }`);
+    redirect('/'); // O a una página de "no hay productos"
   }
-  
-
-  const labels: Record<string, string>  = {
-    'men': 'para hombres',
-    'women': 'para mujeres',
-    'kid': 'para niños',
-    'unisex': 'para todos'
-  }
-
-  // if ( id === 'kids' ) {
-  //   notFound();
-  // }
-
 
   return (
     <>
       <Title
-        title={`Artículos de ${ labels[gender] }`}
+        title={`Artículos de ${ slug.toUpperCase() }`} // O busca el nombre real en la DB
         subtitle="Todos los productos"
         className="mb-2"
       />
 
-      <ProductGrid 
-        products={ products }
-      />
+      <ProductGrid products={ products } />
 
       <Pagination totalPages={ totalPages }  />
-      
     </>
   );
 }
