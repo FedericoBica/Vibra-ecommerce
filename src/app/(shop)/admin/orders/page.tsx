@@ -51,8 +51,8 @@ export default async function OrdersPage({ searchParams }: Props) {
       {/* Filtros de Cliente */}
       <OrderFilters currentStatus={status} />
 
-      <div className="mb-10 overflow-hidden rounded-xl border border-zinc-800 bg-zinc-950">
-        <table className="min-w-full">
+      <div className="mb-10 overflow-x-auto rounded-xl border border-zinc-800 bg-zinc-950">
+        <table className="min-w-[800px] w-full border-collapse">
           <thead className="bg-zinc-900 border-b border-zinc-800">
             <tr>
               <th className="text-sm font-bold text-zinc-300 px-6 py-4 text-left">#ID</th>
