@@ -111,10 +111,12 @@ export default async function OrdersPage({ searchParams }: Props) {
                     </Link>
                     
                     {/* 2. Botón Entregado (El componente que ya tenés) */}
-                    <DeliveredButton 
-                      orderId={order.id} 
-                      isDelivered={order.isDelivered} 
-                    />
+                    {order.isPaid && (
+                      <DeliveredButton 
+                        orderId={order.id} 
+                        isDelivered={order.isDelivered} 
+                      />
+                    )}
 
                     {/* 3. Botón Tracking (Unificado visualmente) */}
                     {order.deliveryMethod === 'STANDARD' && order.isPaid && !order.isDelivered && (
