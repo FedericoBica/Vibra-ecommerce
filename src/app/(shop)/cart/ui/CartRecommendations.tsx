@@ -59,7 +59,7 @@ export const CartRecommendations = () => {
   if (recommended.length === 0) return null;
 
   return (
-    <div className="mt-20 pb-20 border-t border-zinc-800/50 pt-10">
+    <div className="mt-5 pb-20 border-t border-zinc-800/50 pt-10">
       <div className="flex items-center gap-3 mb-8">
         <div className="w-1 h-6 bg-pink-500 rounded-full" />
         <h2 className="text-xl font-black uppercase tracking-widest text-white italic">

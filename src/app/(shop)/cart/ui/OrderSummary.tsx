@@ -31,21 +31,11 @@ export const OrderSummary = ({ threshold }: Props) => {
 
   if (!loaded) return <p className="animate-pulse text-pink-500">Cargando resumen...</p>;
 
-  // --- BORRAMOS LA LÍNEA QUE ESTABA ACÁ (const isFreeShipping = ...) ---
-
   return (
     <div className="grid grid-cols-2 gap-y-3">
-      <span className="text-gray-400">No. Productos</span>
-      <span className="text-right text-gray-200">{itemsInCart} unidades</span>
 
       <span className="text-gray-400">Subtotal</span>
       <span className="text-right text-gray-200">{currencyFormat(subTotal)}</span>
-
-      {/* Info dinámica de envío */}
-      <span className="text-gray-400">Envío</span>
-      <span className={`text-right font-bold italic ${isFreeShipping ? 'text-emerald-400 animate-pulse' : 'text-zinc-500'}`}>
-        {isFreeShipping ? '¡GRATIS!' : 'A calcular'}
-      </span>
 
       <div className="col-span-2 h-px bg-zinc-800 my-2" />
 
@@ -55,11 +45,21 @@ export const OrderSummary = ({ threshold }: Props) => {
       </span>
 
       {/* Usamos amountToFreeShipping que ya calculó el store */}
-      {!isFreeShipping && (
-        <p className="col-span-2 text-[10px] text-zinc-500 text-right mt-2 bg-pink-600/5 p-2 rounded-lg border border-pink-500/10 animate-in fade-in duration-500">
-          Agregá <span className="text-pink-500 font-black">{currencyFormat(amountToFreeShipping)}</span> más para tener <span className="text-emerald-400">ENVÍO GRATIS</span>
-        </p>
-      )}
-    </div>  
+      <div className="col-span-2 mt-2">
+        {isFreeShipping ? (
+          /* MENSAJE CUANDO TIENE ENVÍO GRATIS */
+          <div className="flex items-center justify-center gap-2 bg-emerald-500/10 border border-emerald-500/20 p-2 rounded-lg animate-in fade-in zoom-in duration-500">
+            <span className="text-[10px] font-black uppercase tracking-widest text-emerald-400">
+              ✨ ¡Tu envío es gratuito! ✨
+            </span>
+          </div>
+        ) : (
+          /* MENSAJE CUANDO FALTA PARA EL ENVÍO GRATIS */
+          <p className="text-[10px] text-zinc-500 text-right bg-pink-600/5 p-2 rounded-lg border border-pink-500/10 animate-in fade-in duration-500">
+            Agregá <span className="text-pink-500 font-black">{currencyFormat(amountToFreeShipping)}</span> más para tener <span className="text-emerald-400">ENVÍO GRATIS</span>
+          </p>
+        )}
+      </div>
+    </div>
   );
 };

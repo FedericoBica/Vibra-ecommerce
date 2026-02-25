@@ -4,8 +4,9 @@ export const recoveryEmail = (order: any) => {
   const orderId = order.id.split("-").at(-1);
   const checkoutUrl = `https://vibralover.com/orders/${order.id}`; // Cambiá por tu web real
 
-  // AJUSTE DE CUENTA: Cambiá el "u/0" por el número que te aparezca a vos (u/0, u/1, etc.)
-  const gmailBase = "https://mail.google.com/mail/u/1/?view=cm&fs=1"; 
+// LA CLAVE: Usamos authuser con el mail de la empresa
+  const cuentaVibra = "vibralovershop@gmail.com"; // <-- Poné acá el mail real de Vibra
+  const gmailBase = `https://mail.google.com/mail/?view=cm&fs=1&authuser=${cuentaVibra}`;
   
   const subject = encodeURIComponent(`Tu pedido en Vibra #${orderId} te está esperando`);
   const message = `Hola ${firstName}, cómo estás?
@@ -23,7 +24,7 @@ Queríamos saber si hubo algún inconveniente o si necesitás ayuda para finaliz
 Cualquier duda, respondé este mail.
 Quedamos atentos.
 
-Saludos, Equipo de Vibra.`;
+Saludos.`;
 
   const body = encodeURIComponent(message);
 
