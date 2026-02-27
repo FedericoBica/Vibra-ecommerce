@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation';
 import prisma from '@/lib/prisma';
 import Link from 'next/link';
 import { AddPackToCart } from './ui/AddPackToCart';
+import { ProductImage } from '@/components';
 
 interface Props {
   params: { slug: string };
@@ -71,9 +72,11 @@ export default async function PackDetailPage({ params }: Props) {
         {(pack.products as unknown as PackProductItem[]).map(({ product }, i: number) => (
           <div key={product.id} className="bg-zinc-900/60 border border-zinc-800 rounded-3xl overflow-hidden">
             <div className="relative h-48 bg-zinc-950">
-              <img
-                src={`/products/${product.ProductImage[0]?.url ?? ''}`}
+              <ProductImage
+                src={product.ProductImage[0]?.url ?? ''}
                 alt={product.title}
+                width={400}
+                height={400}
                 className="w-full h-full object-cover"
               />
               <div className="absolute top-3 left-3 w-7 h-7 rounded-full bg-pink-600 flex items-center justify-center text-white text-xs font-black">

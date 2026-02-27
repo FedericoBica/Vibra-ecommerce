@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import clsx from 'clsx';
+import { ProductImage } from '../product/product-image/ProductImage';
 
 interface Product {
   id: string;
@@ -37,12 +38,12 @@ export const PackCard = ({ pack, variant = 'card' }: Props) => {
         {/* Fotos apiladas */}
         <div className="flex -space-x-3 flex-none">
           {pack.products.slice(0, 3).map(({ product }, i) => (
-            <img
-              key={product.id}
-              src={`/products/${product.ProductImage[0]?.url ?? ''}`}
+            <ProductImage
+              src={product.ProductImage[0]?.url ?? ''}
               alt={product.title}
-              className="w-12 h-12 object-cover rounded-xl border-2 border-zinc-900 group-hover:border-zinc-800 transition-colors"
-              style={{ zIndex: pack.products.length - i }}
+              width={400}
+              height={400}
+              className="w-full h-full object-cover"
             />
           ))}
         </div>
@@ -112,10 +113,12 @@ export const PackCard = ({ pack, variant = 'card' }: Props) => {
                 zIndex: i === 1 ? 10 : 5,
               }}
             >
-              <img
-                src={`/products/${product.ProductImage[0]?.url ?? ''}`}
+              <ProductImage
+                src={product.ProductImage[0]?.url ?? ''}
                 alt={product.title}
-                className="w-24 h-24 object-cover rounded-2xl shadow-xl group-hover:scale-105 transition-transform duration-300"
+                width={400}
+                height={400}
+                className="w-full h-full object-cover"
               />
             </div>
           ))}
