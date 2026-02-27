@@ -45,6 +45,8 @@ model Product {
 
   rating    Float @default(5.0)
   reviewCount Int @default(0)
+
+  packs PackProduct[]
 }
 
 model ProductImage {
@@ -188,3 +190,28 @@ model StoreConfig {
   updatedAt DateTime @updatedAt
 }
 
+model Pack {
+  id          String      @id @default(uuid())
+  title       String
+  description String
+  price       Float
+  comparePrice Float?     // precio tachado (suma de productos sueltos)
+  image       String?     // imagen principal del pack
+  slug        String      @unique
+  options      Json         @default("[]")
+  isActive    Boolean     @default(true)
+  soldCount   Int         @default(0)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  products    PackProduct[]
+}
+
+model PackProduct {
+  id        String  @id @default(uuid())
+  packId    String
+  productId String
+  pack      Pack    @relation(fields: [packId], references: [id], onDelete: Cascade)
+  product   Product @relation(fields: [productId], references: [id])
+
+  @@unique([packId, productId])
+}

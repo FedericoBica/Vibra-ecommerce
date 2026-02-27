@@ -14,6 +14,8 @@ export * from './category/get-categories';
 
 export * from './config/store-config';
 
+export * from './packs/pack-actions';
+
 export * from './coupons/admin-coupon';
 
 export * from './blog/get-posts';
@@ -28,7 +30,7 @@ export * from './order/get-paginated-orders';
 export * from './order/get-orders-by-user';
 export * from './order/get-order-summary';
 export * from './order/set-delivered';
-
+export * from './order/validate-coupon'
 
 export * from './payments/mercado-pago-preference';
 

@@ -16,6 +16,7 @@ import {
   IoDocumentTextOutline,
   IoPaperPlaneOutline,
   IoSettingsOutline,
+  IoGiftOutline,
 } from "react-icons/io5";
 
 import { useUIStore } from "@/store";
@@ -104,6 +105,10 @@ export const Sidebar = () => {
               <Link href="/admin/products" onClick={closeMenu} className="flex items-center group">
                 <span className="mr-4 text-sm font-light text-gray-400 group-hover:text-white transition-all">Productos</span>
                 <IoShirtOutline size={20} className="text-zinc-600 group-hover:text-pink-500" />
+              </Link>
+              <Link href="/admin/packs" onClick={closeMenu} className="flex items-center group">
+                <span className="mr-4 text-sm font-light text-gray-400 group-hover:text-white transition-all">Packs</span>
+                <IoGiftOutline size={20} className="text-zinc-600 group-hover:text-pink-500" />
               </Link>
               <Link href="/admin/orders" onClick={closeMenu} className="flex items-center group">
                 <span className="mr-4 text-sm font-light text-gray-400 group-hover:text-white transition-all">Órdenes</span>

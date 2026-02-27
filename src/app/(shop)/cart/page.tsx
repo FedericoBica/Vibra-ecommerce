@@ -6,6 +6,7 @@ import { OrderSummary } from './ui/OrderSummary';
 import { CartRecommendations } from './ui/CartRecommendations';
 import { getStoreConfig } from '@/actions/config/store-config'; // <--- IMPORTANTE
 import { CheckoutButton } from '@/components/cart/CheckoutButton';
+import { CartPacksSuggestion } from '@/components/packs/CartPacksSuggestion';
 
 export default async function CartPage() { // <--- Agregamos async
 
@@ -58,6 +59,10 @@ export default async function CartPage() { // <--- Agregamos async
           <div className="col-span-1 md:col-span-12 order-3">
             <CartRecommendations />
           </div>
+          <div className="col-span-1 md:col-span-12 order-3">
+            <CartPacksSuggestion />
+          </div>
+
           
         </div>
       </div>

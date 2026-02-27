@@ -30,6 +30,7 @@ export interface CartProduct {
   image: string;
   color: Color;
   category: string;
+  note?:    string; 
 }
 
 

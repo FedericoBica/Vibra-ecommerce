@@ -6,6 +6,7 @@ import { redirect } from 'next/navigation';
 import { getAllStoreConfig, getPaginatedProductsWithImages } from '@/actions';
 import { Pagination, ProductGrid, Title } from '@/components';
 import { ProductHero } from '@/components/ui/product-hero/ProductHero';
+import { PacksSection } from '@/components/packs/PackSection';
 
 
 
@@ -40,6 +41,7 @@ export default async function Home({ searchParams }: Props) {
         className="mb-2"
       />
 
+      <PacksSection />
       <ProductGrid 
         products={ products }
       />

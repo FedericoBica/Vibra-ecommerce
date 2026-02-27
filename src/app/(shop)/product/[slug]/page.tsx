@@ -17,6 +17,7 @@ import { ProductDetailedFeature } from "@/components/product/ui/PremiumFeatures"
 import { ProductSteps } from "@/components/product/ui/ProductSteps";
 import { RelatedProducts } from "@/components/product/related/RelatedProducts";
 import { IoStar, IoStarHalf, IoStarOutline } from "react-icons/io5";
+import { ProductPacksWidget } from "@/components/packs/ProductPacksWidget";
 
 interface Props {
   params: {
@@ -129,6 +130,8 @@ export default async function ProductBySlugPage({ params }: Props) {
           <p className="font-light text-zinc-300 leading-relaxed mt-2">{product.description}</p>
         </div>
       </div>
+
+      <ProductPacksWidget productId={product.id} />
 
       {/* 2. SECCIÓN ULTRA UI (Solo si es Premium) */}
       {product.isPremiumUI && (
