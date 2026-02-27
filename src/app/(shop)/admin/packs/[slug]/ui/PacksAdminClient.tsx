@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useTransition } from 'react';
-import { createPack, togglePack, deletePack } from '@/actions/packs/pack-actions';
+import { createPack, togglePack, deletePack, updatePack } from '@/actions/packs/pack-actions';
 import { IoAddOutline, IoTrashOutline, IoCheckmarkCircle, IoCloseCircle, IoSearchOutline, IoCloseOutline } from 'react-icons/io5';
 import clsx from 'clsx';
 import { PackOption } from '@/interfaces';
@@ -40,15 +40,22 @@ export const PacksAdminClient = ({ initialPacks, allProducts }: Props) => {
   const [showForm, setShowForm] = useState(false);
 
   // Form state
-  const [title, setTitle]             = useState('');
-  const [description, setDescription] = useState('');
-  const [price, setPrice]             = useState('');
+  const [title, setTitle]               = useState('');
+  const [description, setDescription]   = useState('');
+  const [price, setPrice]               = useState('');
   const [comparePrice, setComparePrice] = useState('');
   const [selectedProducts, setSelectedProducts] = useState<Product[]>([]);
-  const [search, setSearch]           = useState('');
-  const [formError, setFormError]     = useState('');
-  const [options, setOptions] = useState<PackOption[]>([]);
-  
+  const [search, setSearch]             = useState('');
+  const [formError, setFormError]       = useState('');
+  const [options, setOptions]           = useState<PackOption[]>([]);
+
+  // Edit state
+  const [editingPack, setEditingPack]           = useState<Pack | null>(null);
+  const [editPrice, setEditPrice]               = useState('');
+  const [editComparePrice, setEditComparePrice] = useState('');
+  const [editTitle, setEditTitle]               = useState('');
+  const [editDescription, setEditDescription]   = useState('');
+
   const addOption = () =>
     setOptions(prev => [...prev, { label: '', choices: [''] }]);
 
@@ -77,8 +84,7 @@ export const PacksAdminClient = ({ initialPacks, allProducts }: Props) => {
         : o
     ));
 
-
- const filteredProducts = allProducts.filter(p =>
+  const filteredProducts = allProducts.filter(p =>
     p.title.toLowerCase().includes(search.toLowerCase()) &&
     !selectedProducts.find(s => s.id === p.id)
   );
@@ -98,11 +104,10 @@ export const PacksAdminClient = ({ initialPacks, allProducts }: Props) => {
 
     if (selectedProducts.length < 2) { setFormError('Seleccioná al menos 2 productos'); return; }
 
-    // Validar que las opciones estén completas
     for (const opt of options) {
-      if (!opt.label.trim())            { setFormError('Todas las opciones deben tener un nombre'); return; }
+      if (!opt.label.trim())                { setFormError('Todas las opciones deben tener un nombre'); return; }
       if (opt.choices.some(c => !c.trim())) { setFormError(`La opción "${opt.label}" tiene opciones vacías`); return; }
-      if (opt.choices.length < 2)       { setFormError(`La opción "${opt.label}" necesita al menos 2 alternativas`); return; }
+      if (opt.choices.length < 2)           { setFormError(`La opción "${opt.label}" necesita al menos 2 alternativas`); return; }
     }
 
     startTransition(async () => {
@@ -118,6 +123,36 @@ export const PacksAdminClient = ({ initialPacks, allProducts }: Props) => {
       if (!r.ok) { setFormError(r.message ?? 'Error'); return; }
       resetForm();
       window.location.reload();
+    });
+  };
+
+  const handleEdit = (pack: Pack) => {
+    setEditingPack(pack);
+    setEditPrice(pack.price.toString());
+    setEditComparePrice(pack.comparePrice?.toString() ?? '');
+    setEditTitle(pack.title);
+    setEditDescription(pack.description);
+  };
+
+  const handleSaveEdit = async () => {
+    if (!editingPack) return;
+    startTransition(async () => {
+      const r = await updatePack(editingPack.id, {
+        price:        parseFloat(editPrice),
+        comparePrice: editComparePrice ? parseFloat(editComparePrice) : undefined,
+        title:        editTitle,
+        description:  editDescription,
+      });
+      if (r.ok) {
+        setPacks(ps => ps.map(p => p.id === editingPack.id ? {
+          ...p,
+          price:        parseFloat(editPrice),
+          comparePrice: editComparePrice ? parseFloat(editComparePrice) : null,
+          title:        editTitle,
+          description:  editDescription,
+        } : p));
+        setEditingPack(null);
+      }
     });
   };
 
@@ -161,12 +196,11 @@ export const PacksAdminClient = ({ initialPacks, allProducts }: Props) => {
         </button>
       </div>
 
-      {/* Formulario */}
+      {/* Formulario de creación */}
       {showForm && (
         <form onSubmit={handleCreate} className="bg-zinc-900/60 border border-pink-500/20 rounded-3xl p-7 space-y-7 animate-in fade-in slide-in-from-top-2 duration-200">
           <p className="text-sm font-black text-pink-400 uppercase tracking-widest">Crear nuevo pack</p>
 
-          {/* Nombre + descripción */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="text-[10px] text-zinc-500 uppercase font-bold tracking-wider mb-1 block">Nombre *</label>
@@ -186,7 +220,6 @@ export const PacksAdminClient = ({ initialPacks, allProducts }: Props) => {
             </div>
           </div>
 
-          {/* Precios */}
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="text-[10px] text-zinc-500 uppercase font-bold tracking-wider mb-1 block">
@@ -270,7 +303,7 @@ export const PacksAdminClient = ({ initialPacks, allProducts }: Props) => {
             )}
           </div>
 
-          {/* ── Editor de opciones ─────────────────────────────────────────── */}
+          {/* Editor de opciones */}
           <div>
             <div className="flex items-center justify-between mb-3">
               <div>
@@ -297,8 +330,6 @@ export const PacksAdminClient = ({ initialPacks, allProducts }: Props) => {
               <div className="space-y-4">
                 {options.map((opt, optIdx) => (
                   <div key={optIdx} className="bg-zinc-950 border border-zinc-800 rounded-2xl p-5 space-y-3">
-
-                    {/* Label de la opción */}
                     <div className="flex items-center gap-3">
                       <input
                         type="text"
@@ -315,7 +346,6 @@ export const PacksAdminClient = ({ initialPacks, allProducts }: Props) => {
                       </button>
                     </div>
 
-                    {/* Alternativas */}
                     <div className="space-y-2 pl-3 border-l-2 border-zinc-800">
                       {opt.choices.map((choice, choiceIdx) => (
                         <div key={choiceIdx} className="flex items-center gap-2">
@@ -339,7 +369,6 @@ export const PacksAdminClient = ({ initialPacks, allProducts }: Props) => {
                           </button>
                         </div>
                       ))}
-
                       <button
                         type="button"
                         onClick={() => addChoice(optIdx)}
@@ -400,9 +429,9 @@ export const PacksAdminClient = ({ initialPacks, allProducts }: Props) => {
       ) : (
         <div className="space-y-3">
           {packs.map(pack => {
-            const opts    = (pack.options as PackOption[]) ?? [];
-            const saving  = (pack.comparePrice ?? 0) - pack.price;
-            const pct     = pack.comparePrice ? Math.round(saving / pack.comparePrice * 100) : 0;
+            const opts   = (pack.options as PackOption[]) ?? [];
+            const saving = (pack.comparePrice ?? 0) - pack.price;
+            const pct    = pack.comparePrice ? Math.round(saving / pack.comparePrice * 100) : 0;
             return (
               <div
                 key={pack.id}
@@ -447,6 +476,15 @@ export const PacksAdminClient = ({ initialPacks, allProducts }: Props) => {
                 </div>
 
                 <div className="flex items-center gap-2 flex-none">
+                  {/* Botón editar */}
+                  <button
+                    onClick={() => handleEdit(pack)}
+                    className="p-2 text-zinc-500 hover:text-blue-400 hover:bg-blue-900/20 rounded-lg transition-all text-base"
+                    title="Editar pack"
+                  >
+                    ✏️
+                  </button>
+
                   <button
                     onClick={() => handleToggle(pack.id, pack.isActive)}
                     disabled={isPending}
@@ -459,6 +497,7 @@ export const PacksAdminClient = ({ initialPacks, allProducts }: Props) => {
                   >
                     {pack.isActive ? <><IoCheckmarkCircle size={12} /> Activo</> : <><IoCloseCircle size={12} /> Inactivo</>}
                   </button>
+
                   <button
                     onClick={() => handleDelete(pack.id, pack.title)}
                     disabled={isPending}
@@ -472,6 +511,98 @@ export const PacksAdminClient = ({ initialPacks, allProducts }: Props) => {
           })}
         </div>
       )}
+
+      {/* ── Modal de edición ── */}
+      {editingPack && (
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-zinc-900 border border-zinc-700 rounded-3xl p-7 w-full max-w-md space-y-5 shadow-2xl">
+            <div className="flex items-center justify-between">
+              <p className="text-sm font-black text-pink-400 uppercase tracking-widest">Editar Pack</p>
+              <button onClick={() => setEditingPack(null)} className="text-zinc-500 hover:text-white transition-colors">
+                <IoCloseOutline size={20} />
+              </button>
+            </div>
+
+            <div>
+              <label className="text-[10px] text-zinc-500 uppercase font-bold tracking-wider mb-1 block">Nombre</label>
+              <input
+                value={editTitle}
+                onChange={e => setEditTitle(e.target.value)}
+                className="w-full bg-zinc-950 border border-zinc-700 focus:border-pink-500 rounded-xl px-4 py-2.5 text-white text-sm outline-none transition-colors"
+              />
+            </div>
+
+            <div>
+              <label className="text-[10px] text-zinc-500 uppercase font-bold tracking-wider mb-1 block">Descripción</label>
+              <input
+                value={editDescription}
+                onChange={e => setEditDescription(e.target.value)}
+                className="w-full bg-zinc-950 border border-zinc-700 focus:border-pink-500 rounded-xl px-4 py-2.5 text-white text-sm outline-none transition-colors"
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="text-[10px] text-zinc-500 uppercase font-bold tracking-wider mb-1 block">
+                  Precio <span className="text-pink-500">(cobra)</span>
+                </label>
+                <div className="relative">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500 font-mono">$</span>
+                  <input
+                    type="number" min={0}
+                    value={editPrice}
+                    onChange={e => setEditPrice(e.target.value)}
+                    className="w-full bg-zinc-950 border border-zinc-700 focus:border-pink-500 rounded-xl pl-7 pr-4 py-2.5 text-white font-black text-lg outline-none transition-colors"
+                  />
+                </div>
+              </div>
+              <div>
+                <label className="text-[10px] text-zinc-500 uppercase font-bold tracking-wider mb-1 block">Precio tachado</label>
+                <div className="relative">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500 font-mono">$</span>
+                  <input
+                    type="number" min={0}
+                    value={editComparePrice}
+                    onChange={e => setEditComparePrice(e.target.value)}
+                    className="w-full bg-zinc-950 border border-zinc-700 focus:border-zinc-600 rounded-xl pl-7 pr-4 py-2.5 text-white outline-none transition-colors"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {editPrice && editComparePrice && parseFloat(editComparePrice) > parseFloat(editPrice) && (
+              <div className="bg-emerald-950/20 border border-emerald-500/20 rounded-xl p-3">
+                {(() => {
+                  const saving = parseFloat(editComparePrice) - parseFloat(editPrice);
+                  const pct    = Math.round(saving / parseFloat(editComparePrice) * 100);
+                  return (
+                    <p className="text-xs text-emerald-400 font-bold">
+                      💰 El cliente ahorra <span className="text-lg font-black">${saving.toLocaleString('es-UY')}</span> ({pct}% OFF)
+                    </p>
+                  );
+                })()}
+              </div>
+            )}
+
+            <div className="flex gap-3 pt-2">
+              <button
+                onClick={handleSaveEdit}
+                disabled={isPending || !editPrice}
+                className="flex-1 bg-pink-600 hover:bg-pink-500 disabled:bg-zinc-800 text-white font-black py-3 rounded-xl text-sm uppercase tracking-widest transition-all"
+              >
+                {isPending ? 'Guardando...' : 'Guardar cambios'}
+              </button>
+              <button
+                onClick={() => setEditingPack(null)}
+                className="px-5 text-zinc-500 hover:text-white bg-zinc-800 hover:bg-zinc-700 rounded-xl text-sm transition-all"
+              >
+                Cancelar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 };

@@ -138,6 +138,24 @@ export const createPack = async (data: {
   }
 };
 
+export const updatePack = async (id: string, data: {
+  price?: number;
+  comparePrice?: number;
+  title?: string;
+  description?: string;
+  isActive?: boolean;
+}) => {
+  try {
+    await requireAdmin();
+    await prisma.pack.update({ where: { id }, data });
+    revalidatePath('/');
+    revalidatePath('/admin/packs');
+    return { ok: true };
+  } catch {
+    return { ok: false, message: 'Error al actualizar el pack' };
+  }
+};
+
 // ── Toggle activo/inactivo ────────────────────────────────────────────────────
 export const togglePack = async (id: string, isActive: boolean) => {
   try {
