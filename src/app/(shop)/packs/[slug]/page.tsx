@@ -11,7 +11,7 @@ interface PackProductItem {
   product: {
     id: string;
     title: string;
-    images: string[];
+    ProductImage: { url: string }[];
     price: number;
     description: string;
     slug: string;
@@ -25,7 +25,17 @@ async function getPackBySlug(slug: string) {
       products: {
         include: {
           product: {
-            select: { id: true, title: true, images: true, price: true, description: true, slug: true }
+            select: { 
+              id: true,
+              title: true,
+              ProductImage: {
+                select: { url: true },
+                take: 1,
+              },
+              price: true, 
+              description: true, 
+              slug: true 
+            }
           }
         }
       }
@@ -58,11 +68,11 @@ export default async function PackDetailPage({ params }: Props) {
 
       {/* Productos del pack */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-12">
-        {(pack.products as PackProductItem[]).map(({ product }, i: number) => (
+        {(pack.products as unknown as PackProductItem[]).map(({ product }, i: number) => (
           <div key={product.id} className="bg-zinc-900/60 border border-zinc-800 rounded-3xl overflow-hidden">
             <div className="relative h-48 bg-zinc-950">
               <img
-                src={`/products/${product.images[0]}`}
+                src={`/products/${product.ProductImage[0]?.url ?? ''}`}
                 alt={product.title}
                 className="w-full h-full object-cover"
               />
@@ -105,5 +115,3 @@ export default async function PackDetailPage({ params }: Props) {
   );
 }
 
-// ── Client Component para el botón (pequeño, inline) ─────────────────────────
-'use client'; // esto va en un archivo separado: AddPackToCart.tsx

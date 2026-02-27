@@ -10,7 +10,7 @@ interface Product {
   title:  string;
   price:  number;
   slug:   string;
-  images: { url: string }[];
+  ProductImage: { url: string }[]; 
 }
 
 interface Pack {
@@ -48,19 +48,20 @@ export const AddPackToCart = ({ pack }: { pack: Pack }) => {
 
     const pricePerProduct = pack.price / pack.products.length;
 
-    pack.products.forEach(({ product }) => {
-      addItem({
-        id:       product.id,
-        slug:     product.slug,
-        title:    product.title,
-        price:    pricePerProduct,
-        quantity: 1,
-        image:    product.images[0]?.url ?? '',
-        color:    'Rosa' as Color,
-        category: 'juguetes',
-        note,   // ← la selección del cliente viaja acá
-      });
+    addItem({
+      id:        pack.id,                              // id del pack
+      slug:      `pack-${pack.id}`,                   // slug único para el carrito
+      title:     pack.title,                           // nombre del pack
+      price:     pack.price,                           // precio completo del pack
+      quantity:  1,
+      image:     pack.products[0]?.product.ProductImage[0]?.url ?? '',  // imagen del primer producto
+      color:     'Rosa' as Color,
+      category:  'pack',
+      note,
+      isPack:    true,
+      packTitle: pack.title,
     });
+
 
     router.push('/cart');
   };

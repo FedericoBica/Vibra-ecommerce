@@ -31,6 +31,8 @@ export interface CartProduct {
   color: Color;
   category: string;
   note?:    string; 
+  isPack?:   boolean;   
+  packTitle?: string;
 }
 
 

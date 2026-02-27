@@ -16,6 +16,11 @@ export * from './blog/PostCard';
 export * from './providers/Providers';
 export * from './providers/MetaPixel';
 
+export * from './packs/CartPacksSuggestion';
+export * from './packs/PackCard';
+export * from './packs/PackSection';
+export * from './packs/ProductPacksWidget';
+
 export * from './product/slideshow/ProductSlideshow';
 export * from './product/slideshow/ProductMobileSlideshow';
 

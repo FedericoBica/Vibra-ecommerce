@@ -4,7 +4,7 @@ import clsx from 'clsx';
 interface Product {
   id: string;
   title: string;
-  images: string[];
+  ProductImage: { url: string }[];
   price: number;
 }
 
@@ -39,7 +39,7 @@ export const PackCard = ({ pack, variant = 'card' }: Props) => {
           {pack.products.slice(0, 3).map(({ product }, i) => (
             <img
               key={product.id}
-              src={`/products/${product.images[0]}`}
+              src={`/products/${product.ProductImage[0]?.url ?? ''}`}
               alt={product.title}
               className="w-12 h-12 object-cover rounded-xl border-2 border-zinc-900 group-hover:border-zinc-800 transition-colors"
               style={{ zIndex: pack.products.length - i }}
@@ -113,7 +113,7 @@ export const PackCard = ({ pack, variant = 'card' }: Props) => {
               }}
             >
               <img
-                src={`/products/${product.images[0]}`}
+                src={`/products/${product.ProductImage[0]?.url ?? ''}`}
                 alt={product.title}
                 className="w-24 h-24 object-cover rounded-2xl shadow-xl group-hover:scale-105 transition-transform duration-300"
               />

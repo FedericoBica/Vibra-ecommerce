@@ -20,6 +20,10 @@ const packInclude = {
           title:  true,
           price:  true,
           slug:   true,
+          ProductImage: {        // ← nombre real de la relación en tu schema
+            select: { url: true },
+            take: 1,
+          },
         }
       }
     }
@@ -115,13 +119,16 @@ export const createPack = async (data: {
         comparePrice: data.comparePrice,
         slug:         finalSlug,
         isActive:     true,
-        options:      data.options,
         products: {
           create: data.productIds.map(productId => ({ productId }))
         }
       },
       include: packInclude,
     });
+    // Actualizás options por separado con raw query
+    await prisma.$executeRaw`
+      UPDATE "Pack" SET options = ${JSON.stringify(data.options)}::jsonb WHERE id = ${pack.id}
+    `;
 
     revalidatePath('/');
     revalidatePath('/admin/packs');
