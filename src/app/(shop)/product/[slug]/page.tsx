@@ -18,6 +18,7 @@ import { ProductSteps } from "@/components/product/ui/ProductSteps";
 import { RelatedProducts } from "@/components/product/related/RelatedProducts";
 import { IoStar, IoStarHalf, IoStarOutline } from "react-icons/io5";
 import { ProductPacksWidget } from "@/components/packs/ProductPacksWidget";
+import { ProductDescription } from "@/components/product/ui/ProductDescription";
 
 interface Props {
   params: {
@@ -58,6 +59,8 @@ export default async function ProductBySlugPage({ params }: Props) {
       
       {/* 1. SECCIÓN DE CABECERA (Slideshow y Compra) */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+        
+        {/* LADO IZQUIERDO: Imágenes y ahora también Descripción en Desktop */}
         <div className="col-span-1 md:col-span-2">
           <ProductMobileSlideshow
             title={product.title}
@@ -70,8 +73,19 @@ export default async function ProductBySlugPage({ params }: Props) {
               images={product.images}
             />
           </div>
+
+          {/* DESCRIPCIÓN PARA DESKTOP (Se muestra abajo de las fotos) */}
+          <div className="hidden md:block mt-10 px-0">
+            <h3 className="font-black text-xs uppercase tracking-[0.2em] text-zinc-500 border-b border-zinc-800 pb-2">
+              Descripción detallada
+            </h3>
+            <div className="mt-4 max-w-3xl text-zinc-300 leading-relaxed antialiased">
+              <ProductDescription text={product.description} />
+            </div>
+          </div>
         </div>
 
+        {/* LADO DERECHO: Info de compra y Título */}
         <div className="col-span-1 px-5">
           <div className="flex items-center gap-2 mb-2">
             <div className="flex text-pink-500">
@@ -98,12 +112,10 @@ export default async function ProductBySlugPage({ params }: Props) {
           {/* PRECIO CON DESCUENTO DINÁMICO */}
           <div className="flex flex-col gap-1 mt-4 mb-6">
             <div className="flex flex-wrap items-baseline gap-3">
-              {/* Precio Vigente */}
               <span className="text-4xl font-black text-white italic tracking-tighter">
                 ${product.price.toLocaleString('es-UY')}
               </span>
 
-              {/* Contenedor de Precio Viejo y Badge - Ahora más compacto */}
               {product.oldPrice && product.oldPrice > product.price && (
                 <div className="flex items-center gap-2 bg-pink-500/10 border border-pink-500/20 py-1 px-2 rounded-lg">
                   <span className="text-sm text-zinc-500 line-through decoration-white/30">
@@ -117,6 +129,7 @@ export default async function ProductBySlugPage({ params }: Props) {
               )}
             </div>
           </div>
+
           <AddToCart 
             product={{
               ...product,
@@ -126,18 +139,19 @@ export default async function ProductBySlugPage({ params }: Props) {
             category={product.category as any}
           />        
 
-          <h3 className="font-black text-xs mt-10 uppercase tracking-[0.2em] text-zinc-500">Descripción</h3>
-          <p className="font-light text-zinc-300 leading-relaxed mt-2">{product.description}</p>
+          {/* DESCRIPCIÓN PARA MÓVIL (Se mantiene aquí para no perder el scroll en celulares) */}
+          <div className="block md:hidden">
+            <h3 className="font-black text-xs mt-10 uppercase tracking-[0.2em] text-zinc-500 border-b border-zinc-800 pb-2">
+              Descripción
+            </h3>
+            <ProductDescription text={product.description} />
+          </div>
         </div>
       </div>
 
-      {/* <ProductPacksWidget productId={product.id} /> */}
-
       {/* 2. SECCIÓN ULTRA UI (Solo si es Premium) */}
       {product.isPremiumUI && (
-        <div className="mt-16 space-y-24"> {/* Espaciado grande entre secciones para que respiren */}
-          
-          {/* Los fondos los manejamos dentro de cada componente ahora */}
+        <div className="mt-16 space-y-24">
           <ProductHighlights 
             headline={premiumData?.bannerHeadline}
             items={premiumData?.highlights ?? []}
@@ -158,7 +172,8 @@ export default async function ProductBySlugPage({ params }: Props) {
           </div>
         </div>
       )}
-      {/* 3. PRODUCTOS RELACIONADOS (Siempre visible al final) */}
+
+      {/* 3. PRODUCTOS RELACIONADOS */}
       <div className="mt-20">
         <RelatedProducts
           categoryId={product.categoryId}
