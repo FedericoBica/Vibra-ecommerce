@@ -131,7 +131,7 @@ export default async function ProductBySlugPage({ params }: Props) {
         </div>
       </div>
 
-      <ProductPacksWidget productId={product.id} />
+      {/* <ProductPacksWidget productId={product.id} /> */}
 
       {/* 2. SECCIÓN ULTRA UI (Solo si es Premium) */}
       {product.isPremiumUI && (
