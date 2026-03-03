@@ -11,13 +11,12 @@ import {
 import { getProductBySlug } from "@/actions";
 import { AddToCart } from './ui/AddToCart';
 
-// NUEVOS COMPONENTES PREMIUM
+// COMPONENTES PREMIUM Y SEO
 import { ProductHighlights } from "@/components/product/ui/ProductHighlights";
 import { ProductDetailedFeature } from "@/components/product/ui/PremiumFeatures";
 import { ProductSteps } from "@/components/product/ui/ProductSteps";
 import { RelatedProducts } from "@/components/product/related/RelatedProducts";
 import { IoStar, IoStarHalf, IoStarOutline } from "react-icons/io5";
-import { ProductPacksWidget } from "@/components/packs/ProductPacksWidget";
 import { ProductDescription } from "@/components/product/ui/ProductDescription";
 
 interface Props {
@@ -33,13 +32,17 @@ export async function generateMetadata(
   const slug = params.slug;
   const product = await getProductBySlug(slug);
 
+  // Optimizamos metadatos para Uruguay y búsquedas locales
+  const title = `${product?.title} | Envío Discreto Uruguay - Vibralover`;
+  const description = `${product?.description?.substring(0, 150)}... Comprá con total discreción en Montevideo y todo Uruguay.`;
+
   return {
-    title: product?.title ?? "Producto no encontrado",
-    description: product?.description ?? "",
+    title: product?.title ? title : "Producto no encontrado",
+    description: description,
     openGraph: {
-      title: product?.title ?? "Producto no encontrado",
-      description: product?.description ?? "",
-      images: [ `/products/${ product?.images[1] }`],
+      title: title,
+      description: description,
+      images: [ `/products/${ product?.images[0] }`],
     },
   };
 }
@@ -54,13 +57,68 @@ export default async function ProductBySlugPage({ params }: Props) {
 
   const premiumData = product.premiumData as any;
 
+  // --- LÓGICA DE SCHEMA JSON-LD (SEO 2026) ---
+  const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: product.title,
+    image: `https://vibralover.com/products/${product.images[0]}`,
+    description: product.description,
+    brand: {
+      '@type': 'Brand',
+      name: 'Vibralover',
+    },
+    offers: {
+      '@type': 'Offer',
+      url: `https://vibralover.com/product/${product.slug}`,
+      priceCurrency: 'UYU',
+      price: product.price,
+      availability: product.inStock > 0 ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
+      itemCondition: 'https://schema.org/NewCondition',
+    },
+    aggregateRating: {
+      '@type': 'AggregateRating',
+      ratingValue: product.rating || 5,
+      reviewCount: product.reviewCount || 1,
+    },
+  },
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "¿El envío es discreto en Uruguay?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Sí, en Vibralover garantizamos total discreción. Los paquetes no tienen logos ni referencias al contenido, y el remitente es una persona física o nombre genérico."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "¿Cómo se paga en Vibralover?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Aceptamos todas las tarjetas de crédito y débito a traves de mercado pago, tambien aceptamos transferencias bancarias"
+          }
+        }
+      ]
+    }
+  ];
+
   return (
     <div className="mt-5 mb-20 flex flex-col">
+      {/* Inyección de JSON-LD para Google/Perplexity */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       
       {/* 1. SECCIÓN DE CABECERA (Slideshow y Compra) */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
         
-        {/* LADO IZQUIERDO: Imágenes y ahora también Descripción en Desktop */}
+        {/* LADO IZQUIERDO: Imágenes y Descripción en Desktop */}
         <div className="col-span-1 md:col-span-2">
           <ProductMobileSlideshow
             title={product.title}
@@ -74,9 +132,8 @@ export default async function ProductBySlugPage({ params }: Props) {
             />
           </div>
 
-          {/* DESCRIPCIÓN PARA DESKTOP (Se muestra abajo de las fotos) */}
           <div className="hidden md:block mt-10 px-0">
-            <h3 className="font-black text-xs uppercase tracking-[0.2em] text-zinc-500 border-b border-zinc-800 pb-2">
+            <h3 className="font-black text-xs uppercase tracking-[0.2em] text-zinc-500 border-b border-zinc-800 pb-2 italic">
               Descripción detallada
             </h3>
             <div className="mt-4 max-w-3xl text-zinc-300 leading-relaxed antialiased">
@@ -85,15 +142,15 @@ export default async function ProductBySlugPage({ params }: Props) {
           </div>
         </div>
 
-        {/* LADO DERECHO: Info de compra y Título */}
+        {/* LADO DERECHO: Info de compra */}
         <div className="col-span-1 px-5">
           <div className="flex items-center gap-2 mb-2">
             <div className="flex text-pink-500">
               {[1, 2, 3, 4, 5].map((index) => (
                 <span key={index}>
-                  {product.rating >= index ? (
+                  {(product.rating || 5) >= index ? (
                     <IoStar size={14} className="fill-current" />
-                  ) : product.rating >= index - 0.5 ? (
+                  ) : (product.rating || 5) >= index - 0.5 ? (
                     <IoStarHalf size={14} className="fill-current" />
                   ) : (
                     <IoStarOutline size={14} className="text-zinc-700" />
@@ -102,14 +159,14 @@ export default async function ProductBySlugPage({ params }: Props) {
               ))}
             </div>            
             <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-tighter">
-              {product.reviewCount || 0} Ratings
+              {product.reviewCount || 0} Ratings verified
             </span>
           </div>
-          <h1 className={`${titleFont.className} antialiased font-bold text-2xl uppercase tracking-tight italic`}>
+
+          <h1 className={`${titleFont.className} antialiased font-bold text-2xl uppercase tracking-tight italic text-white`}>
             {product.title}
           </h1>
           
-          {/* PRECIO CON DESCUENTO DINÁMICO */}
           <div className="flex flex-col gap-1 mt-4 mb-6">
             <div className="flex flex-wrap items-baseline gap-3">
               <span className="text-4xl font-black text-white italic tracking-tighter">
@@ -121,13 +178,15 @@ export default async function ProductBySlugPage({ params }: Props) {
                   <span className="text-sm text-zinc-500 line-through decoration-white/30">
                     ${product.oldPrice.toLocaleString('es-UY')}
                   </span>
-                  
                   <span className="text-pink-500 text-[10px] font-black uppercase tracking-tighter">
                     -{Math.round(((product.oldPrice - product.price) / product.oldPrice) * 100)}% OFF
                   </span>
                 </div>
               )}
             </div>
+            <p className="text-[10px] text-zinc-500 uppercase font-bold tracking-widest mt-1">
+              Envío discreto en Montevideo y todo Uruguay
+            </p>
           </div>
 
           <AddToCart 
@@ -139,7 +198,6 @@ export default async function ProductBySlugPage({ params }: Props) {
             category={product.category as any}
           />        
 
-          {/* DESCRIPCIÓN PARA MÓVIL (Se mantiene aquí para no perder el scroll en celulares) */}
           <div className="block md:hidden">
             <h3 className="font-black text-xs mt-10 uppercase tracking-[0.2em] text-zinc-500 border-b border-zinc-800 pb-2">
               Descripción
@@ -149,16 +207,14 @@ export default async function ProductBySlugPage({ params }: Props) {
         </div>
       </div>
 
-      {/* 2. SECCIÓN ULTRA UI (Solo si es Premium) */}
+      {/* 2. SECCIÓN ULTRA UI */}
       {product.isPremiumUI && (
         <div className="mt-16 space-y-24">
           <ProductHighlights 
             headline={premiumData?.bannerHeadline}
             items={premiumData?.highlights ?? []}
           />
-
           <ProductSteps steps={premiumData?.usage ?? []} />
-
           <div className="space-y-10">
             {premiumData?.features?.map((feat: any, index: number) => (
               <ProductDetailedFeature 
@@ -180,7 +236,6 @@ export default async function ProductBySlugPage({ params }: Props) {
           currentProductId={product.id}
         />
       </div>
-      
     </div>
   );
 }

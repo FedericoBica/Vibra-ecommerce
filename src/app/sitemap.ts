@@ -4,7 +4,7 @@ import prisma from '@/lib/prisma';
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = 'https://vibralover.com';
 
-  // 1. Productos reales de la DB
+  // 1. Productos
   const products = await prisma.product.findMany({
     select: { slug: true }
   });
@@ -12,10 +12,22 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const productEntries: MetadataRoute.Sitemap = products.map((product) => ({
     url: `${baseUrl}/product/${product.slug}`,
     changeFrequency: 'weekly',
-    priority: 0.7,
+    priority: 0.8,
   }));
 
-  // 2. Posts del blog que ya creaste
+  // 2. NUEVO: Packs (Damos prioridad alta para SEO)
+  const packs = await prisma.pack?.findMany({
+    where: { isActive: true },
+    select: { slug: true }
+  }) || [];
+
+  const packEntries: MetadataRoute.Sitemap = packs.map((pack) => ({
+    url: `${baseUrl}/product/${pack.slug}`, // O la ruta que uses para packs
+    changeFrequency: 'weekly',
+    priority: 0.7, // Prioridad más alta para las ofertas
+  }));
+
+  // 3. Posts del blog
   const posts = await prisma.post.findMany({
     where: { isPublished: true },
     select: { slug: true, updatedAt: true }
@@ -28,27 +40,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.6,
   }));
 
-  // 3. Rutas principales que SÍ existen
+  // 4. Rutas estáticas
   const staticRoutes: MetadataRoute.Sitemap = [
-    {
-      url: baseUrl, // Home
-      lastModified: new Date(),
-      changeFrequency: 'daily',
-      priority: 1,
-    },
-    {
-      url: `${baseUrl}/blog`, 
-      lastModified: new Date(),
-      changeFrequency: 'daily',
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/envios`, 
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.5,
-    },
+    { url: baseUrl, lastModified: new Date(), changeFrequency: 'daily', priority: 1 },
+    { url: `${baseUrl}/blog`, lastModified: new Date(), changeFrequency: 'daily', priority: 0.8 },
+    { url: `${baseUrl}/envios`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.5 },
   ];
 
-  return [...staticRoutes, ...productEntries, ...blogEntries];
+  return [...staticRoutes, ...productEntries, ...packEntries, ...blogEntries];
 }
